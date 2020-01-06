@@ -29,7 +29,6 @@ function isVerfy($verify)
             }
         }
         if (isset($_SESSION["time"]) && time() - $_SESSION["time"] > 1800) { //逾時登出
-            // session_unset();
             unset($_SESSION["act"]);
             unset($_SESSION["pad"]);
             unset($_SESSION["time"]);
@@ -39,7 +38,7 @@ function isVerfy($verify)
         }
     }
     include "./sys/route.php";
-    $routes = new app\route;
-    return $routes->init();
+    $route = new app\route;
+    return $route->init();
 }
 isVerfy($verify);
