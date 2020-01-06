@@ -6,6 +6,10 @@
 	
 RewriteEngine On
 
-RewriteCond %{REQUEST_FILENAME} !(.*)\.(js|css|otf|eot|svg|ttf|woff|woff2|map)
+RewriteCond %{REQUEST_FILENAME} !^.*/(resources)/(css|js|fonts)/(.*)\.(js|css|otf|eot|svg|ttf|woff|woff2|map)$
+#RewriteRule ^ ${DOCUMENT_ROOT}/template2/$1/$2/$3.$4
+
+#RewriteCond %{REQUEST_FILENAME} !-f
+#RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^ index.php [L]
 </IfModule>

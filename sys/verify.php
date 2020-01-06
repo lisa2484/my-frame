@@ -38,8 +38,8 @@ function isVerfy($verify)
             $_SESSION["time"] = time();
         }
     }
-    include "./sys/routes.php";
-    $routes = new app\routes;
+    include "./sys/route.php";
+    $routes = new app\route;
     return $routes->init();
 }
 isVerfy($verify);

@@ -2,16 +2,14 @@
 
 namespace app;
 
-class routes
+class route
 {
     function init()
     {
-        $redirect_url = substr($_SERVER["REDIRECT_URL"], 1);
-        $script_name = substr($_SERVER["SCRIPT_NAME"], 1);
-        // var_dump($_SERVER);
-        $script_name = str_replace("/index.php", "", $script_name);
-        $url = str_replace($script_name, "", $redirect_url);
-        $url = substr($url, 0, 1) == "/" ? substr($url, 1) : $url;
+        $script_name = $_SERVER["SCRIPT_NAME"];
+        $script_name = str_replace("index.php", "", $script_name);
+        $request_url = $_SERVER["REQUEST_URI"];
+        $url = str_replace($script_name, "", $request_url);
         if (!empty($url) && $url != "/") {
             $urlArr = preg_split("/\//", $url);
             $routes = $this->Routes(isset($urlArr[1]) ? $urlArr[0] : null);
@@ -41,17 +39,23 @@ class routes
     }
 
     /**
-     * 路由位置設定
-     * @return array[fun] value controller/menu_setting
+     * 路由群組設定
+     * @return array[GroupName] routesPHPName
      */
-    function Routes($route = null)
+    function RouteGroups()
     {
-        if (!empty($route) && is_file("./routes/" . $route . ".php")) {
-            include "./routes/" . $route . ".php";
-            return $routes;
+        $routeGroups["menu"] = "menu_route";
+        return $routeGroups;
+    }
+
+    function Routes($route)
+    {
+        $routeGroups = $this->RouteGroups();
+        if (isset($route) && isset($routeGroups[$route])) {
+            include "./routes/" . $routeGroups[$route] . ".php";
         } else {
             include "./routes/main.php";
-            return $routes;
         }
+        return $routes;
     }
 }
