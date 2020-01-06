@@ -1,0 +1,70 @@
+<?php
+
+namespace app\controllers;
+
+use app\models\menu_setting_dao;
+
+include_once "./sys/contorller.php";
+include_once "./models/menu_setting_dao.php";
+
+class menu_setting_con
+{
+    function init()
+    {
+        // $dao = new menu_setting_dao;
+        $menus = menu_setting_dao::getMenuSettingAll();
+        $mainMenus = array();
+        $belongs = array();
+        foreach ($menus as $menu) {
+            if ($menu["belong"] == 0) {
+                $mainMenus[] = $menu;
+            } else {
+                $belongs[$menu["belong"]][] = $menu;
+            }
+        }
+        return view("settings/menu_setting", ["menus" => $mainMenus, "belongs" => $belongs]);
+    }
+    function menu_setting()
+    {
+        echo "menu";
+    }
+
+    function menu_edit()
+    {
+        if (menu_setting_dao::updateMenuSettingByID($_POST["id"], $_POST["name"], $_POST["url"], $_POST["icon"])) {
+            echo "ok";
+            return;
+        }
+        echo "error";
+    }
+
+    function menu_add()
+    {
+        if (menu_setting_dao::insertMainMenuSetting($_POST["name"], $_POST["url"], $_POST["icon"])) {
+            echo "ok";
+            return;
+        }
+        echo "error";
+        return;
+    }
+
+    function menu_del()
+    {
+        if (menu_setting_dao::deleteMenuSetting($_POST["id"])) {
+            echo "ok";
+            return;
+        }
+        echo "error";
+        return;
+    }
+
+    function menu_child_add()
+    {
+        if (menu_setting_dao::insertChildMenuSetting($_POST["id"], $_POST["name"], $_POST["url"], $_POST["icon"])) {
+            echo "ok";
+            return;
+        }
+        echo "error";
+        return;
+    }
+}

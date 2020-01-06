@@ -1,0 +1,11 @@
+<IfModule mod_rewrite.c>
+# disable directory browsing
+	<IfModule mod_negotiation.c>
+		Options -MultiViews -Indexes
+	</IfModule>
+	
+RewriteEngine On
+
+RewriteCond %{REQUEST_FILENAME} !(.*)\.(js|css|otf|eot|svg|ttf|woff|woff2|map)
+RewriteRule ^ index.php [L]
+</IfModule>
