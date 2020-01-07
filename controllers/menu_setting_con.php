@@ -4,7 +4,7 @@ namespace app\controllers;
 
 use app\models\menu_setting_dao;
 
-include_once "./sys/contorller.php";
+include_once "./sys/controller.php";
 include_once "./models/menu_setting_dao.php";
 
 class menu_setting_con

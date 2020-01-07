@@ -128,7 +128,6 @@
     <div>
         <div class="title">
             <div class="col" style="background-color: #494949;height:100%;">
-                <!-- ようこそ　ジャパリパークへ！！ -->
             </div>
         </div>
         <div class="sub">

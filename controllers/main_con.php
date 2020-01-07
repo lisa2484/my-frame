@@ -2,7 +2,7 @@
 
 namespace app\controllers;
 
-include_once './sys/contorller.php';
+include_once './sys/controller.php';
 include './models/menu_setting_dao.php';
 
 use app\models\menu_setting_dao;

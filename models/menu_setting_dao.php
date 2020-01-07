@@ -7,7 +7,8 @@ include_once './sys/mysqlDB.php';
 class menu_setting_dao
 {
     private static $table_name = 'menu';
-    static function getMenuSettingAll()
+    
+    function getMenuSettingAll()
     {
         $dataArr = DB::select("SELECT * FROM " . menu_setting_dao::$table_name);
         return $dataArr;

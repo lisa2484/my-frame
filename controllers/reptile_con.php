@@ -2,7 +2,7 @@
 
 namespace app\controllers;
 
-include_once './sys/contorller.php';
+include_once './sys/controller.php';
 
 class reptile_con
 {

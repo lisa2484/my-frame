@@ -44,7 +44,8 @@ class route
      */
     function RouteGroups()
     {
-        $routeGroups["menu"] = "menu_route";
+        include "./routes/route_groups.php";
+
         return $routeGroups;
     }
 

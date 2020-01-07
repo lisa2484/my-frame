@@ -2,14 +2,13 @@
 
 use app\models\user_dao;
 
-include_once "./sys/contorller.php";
+include_once "./sys/controller.php";
 
 function isVerfy($verify)
 {
     $verify = isset($verify) ? $verify : true;
     if ($verify) {
         session_start();
-        // var_dump($_SESSION);
         if (!isset($_SESSION["act"]) || !isset($_SESSION["pad"])) {
             if (!isset($_POST["account"]) || !isset($_POST["password"])) {
                 return view("login");
@@ -28,14 +27,14 @@ function isVerfy($verify)
                 }
             }
         }
-        if (isset($_SESSION["time"]) && time() - $_SESSION["time"] > 1800) { //逾時登出
-            unset($_SESSION["act"]);
-            unset($_SESSION["pad"]);
-            unset($_SESSION["time"]);
-            return view("login");
-        } else {
-            $_SESSION["time"] = time();
-        }
+        // if (isset($_SESSION["time"]) && time() - $_SESSION["time"] > 1800) { //逾時登出
+        //     unset($_SESSION["act"]);
+        //     unset($_SESSION["pad"]);
+        //     unset($_SESSION["time"]);
+        //     return view("login");
+        // } else {
+        //     $_SESSION["time"] = time();
+        // }
     }
     include "./sys/route.php";
     $route = new app\route;

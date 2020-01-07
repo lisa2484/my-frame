@@ -18,7 +18,7 @@
                     <input class="col-8">
                     <div class="col-4">使用者名稱:</div>
                     <input class="col-8">
-                    <div class="col-4">權限</div>
+                    <div class="col-4">權限:</div>
                     <input class="col-8">
                 </div>
                 <div class="modal-footer">
