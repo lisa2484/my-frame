@@ -12,6 +12,7 @@ class user_dao
 
     function getUser()
     {
+        return DB::select("SELECT `id`,`user_name`,`authority`,`account`,`create_dt` FROM " . user_dao::$table_name);
     }
 
     function selectUser($act)

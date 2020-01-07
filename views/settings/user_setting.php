@@ -1,5 +1,10 @@
 <head>
-    <?php include "./sys/head.php" ?>
+    <?php //include "./sys/head.php" 
+    ?>
+    <link rel="stylesheet" type="text/css" href="./resources/css/bootstrap.css">
+    <link rel="stylesheet" href="./resources/css/font-awesome.css">
+    <script src="./resources/js/jquery-3.4.1.js"></script>
+    <script src="./resources/js/bootstrap.js"></script>
 </head>
 
 <body>
@@ -13,9 +18,9 @@
                     <div class="col-4">帳號:</div>
                     <input class="col-8">
                     <div class="col-4">密碼:</div>
-                    <input class="col-8">
+                    <input class="col-8" type="password">
                     <div class="col-4">確認密碼:</div>
-                    <input class="col-8">
+                    <input class="col-8" type="password">
                     <div class="col-4">使用者名稱:</div>
                     <input class="col-8">
                     <div class="col-4">權限:</div>
@@ -31,7 +36,7 @@
     <div>
         <button class="btn btn-info" data-toggle="modal" data-target=".user-edit">新增使用者</button>
     </div>
-    <div>
+    <div class="container">
         <table class="table">
             <thead>
                 <tr>
@@ -43,7 +48,16 @@
             </thead>
             <tbody>
                 <?php
-
+                foreach ($datas as $data) {
+                ?>
+                    <tr>
+                        <td><?= $data["account"] ?></td>
+                        <td><?= $data["user_name"] ?></td>
+                        <td><?= $data["authority"] ?></td>
+                        <td></td>
+                    </tr>
+                <?php
+                }
                 ?>
             </tbody>
         </table>
