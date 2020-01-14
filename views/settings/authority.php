@@ -97,7 +97,13 @@
                                 <td class="name-<?= $data["id"] ?>"><?= $data["authority_name"] ?></td>
                                 <td>
                                     <button class="btn-edit btn" data-toggle="modal" data-target=".aut-edit" data-id="<?= $data["id"] ?>"><i class="fa fa-pencil"></i></button>
-                                    <button class="btn-del btn" data-id="<?= $data["id"] ?>"><i class="fa fa-trash"></i></button>
+                                    <?php
+                                    if ($data["id"] != 1) {
+                                    ?>
+                                        <button class="btn-del btn" data-id="<?= $data["id"] ?>"><i class="fa fa-trash"></i></button>
+                                    <?php
+                                    }
+                                    ?>
                                 </td>
                             </tr>
                     <?php
