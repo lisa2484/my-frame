@@ -7,26 +7,26 @@ include_once './sys/mysqlDB.php';
 class menu_setting_dao
 {
     private static $table_name = 'menu';
-    
+
     function getMenuSettingAll()
     {
         $dataArr = DB::select("SELECT * FROM " . menu_setting_dao::$table_name);
         return $dataArr;
     }
 
-    function insertMainMenuSetting($name, $url, $icon)
+    function insertMainMenuSetting($name, $url, $icon, $aut)
     {
-        return DB::DBCode("INSERT INTO " . menu_setting_dao::$table_name . " (name,url,icon) VALUES ('" . $name . "','" . $url . "','" . $icon . "')");
+        return DB::DBCode("INSERT INTO " . menu_setting_dao::$table_name . " (name,url,icon,authority) VALUES ('" . $name . "','" . $url . "','" . $icon . "','" . $aut . "')");
     }
 
-    function insertChildMenuSetting($id, $name, $url, $icon)
+    function insertChildMenuSetting($id, $name, $url, $icon, $aut)
     {
-        return DB::DBCode("INSERT INTO " . menu_setting_dao::$table_name . " (belong,name,url,icon) VALUES ('" . $id . "','" . $name . "','" . $url . "','" . $icon . "')");
+        return DB::DBCode("INSERT INTO " . menu_setting_dao::$table_name . " (belong,name,url,icon,authority) VALUES ('" . $id . "','" . $name . "','" . $url . "','" . $icon . "','" . $aut . "')");
     }
 
-    function updateMenuSettingByID($id, $name, $url, $icon)
+    function updateMenuSettingByID($id, $name, $url, $icon, $aut)
     {
-        return DB::DBCode("UPDATE " . menu_setting_dao::$table_name . " SET name = '" . $name . "',url = '" . $url . "',icon = '" . $icon . "' WHERE id = " . $id);
+        return DB::DBCode("UPDATE " . menu_setting_dao::$table_name . " SET name = '" . $name . "',url = '" . $url . "',icon = '" . $icon . "' ,authority = '" . $aut . "' WHERE id = " . $id);
     }
 
     function deleteMenuSetting($id)

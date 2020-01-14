@@ -10,13 +10,22 @@
             $("iframe").attr("src", "./" + url);
         }
     }
+
+    function logout() {
+        $.post("logout", {
+                logout: "logout"
+            },
+            function() {
+                location.reload();
+            });
+    }
 </script>
 <style>
     .title {
         position: fixed;
         height: 50px;
         width: 100%;
-        z-index: 21;
+        z-index: 31;
     }
 
     body {
@@ -127,7 +136,14 @@
 <body>
     <div>
         <div class="title">
-            <div class="col" style="background-color: #494949;height:100%;">
+            <div class="col" style="background-color: #494949;height:100%;display: flex;justify-content: flex-end;padding-right:0;">
+                <div>
+                    你好，
+                    <?php
+                    echo $_SESSION["name"];
+                    ?>
+                </div>
+                <button class="logout" onclick="logout();">登出</button>
             </div>
         </div>
         <div class="sub">

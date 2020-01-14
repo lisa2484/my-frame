@@ -6,6 +6,9 @@ use app\models\menu_setting_dao;
 
 include_once "./sys/controller.php";
 include_once "./models/menu_setting_dao.php";
+include "./models/authority_dao.php";
+
+use app\models\authority_dao;
 
 class menu_setting_con
 {
@@ -13,6 +16,7 @@ class menu_setting_con
     {
         // $dao = new menu_setting_dao;
         $menus = menu_setting_dao::getMenuSettingAll();
+        $authorityTable = authority_dao::getAll();
         $mainMenus = array();
         $belongs = array();
         foreach ($menus as $menu) {
@@ -22,7 +26,7 @@ class menu_setting_con
                 $belongs[$menu["belong"]][] = $menu;
             }
         }
-        return view("settings/menu_setting", ["menus" => $mainMenus, "belongs" => $belongs]);
+        return view("settings/menu_setting", ["menus" => $mainMenus, "belongs" => $belongs, "authority" => $authorityTable]);
     }
     function menu_setting()
     {
@@ -31,7 +35,7 @@ class menu_setting_con
 
     function menu_edit()
     {
-        if (menu_setting_dao::updateMenuSettingByID($_POST["id"], $_POST["name"], $_POST["url"], $_POST["icon"])) {
+        if (menu_setting_dao::updateMenuSettingByID($_POST["id"], $_POST["name"], $_POST["url"], $_POST["icon"],$_POST["aut"])) {
             echo "ok";
             return;
         }
@@ -40,7 +44,7 @@ class menu_setting_con
 
     function menu_add()
     {
-        if (menu_setting_dao::insertMainMenuSetting($_POST["name"], $_POST["url"], $_POST["icon"])) {
+        if (menu_setting_dao::insertMainMenuSetting($_POST["name"], $_POST["url"], $_POST["icon"],$_POST["aut"])) {
             echo "ok";
             return;
         }
@@ -60,7 +64,7 @@ class menu_setting_con
 
     function menu_child_add()
     {
-        if (menu_setting_dao::insertChildMenuSetting($_POST["id"], $_POST["name"], $_POST["url"], $_POST["icon"])) {
+        if (menu_setting_dao::insertChildMenuSetting($_POST["id"], $_POST["name"], $_POST["url"], $_POST["icon"],$_POST["aut"])) {
             echo "ok";
             return;
         }

@@ -15,10 +15,13 @@ class main_con
         $mainMenus = array();
         $belongs = array();
         foreach ($menus as $menu) {
-            if ($menu['belong'] == 0) {
-                $mainMenus[] = $menu;
-            } else {
-                $belongs[$menu['belong']][] = $menu;
+            $autArr = preg_split("/,/", $menu["authority"]);
+            if (in_array($_SESSION["aut"], $autArr) || $_SESSION["aut"] == 1) {
+                if ($menu['belong'] == 0) {
+                    $mainMenus[] = $menu;
+                } else {
+                    $belongs[$menu['belong']][] = $menu;
+                }
             }
         }
         return view('main', ['menus' => $mainMenus, 'belongs' => $belongs]);

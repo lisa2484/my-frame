@@ -31,6 +31,11 @@
                     }
                 });
         });
+        $('input').on('keyup', function(even) {
+            if (even.keyCode == 13) {
+                $('button').click();
+            }
+        });
     });
 </script>
 <style>
