@@ -10,7 +10,7 @@ class menu_setting_dao
 
     function getMenuSettingAll()
     {
-        $dataArr = DB::select("SELECT * FROM " . menu_setting_dao::$table_name);
+        $dataArr = DB::select("SELECT * FROM " . menu_setting_dao::$table_name . " ORDER BY seq");
         return $dataArr;
     }
 
@@ -32,5 +32,10 @@ class menu_setting_dao
     function deleteMenuSetting($id)
     {
         return DB::DBCode("DELETE FROM " . menu_setting_dao::$table_name . " WHERE id =" . $id);
+    }
+
+    function sortSetting($id, $seq)
+    {
+        return DB::DBCode("UPDATE " . menu_setting_dao::$table_name . " SET seq = '" . $seq . "' WHERE id = '" . $id . "'");
     }
 }

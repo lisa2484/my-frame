@@ -35,7 +35,7 @@ class menu_setting_con
 
     function menu_edit()
     {
-        if (menu_setting_dao::updateMenuSettingByID($_POST["id"], $_POST["name"], $_POST["url"], $_POST["icon"],$_POST["aut"])) {
+        if (menu_setting_dao::updateMenuSettingByID($_POST["id"], $_POST["name"], $_POST["url"], $_POST["icon"], $_POST["aut"])) {
             echo "ok";
             return;
         }
@@ -44,7 +44,7 @@ class menu_setting_con
 
     function menu_add()
     {
-        if (menu_setting_dao::insertMainMenuSetting($_POST["name"], $_POST["url"], $_POST["icon"],$_POST["aut"])) {
+        if (menu_setting_dao::insertMainMenuSetting($_POST["name"], $_POST["url"], $_POST["icon"], $_POST["aut"])) {
             echo "ok";
             return;
         }
@@ -64,11 +64,27 @@ class menu_setting_con
 
     function menu_child_add()
     {
-        if (menu_setting_dao::insertChildMenuSetting($_POST["id"], $_POST["name"], $_POST["url"], $_POST["icon"],$_POST["aut"])) {
+        if (menu_setting_dao::insertChildMenuSetting($_POST["id"], $_POST["name"], $_POST["url"], $_POST["icon"], $_POST["aut"])) {
             echo "ok";
             return;
         }
         echo "error";
         return;
+    }
+
+    function sortable()
+    {
+        $main = json_decode($_POST["main"]);
+        $sub = json_decode($_POST["sub"]);
+        foreach ($main as $key => $id) {
+            menu_setting_dao::sortSetting($id, $key);
+        }
+        foreach ($sub as $midArr) {
+            if (count($midArr) > 1) {
+                foreach ($midArr as $key => $id) {
+                    menu_setting_dao::sortSetting($id, $key);
+                }
+            }
+        }
     }
 }

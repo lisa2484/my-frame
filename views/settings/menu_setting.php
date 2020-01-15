@@ -1,5 +1,6 @@
 <head>
     <?php include "./sys/head.php"; ?>
+    <script src="../resources/js/jquery-ui.js"></script>
 </head>
 <script>
     function editBtnShowAndHide(btn) {
@@ -137,6 +138,45 @@
                     window.location.reload();
                 });
         });
+        $(".sortable-btn").click(function() {
+            $(this).hide();
+            $(".sortable-div").show();
+            $("#sortable").sortable({
+                axis: "y"
+            });
+            $("#sortable").disableSelection();
+            $("#sortable > div > .sortable-sub").sortable({
+                axis: "y"
+            });
+            $("#sortable > div > .sortable-sub").disableSelection();
+        });
+        $(".sortable-set").click(function() {
+            var mainArr = [];
+            var subArr = [];
+            var main = $("#sortable").children();
+            var sub = $(".sortable-sub");
+            main.each(function(i, obj) {
+                mainArr[i] = $(this).data("id");
+            });
+            sub.each(function(i, obj) {
+                var mainID = $(this).attr("data-id");
+                var subObj = $(this).children(".row");
+                var subObjArr = [];
+                subObj.each(function(i, obj) {
+                    subObjArr[i] = $(this).data("id");
+                });
+                subArr[mainID] = subObjArr;
+            });
+            // console.log(JSON.stringify(subArr));
+            $.post("meun_sortable", {
+                    main: JSON.stringify(mainArr),
+                    sub: JSON.stringify(subArr)
+                },
+                function(req) {
+                    parent.location.reload();
+                }
+            );
+        });
     });
 </script>
 
@@ -181,20 +221,62 @@
         </div>
     </div>
     <div>
-        <div>
+        <div class="" style="display:flex;">
             <button class="btn btn-info add-btn-edit" data-toggle="modal" data-target=".menu-edit">新增</button>
+            <button class="btn sortable-btn">變更排序</button>
+            <div class="sortable-div" style="display: none;">
+                <button class="btn sortable-set">確定</button>
+                <button class="btn" onclick="javascript:location.reload();">取消</button>
+            </div>
         </div>
-        <div>
-            <table class="table container">
+        <div id="sortable">
+            <?php
+            foreach ($menus as $menu) {
+            ?>
+                <div data-id="<?= $menu["id"] ?>">
+                    <div class="row">
+                        <div class="col-6"><?= $menu["name"] ?></div>
+                        <p class="menu-main-aut" data-id="<?= $menu["id"] ?>" style="display: none;"><?= $menu["authority"] ?></p>
+                        <button class="btn btn-primary child-add" data-id="<?= $menu["id"] ?>" data-toggle="modal" data-target=".menu-edit"><i class="fa fa-plus"></i></button>
+                        <button class="btn btn-info menu-btn-edit" data-id="<?= $menu["id"] ?>" data-name="<?= $menu["name"] ?>" data-url="<?= $menu["url"] ?>" data-icon="<?= $menu["icon"] ?>" data-toggle="modal" data-target=".menu-edit"><i class="fa fa-pencil"></i></button>
+                        <button class="btn btn-danger btn-del" data-id="<?= $menu["id"] ?>"><i class="fa fa-trash"></i></button>
+                    </div>
+                    <?php
+                    if (isset($belongs[$menu["id"]])) {
+                    ?>
+                        <div class="sortable-sub" data-id="<?= $menu["id"] ?>">
+                            <?php
+                            foreach ($belongs[$menu["id"]] as $belong) {
+                            ?>
+                                <div class="row" data-id="<?= $belong["id"] ?>">
+                                    <div class="col-1"></div>
+                                    <div class="col-5"><?= $belong["name"] ?></div>
+                                    <p class="menu-sub-aut" data-id="<?= $belong["id"] ?>" style="display: none;"><?= $belong["authority"] ?></p>
+                                    <button class="btn btn-info belong-btn-edit" data-id="<?= $belong["id"] ?>" data-name="<?= $belong["name"] ?>" data-url="<?= $belong["url"] ?>" data-icon="<?= $belong["icon"] ?>" data-toggle="modal" data-target=".menu-edit"><i class="fa fa-pencil"></i></button>
+                                    <button class="btn btn-danger btn-del" data-id="<?= $belong["id"] ?>"><i class="fa fa-trash"></i></button>
+                                </div>
+                            <?php
+
+                            }
+                            ?>
+                        </div>
+                    <?php
+                    }
+                    ?>
+                </div>
+            <?php
+            }
+            ?>
+            <!-- <table class="table container">
                 <thead>
                     <tr>
                         <th>名稱</th>
                         <th>編輯</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="sortable">
                     <?php
-                    foreach ($menus as $menu) {
+                    // foreach ($menus as $menu) {
                     ?>
                         <tr>
                             <td>
@@ -208,8 +290,8 @@
                             </td>
                         </tr>
                         <?php
-                        if (isset($belongs[$menu["id"]])) {
-                            foreach ($belongs[$menu["id"]] as $belong) {
+                        // if (isset($belongs[$menu["id"]])) {
+                        //     foreach ($belongs[$menu["id"]] as $belong) {
                         ?>
                                 <tr style="background: #f2f2f2;">
                                     <td>
@@ -223,14 +305,14 @@
                                     </td>
                                 </tr>
                         <?php
-                            }
-                        }
+                        //     }
+                        // }
                         ?>
                     <?php
-                    }
+                    // }
                     ?>
                 </tbody>
-            </table>
+            </table> -->
         </div>
     </div>
 </body>
