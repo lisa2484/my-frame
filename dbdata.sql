@@ -17,15 +17,18 @@ CREATE DATABASE IF NOT EXISTS `laravel` /*!40100 DEFAULT CHARACTER SET utf8 COLL
 USE `laravel`;
 
 -- 傾印  資料表 laravel.authority 結構
+DROP TABLE IF EXISTS `authority`;
 CREATE TABLE IF NOT EXISTS `authority` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `authority_name` int(11) NOT NULL DEFAULT '0',
+  `authority_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '0',
+  `authority` mediumtext,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='權限表';
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1 COMMENT='權限表';
 
 -- 取消選取資料匯出。
 
 -- 傾印  資料表 laravel.bg_user 結構
+DROP TABLE IF EXISTS `bg_user`;
 CREATE TABLE IF NOT EXISTS `bg_user` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_name` varchar(50) NOT NULL DEFAULT '',
@@ -34,12 +37,14 @@ CREATE TABLE IF NOT EXISTS `bg_user` (
   `password` varchar(50) NOT NULL DEFAULT '0',
   `create_dt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `final_login_dt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `user_name` (`user_name`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 
 -- 取消選取資料匯出。
 
 -- 傾印  資料表 laravel.menu 結構
+DROP TABLE IF EXISTS `menu`;
 CREATE TABLE IF NOT EXISTS `menu` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `belong` int(10) unsigned NOT NULL DEFAULT '0',
@@ -47,9 +52,8 @@ CREATE TABLE IF NOT EXISTS `menu` (
   `url` varchar(50) DEFAULT '0',
   `seq` int(10) unsigned DEFAULT '0',
   `icon` varchar(50) DEFAULT NULL,
-  `authorty` text,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=latin1;
 
 -- 取消選取資料匯出。
 

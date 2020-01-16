@@ -24,9 +24,11 @@
                 return;
             }
             var id = $(this).attr("data-id");
+            var aut = $(".edit-aut").val();
             $.post("edit", {
                     id: id,
-                    name: name
+                    name: name,
+                    aut: aut
                 },
                 function(data) {
                     alert(data);
@@ -34,6 +36,9 @@
                 });
         });
         $(".btn-del").click(function() {
+            if (!confirm("是否刪除?")) {
+                return;
+            }
             var id = $(this).data("id");
             $.post("del", {
                     id: id
@@ -52,10 +57,48 @@
             $(".edit-add").hide();
             $(".edit-ok").show();
             var id = $(this).data("id");
+            $(".edit-aut").val($(".p-aut-" + id).html());
             $(".edit-name").val($(".name-" + id).html());
             $(".edit-ok").attr("data-id", id);
+            inputToChk();
+        });
+
+        $(".chk-r").click(function() {
+            var chk = $(".chk-inp-r[data-id='" + $(this).data("id") + "']");
+            if (chk.attr("checked")) {
+                chk.attr("checked", false);
+            } else {
+                chk.attr("checked", true);
+            }
+            chkToInput()
         });
     });
+
+    function inputToChk() {
+        var inp = $(".edit-aut");
+        $(".chk-inp-r").attr("checked", false);
+        var datas = JSON.parse(inp.val());
+        datas["r"].forEach(x => $(".chk-inp-r[data-id='" + x + "']").attr("checked", true));
+    }
+
+    function chkToInput() {
+        var inp = $(".edit-aut");
+        var datas = {
+            "r": "",
+            "c": "",
+            "u": "",
+            "d": ""
+        };
+        var r = $(".chk-inp-r");
+        var rdata = [];
+        r.each(function(i, obj) {
+            if ($(this).attr("checked")) {
+                rdata.push($(this).data("id"));
+            }
+        });
+        datas["r"] = rdata;
+        inp.val(JSON.stringify(datas));
+    }
 </script>
 
 <body>
@@ -68,6 +111,39 @@
                 <div class="modal-body container row">
                     <div class="col-3">名稱:</div>
                     <input class="col-9 edit-name form-control">
+                    <div class="col-12">權限</div>
+                    <input class="edit-aut" style="display: none;">
+                    <div class="col-12">
+                        <?php
+                        foreach ($menu as $m) {
+                        ?>
+                            <div class="row">
+                                <div class="col-5" style="position: relative;">
+                                    <div class="chk-r" data-id="<?= $m["id"] ?>" style="position:absolute;height:100%;width:100%;"></div>
+                                    <input class="chk-inp-r" data-id="<?= $m["id"] ?>" type="checkbox"><?= $m["name"] ?>
+                                </div>
+                                <div class="col-7"></div>
+                            </div>
+                            <?php
+                            if (isset($bel[$m["id"]])) {
+                                foreach ($bel[$m["id"]] as $b) {
+                            ?>
+                                    <div class="row">
+                                        <div class="col-1"></div>
+                                        <div class="col-4" style="position: relative;">
+                                            <div class="chk-r" data-id="<?= $b["id"] ?>" style="position:absolute;height:100%;width:100%;"></div>
+                                            <input class="chk-inp-r" data-id="<?= $b["id"] ?>" type="checkbox"><?= $b["name"] ?>
+                                        </div>
+                                        <div class="col-7"></div>
+                                    </div>
+                            <?php
+                                }
+                            }
+                            ?>
+                        <?php
+                        }
+                        ?>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button class="edit-ok btn btn-info" data-id="">修改</button>
@@ -96,14 +172,9 @@
                             <tr>
                                 <td class="name-<?= $data["id"] ?>"><?= $data["authority_name"] ?></td>
                                 <td>
+                                    <p class="p-aut-<?= $data["id"] ?>" style="display: none;"><?= $data["authority"] ?></p>
                                     <button class="btn-edit btn" data-toggle="modal" data-target=".aut-edit" data-id="<?= $data["id"] ?>"><i class="fa fa-pencil"></i></button>
-                                    <?php
-                                    if ($data["id"] != 1) {
-                                    ?>
-                                        <button class="btn-del btn" data-id="<?= $data["id"] ?>"><i class="fa fa-trash"></i></button>
-                                    <?php
-                                    }
-                                    ?>
+                                    <button class="btn-del btn" data-id="<?= $data["id"] ?>"><i class="fa fa-trash"></i></button>
                                 </td>
                             </tr>
                     <?php

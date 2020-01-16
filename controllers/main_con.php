@@ -4,19 +4,22 @@ namespace app\controllers;
 
 include_once './sys/controller.php';
 include './models/menu_setting_dao.php';
+include './models/authority_dao.php';
 
 use app\models\menu_setting_dao;
+use app\models\authority_dao;
 
 class main_con
 {
     function init()
     {
         $menus = menu_setting_dao::getMenuSettingAll();
+        $autDatas = authority_dao::getAuthorityByID($_SESSION["aut"]);
+        $autDatas = json_decode($autDatas[0]["authority"], true);
         $mainMenus = array();
         $belongs = array();
         foreach ($menus as $menu) {
-            $autArr = preg_split("/,/", $menu["authority"]);
-            if (in_array($_SESSION["aut"], $autArr) || $_SESSION["aut"] == 1) {
+            if (in_array($menu["id"], $autDatas["r"])) {
                 if ($menu['belong'] == 0) {
                     $mainMenus[] = $menu;
                 } else {

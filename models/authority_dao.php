@@ -13,9 +13,14 @@ class authority_dao
         return DB::select("SELECT * FROM " . authority_dao::$table_name);
     }
 
-    function update($id, $name)
+    function getAuthorityByID($aid)
     {
-        return DB::DBCode("UPDATE " . authority_dao::$table_name . " SET authority_name = '" . $name . "' WHERE id = '" . $id . "'");
+        return DB::select("SELECT authority FROM " . authority_dao::$table_name . " WHERE id = '" . $aid . "' LIMIT 1");
+    }
+
+    function update($id, $name, $aut)
+    {
+        return DB::DBCode("UPDATE " . authority_dao::$table_name . " SET authority_name = '" . $name . "', authority = '" . $aut . "' WHERE id = '" . $id . "'");
     }
 
     function insert($name)
