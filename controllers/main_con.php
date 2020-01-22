@@ -15,11 +15,11 @@ class main_con
     {
         $menus = menu_setting_dao::getMenuSettingAll();
         $autDatas = authority_dao::getAuthorityByID($_SESSION["aut"]);
-        $autDatas = json_decode($autDatas[0]["authority"], true);
+        $autData = json_decode($autDatas[0]["authority"], true);
         $mainMenus = array();
         $belongs = array();
         foreach ($menus as $menu) {
-            if (in_array($menu["id"], $autDatas["r"])) {
+            if (in_array($menu["id"], $autData["r"])) {
                 if ($menu['belong'] == 0) {
                     $mainMenus[] = $menu;
                 } else {
@@ -27,6 +27,6 @@ class main_con
                 }
             }
         }
-        return view('main', ['menus' => $mainMenus, 'belongs' => $belongs]);
+        return view('main', ['menus' => $mainMenus, 'belongs' => $belongs, 'autname' => $autDatas[0]["authority_name"]]);
     }
 }

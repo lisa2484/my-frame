@@ -36,7 +36,7 @@
                 });
         });
         $(".btn-del").click(function() {
-            if (!confirm("是否刪除?")) {
+            if (!confirm("是否删除?")) {
                 return;
             }
             var id = $(this).data("id");
@@ -106,12 +106,12 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3>權限設定</h3>
+                    <h3>权限设定</h3>
                 </div>
                 <div class="modal-body container row">
-                    <div class="col-3">名稱:</div>
+                    <div class="col-3">名称:</div>
                     <input class="col-9 edit-name form-control">
-                    <div class="col-12">權限</div>
+                    <div class="col-12">权限</div>
                     <input class="edit-aut" style="display: none;">
                     <div class="col-12">
                         <?php
@@ -154,14 +154,14 @@
         </div>
     </div>
     <div class="container">
-        <div>權限設定</div>
+        <div>权限设定</div>
         <div>
             <button class="btn btn-info btn-add" data-toggle="modal" data-target=".aut-edit">新增</button>
             <table class="table">
                 <thead>
                     <tr>
-                        <th>名稱</th>
-                        <th>編輯</th>
+                        <th>名称</th>
+                        <th>编辑</th>
                     </tr>
                 </thead>
                 <tbody>

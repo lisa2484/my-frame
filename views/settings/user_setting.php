@@ -29,21 +29,21 @@
         $(".add-btn").click(function() {
             var act = $(".add-act").val();
             if (act.replace(/(^\s*)|(\s*$)/g, "").length == 0) {
-                alert("請輸入帳號");
+                alert("请输入帐号");
                 return;
             }
             var pad = $(".add-pad").val();
             if (pad.replace(/\s/g, "").length == 0) {
-                alert("請輸入密碼");
+                alert("请输入密码");
                 return;
             }
             if (pad != $(".add-vpad").val()) {
-                alert("密碼與確認密碼不同");
+                alert("密码与确认密码不同");
                 return;
             }
             var name = $(".add-name").val();
             if (name.replace(/\s/g, "").length == 0) {
-                alert("請輸入使用者名稱");
+                alert("请输入使用者名称");
                 return;
             }
             var aut = $(".add-aut").val();
@@ -56,14 +56,14 @@
                 function(data) {
                     switch (data) {
                         case "account-repeat":
-                            alert("帳號重複");
+                            alert("帐号重复");
                             break;
                         case "true":
                             alert("新增成功")
                             location.reload();
                             break;
                         default:
-                            alert("新增失敗");
+                            alert("新增失败");
                     }
                 });
         });
@@ -87,11 +87,11 @@
             var opad = $(".edit-pad-opad").val();
             var vpad = $(".edit-pad-vpad").val();
             if (pad.replace(/\s/g, "").length == 0 || (opad.replace(/\s/g, "").length == 0 || vpad.replace(/\s/g, "").length == 0)) {
-                alert("密碼不可為空");
+                alert("密码不可为空");
                 return;
             }
             if (pad == opad) {
-                alert("舊密碼不可與新密碼相同");
+                alert("旧密码不可与新密码相同");
                 return;
             }
             if (pad == vpad) {
@@ -103,18 +103,18 @@
                     function(req) {
                         switch (req) {
                             case "opad-false":
-                                alert("密碼錯誤");
+                                alert("密码错误");
                                 break;
                             case "true":
                                 alert("更新成功");
                                 location.reload();
                                 break;
                             default:
-                                alert("更新失敗");
+                                alert("更新失败");
                         }
                     });
             } else {
-                alert("密碼確認錯誤");
+                alert("密码确认错误");
             }
         });
     });
@@ -127,11 +127,11 @@
                 <div class="modal-header">
                 </div>
                 <div class="modal-body container row">
-                    <div class="col-3">舊密碼</div>
+                    <div class="col-3">旧密码</div>
                     <input class="col-9 edit-pad-opad" type="password">
-                    <div class="col-3">新密碼</div>
+                    <div class="col-3">新密码</div>
                     <input class="col-9 edit-pad-npad" type="password">
-                    <div class="col-3">密碼確認</div>
+                    <div class="col-3">密码确认</div>
                     <input class="col-9 edit-pad-vpad" type="password">
                 </div>
                 <div class="modal-footer">
@@ -148,17 +148,17 @@
 
                 </div>
                 <div class="modal-body container row">
-                    <div class="col-4">帳號:</div>
+                    <div class="col-4">帐号:</div>
                     <input class="col-8 add-act">
-                    <div class="col-4">密碼:</div>
+                    <div class="col-4">密码:</div>
                     <input class="col-8 add-pad" type="password">
-                    <div class="col-4">確認密碼:</div>
+                    <div class="col-4">确认密码:</div>
                     <input class="col-8 add-vpad" type="password">
-                    <div class="col-4">使用者名稱:</div>
+                    <div class="col-4">使用者名称:</div>
                     <input class="col-8 add-name">
-                    <div class="col-4">權限:</div>
+                    <div class="col-4">权限:</div>
                     <select class="col-8 add-aut">
-                        <option value="0">請選擇</option>
+                        <option value="0">请选择</option>
                         <?php
                         foreach ($authority as $aut) {
                         ?>
@@ -182,13 +182,13 @@
 
                 </div>
                 <div class="modal-body container row">
-                    <div class="col-4">帳號:</div>
+                    <div class="col-4">帐号:</div>
                     <div class="col-8 edit-act"></div>
-                    <div class="col-4">使用者名稱:</div>
+                    <div class="col-4">使用者名称:</div>
                     <input class="col-8 edit-name">
-                    <div class="col-4">權限:</div>
+                    <div class="col-4">权限:</div>
                     <select class="col-8 edit-aut">
-                        <option value="0">請選擇</option>
+                        <option value="0">请选择</option>
                         <?php
                         foreach ($authority as $aut) {
                         ?>
@@ -212,9 +212,9 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th>帳號</th>
-                    <th>使用者名稱</th>
-                    <th>權限</th>
+                    <th>帐号</th>
+                    <th>使用者名称</th>
+                    <th>权限</th>
                     <th>功能</th>
                 </tr>
             </thead>

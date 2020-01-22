@@ -142,12 +142,12 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3>選單設定</h3>
+                    <h3>选单设定</h3>
                 </div>
                 <div class="modal-body container row">
-                    <div class="col-3">選單名稱:</div>
+                    <div class="col-3">选单名称:</div>
                     <input class="col-9 edit-name form-control">
-                    <div class="col-3">路徑:</div>
+                    <div class="col-3">路由:</div>
                     <input class="col-9 edit-url form-control">
                     <div class="col-3">icon:</div>
                     <input class="col-9 edit-icon form-control">
@@ -164,9 +164,9 @@
     <div class="container">
         <div>
             <button class="btn btn-info add-btn-edit" data-toggle="modal" data-target=".menu-edit">新增</button>
-            <button class="btn sortable-btn">變更排序</button>
+            <button class="btn sortable-btn">变更排序</button>
             <div class="sortable-div" style="display: none;">
-                <button class="btn sortable-set">確定</button>
+                <button class="btn sortable-set">确定</button>
                 <button class="btn" onclick="javascript:location.reload();">取消</button>
             </div>
         </div>

@@ -3,6 +3,7 @@
     <link rel="stylesheet" href="./resources/css/font-awesome.css">
     <script src="./resources/js/jquery-3.4.1.js"></script>
     <script src="./resources/js/bootstrap.js"></script>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
 </head>
 <script>
     function contentSwith(url) {
@@ -38,9 +39,11 @@
     }
 
     .all-collapse {
-        background-color: #8d8d8d;
+        /* background-color: #8d8d8d; */
         height: 100%;
         padding-top: 10px;
+        overflow-x: hidden;
+        overflow-y: auto;
     }
 
     .sub {
@@ -56,16 +59,18 @@
 
     .content {
         border: none;
-        padding: 0;
-        -webkit-transition: margin 0.4s;
-        transition: margin 0.4s;
         z-index: 20;
+        overflow-x: hidden;
+        overflow-y: auto;
+        padding: 0;
     }
 
     .middle {
         height: 100%;
         padding-top: 50px;
         padding-left: 200px;
+        -webkit-transition: padding 0.4s;
+        transition: padding 0.4s;
     }
 
     a {
@@ -80,7 +85,9 @@
 
     .menu-btn {
         height: 40px;
-        background-color: #6d6d6d;
+        background-color: #f4f4f4;
+        border-top: #e7e7e7 1px solid;
+        border-bottom: #fff 1px solid;
     }
 
     .menu-btn-text {
@@ -101,7 +108,7 @@
     }
 
     .all-collapse {
-        background-color: #8d8d8d;
+        background-color: #f4f4f4;
         width: 100%;
         height: 100%;
         padding-top: 10px;
@@ -116,6 +123,32 @@
         width: 200px;
         overflow: hidden;
         list-style: none;
+        background: #e7e7e7;
+    }
+
+    .logout {
+        background: #696969;
+        border: none;
+    }
+
+    .logout:hover {
+
+        background: #777;
+    }
+
+    .title>div {
+        background-color: #5e87b0;
+        height: 100%;
+        display: flex;
+        justify-content: flex-end;
+        padding-right: 0;
+    }
+
+    .title>div>div {
+        display: flex;
+        align-items: center;
+        padding: 0 10px;
+        background: #777;
     }
 
     @media only screen and (max-width:992px) {
@@ -136,14 +169,15 @@
 <body>
     <div>
         <div class="title">
-            <div class="col" style="background-color: #494949;height:100%;display: flex;justify-content: flex-end;padding-right:0;">
+            <div class="">
                 <div>
-                    你好，
+                    当前登入：
                     <?php
                     echo $_SESSION["name"];
+                    echo "[" . $autname . "]";
                     ?>
                 </div>
-                <button class="logout" onclick="logout();">登出</button>
+                <button class="logout" onclick="logout();">注销</button>
             </div>
         </div>
         <div class="sub">

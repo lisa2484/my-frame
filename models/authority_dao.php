@@ -15,7 +15,7 @@ class authority_dao
 
     function getAuthorityByID($aid)
     {
-        return DB::select("SELECT authority FROM " . authority_dao::$table_name . " WHERE id = '" . $aid . "' LIMIT 1");
+        return DB::select("SELECT * FROM " . authority_dao::$table_name . " WHERE id = '" . $aid . "' LIMIT 1");
     }
 
     function update($id, $name, $aut)
