@@ -9,7 +9,11 @@ class route
         $script_name = $_SERVER["SCRIPT_NAME"];
         $script_name = str_replace("index.php", "", $script_name);
         $request_url = $_SERVER["REQUEST_URI"];
-        $url = str_replace($script_name, "", $request_url);
+        if ($script_name != "/") {
+            $url = str_replace($script_name, "", $request_url);
+        } else {
+            $url = substr($request_url, 1);
+        }
         if (!empty($url) && $url != "/") {
             $urlArr = preg_split("/\//", $url);
             $routes = $this->Routes(isset($urlArr[1]) ? $urlArr[0] : null);
