@@ -2,7 +2,8 @@
 
 use app\models\user_dao;
 
-include_once "./sys/controller.php";
+include "./sys/controller.php";
+include "./sys/mysqlDB.php";
 
 function isVerfy($verify)
 {
@@ -15,7 +16,8 @@ function isVerfy($verify)
                     return view("login");
                 } else {
                     include "./models/user_dao.php";
-                    $user = user_dao::selectUser($_POST["account"]);
+                    $userDao = new user_dao;
+                    $user = $userDao->selectUser($_POST["account"]);
                     $user = $user[0];
                     if (count($user) > 0 && md5($user["account"] . $_POST["password"] . strtotime($user["create_dt"])) == $user["password"]) {
                         $_SESSION["act"] = $user["account"];
@@ -23,11 +25,9 @@ function isVerfy($verify)
                         $_SESSION["name"] = $user["user_name"];
                         $_SESSION["aut"] = $user["authority"];
                         $_SESSION["time"] = time();
-                        echo "true";
-                        return;
+                        return "true";
                     } else {
-                        echo "false";
-                        return;
+                        return "false";
                     }
                 }
             }
@@ -50,7 +50,7 @@ function isVerfy($verify)
 
     }
     include "./sys/route.php";
-    $route = new app\route;
+    $route = new route;
     return $route->init();
 }
-isVerfy($verify);
+echo isVerfy($verify);

@@ -2,8 +2,6 @@
 
 namespace app\models;
 
-include_once './sys/mysqlDB.php';
-
 class menu_setting_dao
 {
     private static $table_name = 'menu';

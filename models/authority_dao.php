@@ -2,8 +2,6 @@
 
 namespace app\models;
 
-include_once "./sys/mysqlDB.php";
-
 class authority_dao
 {
     private static $table_name = "authority";

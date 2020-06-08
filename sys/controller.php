@@ -5,9 +5,10 @@ function view($view, $push = array())
         foreach (array_keys($push) as $key) {
             $$key = $push[$key];
         }
-        return include './views/' . $view . '.php';
-    }
-    else{
-        return include './login.php';
+        include './views/' . $view . '.php';
+        return "";
+    } else {
+        include './login.php';
+        return "";
     }
 }

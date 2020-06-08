@@ -2,7 +2,6 @@
 
 namespace app\controllers;
 
-include_once './sys/controller.php';
 
 class reptile_con
 {
@@ -42,10 +41,10 @@ class reptile_con
         curl_setopt($ch, CURLOPT_COOKIE, 'redirectLogin=3;t=1766da7fa03df9fdb66af1ebaa160ecc;'); // 執行一個curl會話
         $contents = curl_exec($ch); // 返回一個保護當前會話最近一次錯誤的字串
         $error = curl_error($ch);
-        if ($error) {
-            echo 'Error: ' . $error;
-        } // 關閉一個curl會話
         curl_close($ch);
+        if ($error) {
+            return 'Error: ' . $error;
+        } // 關閉一個curl會話
         return $contents;
     }
 }

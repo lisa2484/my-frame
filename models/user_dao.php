@@ -2,8 +2,6 @@
 
 namespace app\models;
 
-include_once "./sys/mysqlDB.php";
-
 use app\models\DB;
 
 class user_dao

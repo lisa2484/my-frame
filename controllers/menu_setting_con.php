@@ -4,17 +4,14 @@ namespace app\controllers;
 
 use app\models\menu_setting_dao;
 
-include_once "./sys/controller.php";
-include_once "./models/menu_setting_dao.php";
-include "./models/authority_dao.php";
-
-use app\models\authority_dao;
+include "./models/menu_setting_dao.php";
 
 class menu_setting_con
 {
     function init()
     {
-        $menus = menu_setting_dao::getMenuSettingAll();
+        $msDao = new menu_setting_dao;
+        $menus = $msDao->getMenuSettingAll();
         $mainMenus = array();
         $belongs = array();
         foreach ($menus as $menu) {
@@ -28,59 +25,57 @@ class menu_setting_con
     }
     function menu_setting()
     {
-        echo "menu";
+        return "menu";
     }
 
     function menu_edit()
     {
-        if (menu_setting_dao::updateMenuSettingByID($_POST["id"], $_POST["name"], $_POST["url"], $_POST["icon"])) {
-            echo "ok";
-            return;
+        $msDao = new menu_setting_dao;
+        if ($msDao->updateMenuSettingByID($_POST["id"], $_POST["name"], $_POST["url"], $_POST["icon"])) {
+            return "ok";
         }
-        echo "error";
+        return "error";
     }
 
     function menu_add()
     {
-        if (menu_setting_dao::insertMainMenuSetting($_POST["name"], $_POST["url"], $_POST["icon"])) {
-            echo "ok";
-            return;
+        $msDao = new menu_setting_dao;
+        if ($msDao->insertMainMenuSetting($_POST["name"], $_POST["url"], $_POST["icon"])) {
+            return "ok";
         }
-        echo "error";
-        return;
+        return "error";
     }
 
     function menu_del()
     {
-        if (menu_setting_dao::deleteMenuSetting($_POST["id"])) {
-            echo "ok";
-            return;
+        $msDao = new menu_setting_dao;
+        if ($msDao->deleteMenuSetting($_POST["id"])) {
+            return "ok";
         }
-        echo "error";
-        return;
+        return "error";
     }
 
     function menu_child_add()
     {
-        if (menu_setting_dao::insertChildMenuSetting($_POST["id"], $_POST["name"], $_POST["url"], $_POST["icon"])) {
-            echo "ok";
-            return;
+        $msDao = new menu_setting_dao;
+        if ($msDao->insertChildMenuSetting($_POST["id"], $_POST["name"], $_POST["url"], $_POST["icon"])) {
+            return "ok";
         }
-        echo "error";
-        return;
+        return "error";
     }
 
     function sortable()
     {
+        $msDao = new menu_setting_dao;
         $main = json_decode($_POST["main"]);
         $sub = json_decode($_POST["sub"]);
         foreach ($main as $key => $id) {
-            menu_setting_dao::sortSetting($id, $key);
+            $msDao->sortSetting($id, $key);
         }
         foreach ($sub as $midArr) {
             if (count($midArr) > 1) {
                 foreach ($midArr as $key => $id) {
-                    menu_setting_dao::sortSetting($id, $key);
+                    $msDao->sortSetting($id, $key);
                 }
             }
         }

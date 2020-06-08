@@ -6,7 +6,7 @@ include './sys/serverset.php';
 
 class DB
 {
-    function select($SQLCode)
+    static function select($SQLCode)
     {
         $SQL = getServer();
         $data = $SQL->query($SQLCode);
@@ -18,7 +18,7 @@ class DB
         return $dataArr;
     }
 
-    function DBCode($SQLCode)
+    static function DBCode($SQLCode)
     {
         $SQL= getServer();
         $request = false;

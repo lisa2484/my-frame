@@ -2,7 +2,6 @@
 
 namespace app\controllers;
 
-include_once './sys/controller.php';
 include './models/menu_setting_dao.php';
 include './models/authority_dao.php';
 
@@ -13,8 +12,10 @@ class main_con
 {
     function init()
     {
-        $menus = menu_setting_dao::getMenuSettingAll();
-        $autDatas = authority_dao::getAuthorityByID($_SESSION["aut"]);
+        $msDao = new menu_setting_dao;
+        $menus = $msDao->getMenuSettingAll();
+        $autDao = new authority_dao;
+        $autDatas = $autDao->getAuthorityByID($_SESSION["aut"]);
         $autData = json_decode($autDatas[0]["authority"], true);
         $mainMenus = array();
         $belongs = array();
