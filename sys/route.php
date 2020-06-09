@@ -5,6 +5,7 @@ namespace app;
 include "./sys/controller.php";
 include "./sys/mysqlDB.php";
 include "./sys/verify.php";
+include "./sys/tool.php";
 
 use app\verify;
 
@@ -28,7 +29,7 @@ class route
             $urlArr = preg_split("/\//", $url);
             $routes = $this->Routes($urlArr[0]);
             $get = key_exists(1, $urlArr) ? $urlArr[1] : $urlArr[0];
-            $route = key_exists($get, $routes) ? $routes[$get] : $get;      //取得路由位置
+            $route = key_exists($get, $routes) ? $routes[$get] : $routes["init"];      //取得路由位置
             if ($route != null) {
                 $routeArr = preg_split("/\//", $route);
                 $con = $routeArr[0];                                        //controller
