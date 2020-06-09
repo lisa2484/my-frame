@@ -6,9 +6,7 @@ function view($view, $push = array())
             $$key = $push[$key];
         }
         include './views/' . $view . '.php';
-        return "";
     } else {
         include './login.php';
-        return "";
     }
 }
