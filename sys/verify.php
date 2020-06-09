@@ -13,24 +13,36 @@ class verify
             if (!isset($_POST["logout"])) {
                 if (!isset($_SESSION["act"]) || !isset($_SESSION["pad"])) {
                     if (isset($_POST["account"]) && isset($_POST["password"])) {
-                        $user = DB::select("SELECT * FROM `bg_user` WHERE `user_name` = '" . $_POST["account"] . "' LIMIT 1");
-                        if (!empty($user)) {
-                            $user = $user[0];
-                            if (md5($user["account"] . $_POST["password"] . strtotime($user["create_dt"])) == $user["password"]) {
-                                $_SESSION["act"] = $user["account"];
-                                $_SESSION["pad"] = $user["password"];
-                                $_SESSION["name"] = $user["user_name"];
-                                $_SESSION["aut"] = $user["authority"];
-                                $_SESSION["time"] = time();
-                                return true;
+                        if (!empty($_POST["account"])) {
+                            $user = DB::select("SELECT * FROM `bg_user` WHERE `user_name` = '" . $_POST["account"] . "' LIMIT 1");
+                            if (!empty($user)) {
+                                $user = $user[0];
+                                $insert["account"] = $user["account"];
+                                $insert["session_id"] = session_id();
+                                $headers = apache_request_headers();
+                                $headers["REMOTE_ADDR"] = $_SERVER["REMOTE_ADDR"];
+                                $insert["headers"] = json_encode($headers);
+                                if (md5($user["account"] . $_POST["password"] . strtotime($user["create_dt"])) == $user["password"]) {
+                                    $this->loginLog($user["account"], true);
+                                    $_SESSION["act"] = $user["account"];
+                                    $_SESSION["pad"] = $user["password"];
+                                    $_SESSION["name"] = $user["user_name"];
+                                    $_SESSION["aut"] = $user["authority"];
+                                    $_SESSION["time"] = time();
+                                    return true;
+                                }
                             }
+                            $this->loginLog($_POST["account"], false);
+                            return false;
                         }
                     }
-                    return false;
                 }
                 if (isset($_SESSION["time"]) && (time() - $_SESSION["time"]) < 1800) { //逾時登出
-                    $_SESSION["time"] = time();
-                    return true;
+                    $log = DB::select("SELECT `session_id` FROM `login_log` WHERE `account` = '" . $_SESSION["act"] . "' ORDER BY id DESC LIMIT 1");
+                    if (!empty($log) && $log[0]["session_id"] == session_id()) {
+                        $_SESSION["time"] = time();
+                        return true;
+                    }
                 }
             }
             unset($_SESSION["act"]);
@@ -40,5 +52,18 @@ class verify
             unset($_SESSION["time"]);
             return false;
         }
+    }
+
+    private function loginLog($user, $success)
+    {
+        $insert["account"] = $user;
+        $insert["session_id"] = session_id();
+        $headers = apache_request_headers();
+        $headers["REMOTE_ADDR"] = $_SERVER["REMOTE_ADDR"];
+        $insert["headers"] = json_encode($headers);
+        $insert["ip"] = getRemoteIP();
+        $insert["login_date"] = date("Y-m-d H:i:s");
+        $success ? $insert["success"] = 1 : $insert["success"] = 0;
+        DB::DBCode("INSERT INTO `login_log` (`" . implode("`,`", array_keys($insert)) . "`) VALUE ('" . implode("','", array_values($insert)) . "')");
     }
 }
