@@ -12,6 +12,7 @@ class whitelist_con
 {
     function init()
     {
+        return $this->getWhitelistList();
     }
 
     function getWhitelistList()

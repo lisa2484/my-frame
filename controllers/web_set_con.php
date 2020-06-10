@@ -10,6 +10,7 @@ class web_set_con
 {
     function init()
     {
+        return $this->getWebsetList();
     }
 
     function getWebsetList()

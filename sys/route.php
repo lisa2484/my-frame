@@ -20,32 +20,40 @@ class route
         $script_name = str_replace("index.php", "", $script_name);
         $request_url = $_SERVER["REQUEST_URI"];
         $url = str_replace($script_name, "", $request_url);
-        $verify = true;
-        $versys = new verify;
-        if (!$versys->isVerfy($verify)) {
-            return false;
-        }
         if (!empty($url) && $url != "/") {
             $urlArr = preg_split("/\//", $url);
-            $routes = $this->Routes($urlArr[0]);
-            $get = key_exists(1, $urlArr) ? $urlArr[1] : $urlArr[0];
-            $route = key_exists($get, $routes) ? $routes[$get] : $routes["init"];      //取得路由位置
-            if ($route != null) {
-                $routeArr = preg_split("/\//", $route);
-                $con = $routeArr[0];                                        //controller
-                $fun =  key_exists(1, $routeArr) ? $routeArr[1] : null;     //function
-                $classStr = "app\controllers\\" . $con;
-                include "./controllers/" . $con . ".php";
-                $class = new $classStr();
-                if ($fun != null) {
-                    return $class->$fun();
-                } else {
-                    return $class->init();                                  //無function時的進入點init
-                }
-            } else {
-                return "error";
+            $verify = true;
+            $versys = new verify;
+            if (!$versys->isVerfy($verify, $urlArr[0])) {
+                return false;
             }
+            $routes = $this->Routes($urlArr[0]);
+            if (empty($routes) || !isset($routes["init"])) return "init or routes error";
+            $get = key_exists(1, $urlArr) ? $urlArr[1] : $urlArr[0];
+            if (empty($get) || ($get != $urlArr[0] && !key_exists($get, $routes))) return "route error";
+            $route = key_exists($get, $routes) ? $routes[$get] : $routes["init"];      //取得路由位置
+            if (empty($route)) return "error";
+            $routeArr = preg_split("/\//", $route);
+            $con = $routeArr[0];                                        //controller
+            $fun =  key_exists(1, $routeArr) ? $routeArr[1] : null;     //function
+            $classStr = "app\controllers\\" . $con;
+            $classfile = "./controllers/" . $con . ".php";
+            if (!is_file($classfile)) return "classfile error";
+            include($classfile);
+            if (!class_exists($classStr)) return "class error";
+            $class = new $classStr();
+            if ($fun != null) {
+                if (!method_exists($class, $fun)) return "function error";
+                return $class->$fun();
+            }
+            if (!method_exists($class, "init")) return "function error";
+            return $class->init();                                  //無function時的進入點init
         } else {
+            $verify = true;
+            $versys = new verify;
+            if (!$versys->isVerfy($verify, "")) {
+                return false;
+            }
             $classStr = "app\controllers\main_con";
             include "./controllers/main_con.php";
             $class = new $classStr();
@@ -66,11 +74,10 @@ class route
 
     function Routes($route)
     {
+        $routes = [];
         $routeGroups = $this->RouteGroups();
         if (isset($route) && isset($routeGroups[$route])) {
             include "./routes/" . $routeGroups[$route] . ".php";
-        } else {
-            include "./routes/main.php";
         }
         return $routes;
     }
@@ -82,5 +89,9 @@ class route
             $_POST[$k] = $d;
         }
         $dbcon->close();
+    }
+
+    function chkAuthority()
+    {
     }
 }

@@ -7,7 +7,7 @@ use app\models\DB;
 class verify
 {
     //驗證功能
-    function isVerfy($verify)
+    function isVerfy($verify, $routeGs)
     {
         $verify = isset($verify) ? $verify : true;
         if ($verify) {
@@ -46,6 +46,8 @@ class verify
                 $_SESSION["act"] = $user["account"];
                 $_SESSION["name"] = $user["user_name"];
                 $_SESSION["aut"] = $user["authority"];
+                $autName = DB::select("SELECT `authority_name` FROM authority WHERE `id` = '" . $user["id"] . "'");
+                $_SESSION["aut_name"] = isset($autName[0]["authority_name"]) ? $autName[0]["authority_name"] : "";
                 $_SESSION["time"] = time();
                 return true;
             }
@@ -60,6 +62,7 @@ class verify
         if (!isset($_SESSION["name"])) return false;
         if (!isset($_SESSION["act"])) return false;
         if (!isset($_SESSION["aut"]) || !is_numeric($_SESSION["aut"])) return false;
+        if (!isset($_SESSION["aut_name"])) return false;
         return true;
     }
 
@@ -95,6 +98,7 @@ class verify
         unset($_SESSION["act"]);
         unset($_SESSION["aut"]);
         unset($_SESSION["name"]);
+        unset($_SESSION["aut_name"]);
         unset($_SESSION["time"]);
     }
 
