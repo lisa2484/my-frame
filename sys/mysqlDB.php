@@ -20,10 +20,10 @@ class DB
 
     static function DBCode($SQLCode)
     {
-        $SQL= getServer();
-        $request = false;
-        if($SQL->query($SQLCode)){
-            $request = !$request;
+        $SQL = getServer();
+        $request = true;
+        if (!$SQL->query($SQLCode)) {
+            $request = false;
         }
         $SQL->close();
         return $request;

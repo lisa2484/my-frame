@@ -11,6 +11,7 @@ class verify
         $verify = isset($verify) ? $verify : true;
         if ($verify) {
             if (!isset($_POST["logout"])) {
+                if (!$this->chkWhitelist()) return false;
                 if (!isset($_SESSION["act"]) || !isset($_SESSION["pad"])) {
                     if (isset($_POST["account"]) && isset($_POST["password"])) {
                         if (!empty($_POST["account"])) {
@@ -65,5 +66,18 @@ class verify
         $insert["login_date"] = date("Y-m-d H:i:s");
         $success ? $insert["success"] = 1 : $insert["success"] = 0;
         DB::DBCode("INSERT INTO `login_log` (`" . implode("`,`", array_keys($insert)) . "`) VALUE ('" . implode("','", array_values($insert)) . "')");
+    }
+
+    private function chkWhitelist()
+    {
+        $set = DB::select("SELECT `value` FROM `web_set` WHERE `set_key` = 'whitelist_switch'");
+        if (!empty($set)) {
+            $ip = getRemoteIP();
+            $req = DB::select("SELECT id FROM `whitelist` WHERE `ip` = '" . $ip . "' LIMIT 1");
+            if (empty($req)) {
+                return false;
+            }
+        }
+        return true;
     }
 }

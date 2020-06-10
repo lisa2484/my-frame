@@ -28,6 +28,7 @@ class main_con
                 }
             }
         }
-        return view('main', ['menus' => $mainMenus, 'belongs' => $belongs, 'autname' => $autDatas[0]["authority_name"]]);
+        // return view('main', ['menus' => $mainMenus, 'belongs' => $belongs, 'autname' => $autDatas[0]["authority_name"]]);
+        return json_encode(['menus' => $mainMenus, 'belongs' => $belongs, 'autname' => $autDatas[0]["authority_name"]]);
     }
 }
