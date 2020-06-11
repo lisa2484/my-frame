@@ -6,14 +6,14 @@ include "./sys/controller.php";
 include "./sys/mysqlDB.php";
 include "./sys/verify.php";
 include "./sys/tool.php";
+include "./sys/db_connect.php";
 
-use app\verify;
-
-class route
+class route extends verify
 {
     function init()
     {
         session_start();
+        $this->setTimeZone();
         //注入防禦
         $this->unInjection(getServer());
         $script_name = $_SERVER["SCRIPT_NAME"];
@@ -23,8 +23,7 @@ class route
         if (!empty($url) && $url != "/") {
             $urlArr = preg_split("/\//", $url);
             $verify = true;
-            $versys = new verify;
-            if (!$versys->isVerfy($verify, $urlArr[0])) {
+            if (!$this->isVerfy($verify, $urlArr[0])) {
                 return false;
             }
             $routes = $this->Routes($urlArr[0]);
@@ -49,9 +48,7 @@ class route
             if (!method_exists($class, "init")) return "function error";
             return $class->init();                                  //無function時的進入點init
         } else {
-            $verify = true;
-            $versys = new verify;
-            if (!$versys->isVerfy($verify, "")) {
+            if (!$this->isVerfy(true, "")) {
                 return false;
             }
             $classStr = "app\controllers\main_con";
@@ -90,6 +87,11 @@ class route
         }
         $dbcon->close();
     }
+
+    // function setTimeZone()
+    // {
+    //     DB::select("SELECT * FROM `web_set` ");
+    // }
 
     function chkAuthority()
     {

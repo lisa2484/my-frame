@@ -1,5 +1,4 @@
 <?php
-date_default_timezone_set('Asia/Taipei');
 include './sys/route.php';
 
 use app\route;

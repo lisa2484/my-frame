@@ -37,4 +37,9 @@ class user_dao
     {
         return DB::DBCode("UPDATE " . user_dao::$table_name . " SET password ='" . $pad . "' WHERE id ='" . $id . "'");
     }
+
+    function setDelete($id)
+    {
+        return DB::DBCode("UPDATE `" . user_dao::$table_name . "` SET `is_del` = 1 WHERE `id` = '" . $id . "';");
+    }
 }

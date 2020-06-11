@@ -4,10 +4,10 @@ namespace app;
 
 use app\models\DB;
 
-class verify
+class verify extends serverset
 {
     //驗證功能
-    function isVerfy($verify, $routeGs)
+    protected function isVerfy($verify, $routeGs)
     {
         $verify = isset($verify) ? $verify : true;
         if ($verify) {
@@ -41,7 +41,7 @@ class verify
         if (!empty($user)) {
             $user = $user[0];
             if (!isset($_POST["password"])) return false;
-            if (md5($user["account"] . $_POST["password"] . strtotime($user["create_dt"])) == $user["password"]) {
+            if (md5($user["account"] . $_POST["password"] . $user["create_dt"]) == $user["password"]) {
                 $_SESSION["id"] = $user["id"];
                 $_SESSION["act"] = $user["account"];
                 $_SESSION["name"] = $user["user_name"];

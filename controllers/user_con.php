@@ -16,7 +16,7 @@ class user_con
         $autDao = new authority_dao;
         $datas = $userDao->getUser();
         $authority = $autDao->getAll();
-        return view('settings/user_setting', ["datas" => $datas, "authority" => $authority]);
+        return json(["datas" => $datas, "authority" => $authority]);
     }
 
     function addUser()
@@ -28,38 +28,57 @@ class user_con
             $pad = md5($_POST["act"] . $_POST["pad"] . $time);
             return $userDao->insertUser($_POST["act"], $pad, $_POST["name"], $_POST["aut"], $time);
         } else {
-            return "account-repeat";
+            return json(["account-repeat"]);
         }
     }
 
-    function editUser()
+    function setUser()
     {
-        $userDao = new user_dao;
-        return $userDao->updateUserForEdit($_POST["id"], $_POST["name"], $_POST["aut"]);
+        if (!key_exists("id", $_POST)) return false;
+        $id = $_POST["id"];
+        if (!is_numeric($id)) return false;
+        if (!key_exists("name", $_POST)) return false;
+        $name = $_POST["name"];
+        if (!key_exists("aut", $_POST)) return false;
+        $aut = $_POST["aut"];
+        if (!is_numeric($aut)) return false;
+        $uDao = new user_dao;
+        return $uDao->updateUserForEdit($id, $name, $aut);
     }
 
-    function padEdit()
+    function setUserName()
     {
+        $_POST[""];
+    }
+
+    function editPassword()
+    {
+        if (!key_exists("id", $_POST)) return false;
+        $id = $_POST["id"];
+        if (!is_numeric($id)) return false;
+        if (!key_exists("old_password", $_POST)) return false;
+        $fopad = $_POST["old_password"];
+        if (!key_exists("new_password", $_POST)) return false;
+        $fpad = $_POST["new_password"];
         $userDao = new user_dao;
-        $userData = $userDao->selectUserByID($_POST["id"]);
+        $userData = $userDao->selectUserByID($id);
+        if (empty($userData)) return false;
         $userData = $userData[0];
-        $opad = md5($userData["account"] . $_POST["opad"] . strtotime($userData["create_dt"]));
+        $opad = md5($userData["account"] . $fopad . strtotime($userData["create_dt"]));
         if ($opad != $userData["password"]) {
-            return "opad-false";
+            return false;
         } else {
-            $npad = md5($userData["account"] . $_POST["pad"] . strtotime($userData["create_dt"]));
-            if ($userDao->updateUserForPad($_POST["id"], $npad)) {
-                return "true";
-            }
-            return "false";
+            $npad = md5($userData["account"] . $fpad . strtotime($userData["create_dt"]));
+            return $userDao->updateUserForPad($id, $npad);
         }
     }
 
     function delUser()
     {
-    }
-
-    function logout()
-    {
+        if (!key_exists("id", $_POST)) return false;
+        $id = $_POST["id"];
+        if (!is_numeric($id)) return false;
+        $uDao = new user_dao;
+        return $uDao->setDelete($id);
     }
 }

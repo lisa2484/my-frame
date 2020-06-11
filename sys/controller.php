@@ -10,3 +10,8 @@ function view($view, $push = array())
         include './login.php';
     }
 }
+
+function json(array $array)
+{
+    return json_encode($array);
+}

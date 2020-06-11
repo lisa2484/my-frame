@@ -57,4 +57,13 @@ class whitelist_con
         if (empty($wsDao->getWebSetListBySetKey("whitelist_switch"))) return $wsDao->setWebSetAdd("whitelist_switch", $value);
         return $wsDao->setWebSetEdit("whitelist_switch", $value);
     }
+
+    function setWhitelistDelete()
+    {
+        if (!key_exists("id", $_POST)) return false;
+        $id = $_POST["id"];
+        if (!is_numeric($id)) return false;
+        $wDao = new whitelist_dao;
+        return $wDao->deleteIP($id);
+    }
 }

@@ -1,7 +1,7 @@
 <?php
 
 // menu strat
-$routes["menu"] = "menu_setting_con";
+$routes["init"] = "menu_setting_con";
 $routes["menu_setting"] = "menu_setting_con/menu_setting";
 $routes["menu_edit"] = "menu_setting_con/menu_edit";
 $routes["menu_add"] = "menu_setting_con/menu_add";

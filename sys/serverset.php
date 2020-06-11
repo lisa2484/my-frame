@@ -1,11 +1,18 @@
 <?php
 
-function getServer()
-{
-    $mysql = new mysqli('localhost', 'root', '', 'laravel');
+namespace app;
 
-    mysqli_query($mysql, "SET NAMES utf8");
-    mysqli_query($mysql, "SET CHARACTER_SET_CLIENT=utf8");
-    mysqli_query($mysql, "SET CHARACTER_SET_RESULTS=utf8");
-    return $mysql;
+use app\models\DB;
+
+class serverset
+{
+    function setTimeZone()
+    {
+        $timezoneset = DB::select("SELECT `value` FROM `web_set` WHERE `set_key` = 'web_teimezone'");
+        if (empty($timezoneset) || empty($timezoneset[0]["value"])) {
+            date_default_timezone_set("America/Blanc-Sablon");
+        } else {
+            date_default_timezone_set('Asia/Taipei');
+        }
+    }
 }
