@@ -23,7 +23,7 @@ class whitelist_con
         $limit = $_POST["limit"];
         $wDao = new whitelist_dao;
         $datas = $wDao->getList($page, $limit);
-        return json_encode($datas);
+        return json($datas);
     }
 
     function setWhitelistAdd()

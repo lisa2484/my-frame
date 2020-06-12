@@ -1,6 +1,6 @@
 <head>
     <?php include "./sys/head.php"; ?>
-    <script src="../resources/js/jquery-ui.js"></script>
+    <script src="..<?= dirname($_SERVER["SCRIPT_NAME"]) ?>/resources/js/jquery-ui.js"></script>
 </head>
 <script>
     function editBtnShowAndHide(btn) {
@@ -43,7 +43,7 @@
             var name = $('.edit-name').val();
             var url = $('.edit-url').val();
             var icon = $('.edit-icon').val();
-            $.post('./menu_edit', {
+            $.post('.<?= dirname($_SERVER["SCRIPT_NAME"]) ?>/menu_edit', {
                     id: id,
                     name: name,
                     url: url,
@@ -58,7 +58,7 @@
             var name = $('.edit-name').val();
             var url = $('.edit-url').val();
             var icon = $('.edit-icon').val();
-            $.post('./menu_add', {
+            $.post('.<?= dirname($_SERVER["SCRIPT_NAME"]) ?>/menu_add', {
                     name: name,
                     url: url,
                     icon: icon
@@ -85,7 +85,7 @@
             var name = $('.edit-name').val();
             var url = $('.edit-url').val();
             var icon = $('.edit-icon').val();
-            $.post('./menu_child_add', {
+            $.post('.<?= dirname($_SERVER["SCRIPT_NAME"]) ?>/menu_child_add', {
                     id: id,
                     name: name,
                     url: url,
@@ -125,12 +125,12 @@
                 });
                 subArr[mainID] = subObjArr;
             });
-            $.post("meun_sortable", {
+            $.post("<?= dirname($_SERVER["SCRIPT_NAME"]) ?>/menu/meun_sortable", {
                     main: JSON.stringify(mainArr),
                     sub: JSON.stringify(subArr)
                 },
                 function(req) {
-                    parent.location.reload();
+                    // parent.location.reload();
                 }
             );
         });

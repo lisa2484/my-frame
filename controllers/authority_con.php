@@ -3,17 +3,17 @@
 namespace app\controllers;
 
 include "./models/authority_dao.php";
-include "./models/menu_setting_dao.php";
+include "./models/menu_dao.php";
 
 use app\models\authority_dao;
-use app\models\menu_setting_dao;
+use app\models\menu_dao;
 
 class authority_con
 {
     function init()
     {
         $autDao = new authority_dao;
-        $menuDao = new menu_setting_dao;
+        $menuDao = new menu_dao;
         $datas = $autDao->getAll();
         $menus = $menuDao->getMenuSettingAll();
         $mainMenus = [];

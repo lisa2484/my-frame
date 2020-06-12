@@ -1,7 +1,7 @@
 <?php
 
 namespace app;
-
+// error_reporting(0);
 include "./sys/controller.php";
 include "./sys/mysqlDB.php";
 include "./sys/verify.php";
@@ -23,6 +23,7 @@ class route extends verify
         if (!empty($url) && $url != "/") {
             $urlArr = preg_split("/\//", $url);
             $verify = true;
+            if ($urlArr[0] == "csbot") $verify = false;
             if (!$this->isVerfy($verify, $urlArr[0])) {
                 return false;
             }
@@ -87,11 +88,6 @@ class route extends verify
         }
         $dbcon->close();
     }
-
-    // function setTimeZone()
-    // {
-    //     DB::select("SELECT * FROM `web_set` ");
-    // }
 
     function chkAuthority()
     {

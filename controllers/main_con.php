@@ -2,17 +2,17 @@
 
 namespace app\controllers;
 
-include './models/menu_setting_dao.php';
+include './models/menu_dao.php';
 include './models/authority_dao.php';
 
-use app\models\menu_setting_dao;
+use app\models\menu_dao;
 use app\models\authority_dao;
 
 class main_con
 {
     function init()
     {
-        $msDao = new menu_setting_dao;
+        $msDao = new menu_dao;
         $menus = $msDao->getMenuSettingAll();
         $autDao = new authority_dao;
         $autDatas = $autDao->getAuthorityByID($_SESSION["aut"]);
@@ -28,7 +28,6 @@ class main_con
                 }
             }
         }
-        // return view('main', ['menus' => $mainMenus, 'belongs' => $belongs, 'autname' => $autDatas[0]["authority_name"]]);
-        return json_encode(['menus' => $mainMenus, 'belongs' => $belongs, 'autname' => $autDatas[0]["authority_name"]]);
+        return json(['menus' => $mainMenus, 'belongs' => $belongs, 'autname' => $autDatas[0]["authority_name"]]);
     }
 }

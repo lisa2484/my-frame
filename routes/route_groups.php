@@ -6,3 +6,4 @@ $routeGroups["userset"] = "user_rou";
 $routeGroups["whitelist"] = "whitelist_rou";
 $routeGroups["webset"] = "web_set_rou";
 $routeGroups["loginlog"] = "loginlog_rou";
+$routeGroups["csbot"] = "csbot_rou";

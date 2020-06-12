@@ -32,6 +32,7 @@ class verify extends serverset
             $this->unsetSession();
             return false;
         }
+        return true;
     }
 
     //登入
