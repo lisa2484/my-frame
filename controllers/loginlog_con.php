@@ -17,11 +17,21 @@
             // $return_arr = array("code"=> "", "msg"=> "", "data"=> "");
             $str_sql_arr = array();
 
-            $adminname = $_POST["adminname"];
-            $time_s = $_POST["timestart"];
-            $time_e = $_POST["timeend"];
-            $page = $_POST["page"];
-            $limit = $_POST["pagenum"];
+            $adminname = isset($_POST["adminname"]) ? $_POST["adminname"] : "" ;
+            $time_s = isset($_POST["timestart"]) ? $_POST["timestart"] : "" ;
+            $time_e = isset($_POST["timeend"]) ? $_POST["timeend"] : "" ;
+
+            if (isset($_POST["page"])) {
+                $page = $_POST["page"];
+            } else {
+                return false;
+            }
+
+            if (isset($_POST["pagenum"])) {
+                $limit = $_POST["pagenum"];
+            } else {
+                return false;
+            }
             
             if (!empty($adminname) || !empty($time_s) || !empty($time_e)) {
                 $str_sql = " WHERE";
@@ -79,6 +89,8 @@
             //     $return_arr['code'] = "0";
             //     $return_arr['msg'] = "NoData";
             // }
-            return json_encode($data_arr);
+
+            // return json_encode($data_arr);
+            return json($data_arr);
         }
     }
