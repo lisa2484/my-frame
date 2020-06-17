@@ -6,38 +6,51 @@ use app\models\DB;
 
 class whitelist_dao
 {
-    private static $table = "whitelist";
+    private static $table = "ipwhitelist";
 
-    function getList($page, $limit)
+    function getList(int $page, int $limit)
     {
-        return DB::select("SELECT * FROM `" . whitelist_dao::$table . "` WHERE `is_del` = 0 LIMIT " . ($page - 1) * $limit . "," . $limit . ";");
+        return DB::select("SELECT * FROM `" . self::$table . "` WHERE `is_del` = 0 LIMIT " . ($page - 1) * $limit . "," . $limit . ";");
     }
 
     function getIP($ip)
     {
-        return DB::select("SELECT * FROM `" . whitelist_dao::$table . "` WHERE `ip` = '" . $ip . "' AND `is_del` = 0 LIMIT 1");
+        return DB::select("SELECT * FROM `" . self::$table . "` WHERE `ip` = '" . $ip . "' AND `is_del` = 0 LIMIT 1");
     }
 
     function insertIP($ip)
     {
-        return DB::DBCode("INSERT INTO `" . whitelist_dao::$table . "` (`ip`,`creator`,`creator_name`,`creation_date`,`updater`,`updater_name`,`update_date`) 
-                           VALUE ('" . $ip . "','" . $_SESSION["act"] . "','" . $_SESSION["name"] . "','" . date("Y-m-d H:i:s") . "','" . $_SESSION["act"] . "','" . $_SESSION["name"] . "','" . date("Y-m-d H:i:s") . "')");
+        return DB::DBCode("INSERT INTO `" . self::$table . "` (`ip`,`creator`,`create_dt`,`create_ip`,`updater`,`update_dt`,`update_ip`) 
+                           VALUE (
+                               '" . $ip . "',
+                               '" . $_SESSION["act"] . "',
+                               '" . date("Y-m-d H:i:s") . "',
+                               '" . getRemoteIP() . "',
+                               '" . $_SESSION["act"] . "',
+                               '" . date("Y-m-d H:i:s") . "'
+                               '" . getRemoteIP() . "')");
     }
 
-    function setIP($id, $ip)
+    function setIP(int $id, $ip)
     {
-        return DB::DBCode("UPDATE `" . whitelist_dao::$table . "` 
-                           SET `ip` = '" . $ip . "', `updater` = '" . $_SESSION["act"] . "',`updater_name` = '" . $_SESSION["name"] . "', `update_date` = '" . date("Y-m-d H:i:s") . "' 
+        return DB::DBCode("UPDATE `" . self::$table . "` 
+                           SET `ip` = '" . $ip . "', `updater` = '" . $_SESSION["act"] . "',
+                               `update_dt` = '" . date("Y-m-d H:i:s") . "',
+                               `update_ip` = '" . getRemoteIP() . "'
                            WHERE `id` = '" . $id . "'");
     }
 
-    function deleteIP($id)
+    function setOnf($id, int $switch)
     {
-        return DB::DBCode("UPDATE `" . whitelist_dao::$table . "` 
+    }
+
+    function deleteIP(int $id)
+    {
+        return DB::DBCode("UPDATE `" . self::$table . "` 
                            SET `is_del` = 1 ,
                                `updater` = '" . $_SESSION["act"] . "',
-                               `updater_name` = '" . $_SESSION["name"] . "',
-                               `update_date` = '" . date("Y-m-d H:i:s") . "'
+                               `update_dt` = '" . date("Y-m-d H:i:s") . "',
+                               `update_ip` = '" . getRemoteIP() . "'
                            WHERE `id` = '" . $id . "'");
     }
 }

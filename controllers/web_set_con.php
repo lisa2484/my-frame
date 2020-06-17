@@ -27,6 +27,7 @@ class web_set_con
     {
         if (!key_exists("value", $_POST)) return false;
         $value = $_POST["value"];
+        if (strlen($value) > 1) return false;
         if (!in_array($value, [0, 1])) return false;
         return $this->setWebset("web_timezone", $value);
     }

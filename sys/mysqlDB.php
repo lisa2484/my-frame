@@ -8,14 +8,7 @@ class DB
 {
     static function select($SQLCode)
     {
-        $SQL = getServer();
-        $data = $SQL->query($SQLCode);
-        $dataArr = [];
-        while ($reData = mysqli_fetch_assoc($data)) {
-            $dataArr[] = $reData;
-        }
-        $SQL->close();
-        return $dataArr;
+        return mysqli_fetch_all(mysqli_query(getServer(), $SQLCode), MYSQLI_ASSOC);
     }
 
     static function DBCode($SQLCode)

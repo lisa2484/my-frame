@@ -43,7 +43,7 @@ class whitelist_con
         $ip = $_POST["ip"];
         if (!filter_var($ip, FILTER_VALIDATE_IP)) return false;
         $id = $_POST["id"];
-        if (!is_numeric($id)) return false;
+        if (!is_numeric($id) || empty($id)) return false;
         $wDao = new whitelist_dao;
         return $wDao->setIP($id, $ip);
     }
@@ -52,6 +52,7 @@ class whitelist_con
     {
         if (!key_exists("value", $_POST)) return false;
         $value = $_POST["value"];
+        if (strlen($value) > 1) return false;
         if (!in_array($value, [0, 1])) return false;
         $wsDao = new web_set_dao;
         if (empty($wsDao->getWebSetListBySetKey("whitelist_switch"))) return $wsDao->setWebSetAdd("whitelist_switch", $value);
@@ -62,7 +63,7 @@ class whitelist_con
     {
         if (!key_exists("id", $_POST)) return false;
         $id = $_POST["id"];
-        if (!is_numeric($id)) return false;
+        if (!is_numeric($id) || empty($id)) return false;
         $wDao = new whitelist_dao;
         return $wDao->deleteIP($id);
     }

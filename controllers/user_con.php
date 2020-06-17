@@ -32,19 +32,19 @@ class user_con
         }
     }
 
-    function setUser()
-    {
-        if (!key_exists("id", $_POST)) return false;
-        $id = $_POST["id"];
-        if (!is_numeric($id)) return false;
-        if (!key_exists("name", $_POST)) return false;
-        $name = $_POST["name"];
-        if (!key_exists("aut", $_POST)) return false;
-        $aut = $_POST["aut"];
-        if (!is_numeric($aut)) return false;
-        $uDao = new user_dao;
-        return $uDao->updateUserForEdit($id, $name, $aut);
-    }
+    // function setUser()
+    // {
+    //     if (!key_exists("id", $_POST)) return false;
+    //     $id = $_POST["id"];
+    //     if (!is_numeric($id)) return false;
+    //     if (!key_exists("name", $_POST)) return false;
+    //     $name = $_POST["name"];
+    //     if (!key_exists("aut", $_POST)) return false;
+    //     $aut = $_POST["aut"];
+    //     if (!is_numeric($aut)) return false;
+    //     $uDao = new user_dao;
+    //     return $uDao->updateUserForEdit($id, $name, $aut);
+    // }
 
     function setUserName()
     {

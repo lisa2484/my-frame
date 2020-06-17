@@ -38,7 +38,7 @@ class verify extends serverset
     //登入
     private function LoginIn()
     {
-        $user = DB::select("SELECT * FROM `bg_user` WHERE `user_name` = '" . $_POST["account"] . "' LIMIT 1");
+        $user = DB::select("SELECT * FROM `user` WHERE `user_name` = '" . $_POST["account"] . "' AND `is_del` = 0 LIMIT 1");
         if (!empty($user)) {
             $user = $user[0];
             if (!isset($_POST["password"])) return false;
@@ -70,7 +70,7 @@ class verify extends serverset
     //驗證與權限功能補強
     private function verifiedLogin()
     {
-        $user = DB::select("SELECT `id`,`authority` FROM `bg_user` WHERE `id` = '" . $_SESSION["id"] . "' LIMIT 1");
+        $user = DB::select("SELECT `id`,`authority` FROM `user` WHERE `id` = '" . $_SESSION["id"] . "' AND `is_del` = 0 LIMIT 1");
         if (empty($user)) {
             return false;
         }
@@ -130,7 +130,7 @@ class verify extends serverset
         $set = DB::select("SELECT `value` FROM `web_set` WHERE `set_key` = 'whitelist_switch'");
         if (!empty($set)) {
             $ip = getRemoteIP();
-            $req = DB::select("SELECT id FROM `whitelist` WHERE `ip` = '" . $ip . "' LIMIT 1");
+            $req = DB::select("SELECT id FROM `ipwhitelist` WHERE `ip` = '" . $ip . "' AND `is_del` = 0 AND `onf` = 1 LIMIT 1");
             if (empty($req)) {
                 return false;
             }
