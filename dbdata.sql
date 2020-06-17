@@ -191,7 +191,7 @@ CREATE TABLE IF NOT EXISTS `user` (
   `account` varchar(50) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL COMMENT '帳號',
   `password` varchar(50) NOT NULL COMMENT '密碼',
   `user_name` varchar(50) NOT NULL DEFAULT '' COMMENT '暱稱',
-  `photo_url` varchar(50) NOT NULL DEFAULT '' COMMENT '圖片路徑',
+  `img_name` varchar(50) NOT NULL DEFAULT '' COMMENT '圖片名稱',
   `authority` int(11) NOT NULL COMMENT '權限',
   `chg_pw_time` int(15) NOT NULL DEFAULT '0' COMMENT '密碼重設時戳',
   `creator` varchar(50) NOT NULL COMMENT '建立者',

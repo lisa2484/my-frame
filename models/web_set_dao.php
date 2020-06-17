@@ -33,7 +33,8 @@ class web_set_dao
      */
     function setWebSetAdd(string $setKey, string $value): bool
     {
-        return DB::DBCode("INSERT INTO `" . self::$table . "` (`set_key`,`value`) VALUE ('" . $setKey . "','" . $value . "');");
+        return DB::DBCode("INSERT INTO `" . self::$table . "` (`set_key`,`value`,`updater`,`update_dt`,`update_ip`) 
+                           VALUE ('" . $setKey . "','" . $value . "','" . $_SESSION["act"] . "','" . date("Y-m-d H:i:s") . "','" . getRemoteIP() . "');");
     }
 
     /**
@@ -44,6 +45,11 @@ class web_set_dao
      */
     function setWebSetEdit(string $setKey, string $value): bool
     {
-        return DB::DBCode("UPDATE `" . self::$table . "` SET `value` = '" . $value . "' WHERE `set_key` = '" . $setKey . "';");
+        return DB::DBCode("UPDATE `" . self::$table . "` 
+                           SET `value` = '" . $value . "',
+                               `updater` = '" . $_SESSION["act"] . "',
+                               `update_dt` = '" . date("Y-m-d H:i:s") . "',
+                               `update_ip` = '" . getRemoteIP() . "'
+                           WHERE `set_key` = '" . $setKey . "';");
     }
 }
