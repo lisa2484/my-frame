@@ -1,39 +1,31 @@
 <?php
     namespace app\controllers;
 
-    include "./models/login_log_dao.php";
+    include "./models/action_log_dao.php";
 
-    use app\models\login_log_dao;
+    use app\models\action_log_dao;
 
-    class loginlog_con
+    class actionlog_con
     {
         /**
-         * 初始：顯示登入紀錄資料
-         */
-        function init()
-        {
-            return $this->getLogList();
-        }
-
-        /**
-         * 抓取登入紀錄資料
+         * 抓取操作紀錄資料
          * @return array(
          *              'total' => string 總數量,
          *              'page' => string 當前頁碼,
          *              'data' => array(
          *                              0 => array(
          *                                  'id' => string 編號
-         *                                  'account' => string 使用者帳號
          *                                  'ip' => string IP
-         *                                  'user_name' => string 使用者名稱
-         *                                  'authority_name' => string 使用者權限名稱
-         *                                  'login_date' => string 登入時間
+         *                                  'user' => string 使用者帳號
+         *                                  'datetime' => string 操作時間
+         *                                  'remark' => string 操作敘述
+         *                                  'fun' => string 操作項目
          *                              ),
          *                              1 => array(....)
          *                        ) 
          *         )
          */
-        function getLogList()
+        function init()
         {
             $str_sql_arr = array();
 
@@ -52,7 +44,7 @@
             } else {
                 return false;
             }
-            
+
             if (!empty($adminname) || !empty($time_s) || !empty($time_e)) {
                 $str_sql = " WHERE";
             } else {
@@ -63,21 +55,22 @@
                 $time_s = empty($time_s) ? date("Y-m-01 00:00:00") : $time_s;
                 $time_e = empty($time_e) ? date("Y-m-d H:i:s") : $time_e;
 
-                $time_sql = " `login_date` BETWEEN '$time_s' AND '$time_e' ";
+                $time_sql = " `datetime` BETWEEN '$time_s' AND '$time_e' ";
                 array_push($str_sql_arr, $time_sql);
             }
             
             if (!empty($adminname)) {
-                $username_sql = " `account` = '$adminname' ";
+                $username_sql = " `user` = '$adminname' ";
                 array_push($str_sql_arr, $username_sql);
             }
 
+            
             $str_sql_im = implode(" AND ", $str_sql_arr);
             $str_sql .= $str_sql_im;
 
-            $loginlogDao = new login_log_dao;
+            $actionlogDao = new action_log_dao;
 
-            $logtotal = $loginlogDao->getLoginLogTotal($str_sql);
+            $logtotal = $actionlogDao->getActionLogTotal($str_sql);
 
             if ($logtotal == 0) {
                 $page = 1;
@@ -91,7 +84,7 @@
 
             $offset = $limit * ($page - 1);
 
-            $logdata = $loginlogDao->getLoginLog($str_sql, $limit, $offset);
+            $logdata = $actionlogDao->getActionLog($str_sql, $limit, $offset);
 
             $data_arr = array(
                 'total' => $logtotal,

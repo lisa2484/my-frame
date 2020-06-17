@@ -8,3 +8,4 @@ $routeGroups["webset"] = "web_set_rou";
 $routeGroups["loginlog"] = "loginlog_rou";
 $routeGroups["csbot"] = "csbot_rou";
 $routeGroups["botset"] = "bot_basicset_rou";
+$routeGroups["actionlog"] = "actionlog_rou";
