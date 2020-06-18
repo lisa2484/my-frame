@@ -21,34 +21,38 @@ class user_con
 
     function addUser()
     {
+        if (!isset($_POST["act"]) || $_POST["act"] == "") return false;
+        $account = $_POST["act"];
+        if (!isset($_POST["pad"]) || $_POST["pad"] == "") return false;
+        $password = $_POST["pad"];
+        if (empty($_POST["aut"])) return false;
+        $authority = $_POST["aut"];
+        isset($_POST["name"]) ? $name = $_POST["name"] : $name = "";
         $time = time();
         $userDao = new user_dao;
-        $redata = $userDao->selectUser($_POST["act"]);
+        $redata = $userDao->selectUser($account);
         if (empty($redata)) {
-            $pad = md5($_POST["act"] . $_POST["pad"] . $time);
-            return $userDao->insertUser($_POST["act"], $pad, $_POST["name"], $_POST["aut"], $time);
+            $pad = md5($account . $password . $time);
+            return $userDao->insertUser($account, $pad, $name, $authority, $time);
         } else {
             return json(["account-repeat"]);
         }
     }
 
-    // function setUser()
-    // {
-    //     if (!key_exists("id", $_POST)) return false;
-    //     $id = $_POST["id"];
-    //     if (!is_numeric($id)) return false;
-    //     if (!key_exists("name", $_POST)) return false;
-    //     $name = $_POST["name"];
-    //     if (!key_exists("aut", $_POST)) return false;
-    //     $aut = $_POST["aut"];
-    //     if (!is_numeric($aut)) return false;
-    //     $uDao = new user_dao;
-    //     return $uDao->updateUserForEdit($id, $name, $aut);
-    // }
-
     function setUserName()
     {
-        $_POST[""];
+        if (!isset($_POST["name"]) || $_POST["name"] == "") return false;
+        $name = $_POST["name"];
+        $userDao = new user_dao;
+        if ($userDao->setUserName($_SESSION["id"], $name)) {
+            $_SESSION["name"] = $name;
+            return true;
+        }
+        return false;
+    }
+
+    function setUserImg()
+    {
     }
 
     function editPassword()
