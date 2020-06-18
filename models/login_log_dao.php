@@ -8,13 +8,20 @@ class login_log_dao
 
     /**
      * 抓取登入紀錄總筆數
-     * @param mixed $str_sql 要查詢的sql語法字串
+     * @param string $account 使用者帳號
+     * @param string $strdt 搜尋時間範圍 開始時間
+     * @param string $enddt 搜尋時間範圍 結束時間
      * @return int 回傳總筆數
      */
-    function getLoginLogTotal($str_sql): int
+    function getLoginLogTotal(string $account, string $strdt, string $enddt): int
     {
-        $total = DB::select("SELECT count(*) FROM `" . self::$table_name . "` " . $str_sql . ";");
-        return $total[0]['count(*)'];
+        $where = [];
+        if (!empty($strdt) && !empty($enddt)) $where[] = "`login_date` BETWEEN '" . $strdt . "' AND '" . $enddt . "'";
+        if ($account != "") $where[] = "`account` = '" . $account . "'";
+        $str_sql = "";
+        if (!empty($where)) $str_sql = "WHERE " . implode(" AND ", $where);
+        $total = DB::select("SELECT count(`id`) AS i FROM `" . self::$table_name . "` " . $str_sql . ";");
+        return $total[0]['i'];
     }
 
     /**
@@ -24,8 +31,14 @@ class login_log_dao
      * @param mixed $offset 要查詢的筆數
      * @return array 回傳table表單資料 MYSQLI_ASSOC
      */
-    function getLoginLog($str_sql, $limit, $offset): array
+    function getLoginLog(string $account, string $strdt, string $enddt, int $page, int $limit): array
     {
-        return DB::select("SELECT `id`, `account`, `ip`, `user_name`, `authority_name`, `login_date` FROM `" . self::$table_name . "` " . $str_sql . " ORDER BY `login_date` DESC LIMIT " . $limit . " OFFSET " . $offset . ";");
+        $where = [];
+        if (!empty($strdt) && !empty($enddt)) $where[] = "`login_date` BETWEEN '" . $strdt . "' AND '" . $enddt . "'";
+        if ($account != "") $where[] = "`account` = '" . $account . "'";
+        $str_sql = "";
+        if (!empty($where)) $str_sql = "WHERE " . implode(" AND ", $where);
+        $page = ($page - 1) * $limit;
+        return DB::select("SELECT `id`, `account`, `ip`, `user_name`, `authority_name`, `login_date` FROM `" . self::$table_name . "` " . $str_sql . " ORDER BY `login_date` DESC LIMIT " . $page . "," . $limit . ";");
     }
 }
