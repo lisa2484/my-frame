@@ -22,9 +22,7 @@ class route extends verify
         $url = str_replace($script_name, "", $request_url);
         if (!empty($url) && $url != "/") {
             $urlArr = preg_split("/\//", $url);
-            $verify = true;
-            if ($urlArr[0] == "csbot") $verify = false;
-            if (!$this->isVerfy($verify, $urlArr[0])) {
+            if (!$this->isVerfy($urlArr[0])) {
                 return false;
             }
             $routes = $this->Routes($urlArr[0]);
@@ -49,7 +47,7 @@ class route extends verify
             if (!method_exists($class, "init")) return "function error";
             return $class->init();                                  //無function時的進入點init
         } else {
-            if (!$this->isVerfy(true, "")) {
+            if (!$this->isVerfy()) {
                 return false;
             }
             $classStr = "app\controllers\main_con";
@@ -87,9 +85,5 @@ class route extends verify
             $_POST[$k] = $d;
         }
         $dbcon->close();
-    }
-
-    function chkAuthority()
-    {
     }
 }

@@ -7,32 +7,31 @@ use app\models\DB;
 class verify extends serverset
 {
     //驗證功能
-    protected function isVerfy($verify, $routeGs)
+    protected function isVerfy(string $routeGs = "")
     {
-        $verify = isset($verify) ? $verify : true;
-        if ($verify) {
-            if (!isset($_POST["logout"])) {
-                if (!$this->chkWhitelist()) return false;
-                if (!$this->chkSession()) {
-                    if (isset($_POST["account"]) && isset($_POST["password"])) {
-                        if (!empty($_POST["account"])) {
-                            //登入驗證
-                            if ($this->LoginIn()) {
-                                $this->loginLog($_POST["account"], true);
-                                return true;
-                            }
-                            $this->loginLog($_POST["account"], false);
-                            return false;
-                        }
-                    }
-                } else {
-                    if ($this->verifiedLogin()) return true;
-                }
-            }
+        $routeGs = trim($routeGs);
+        if ($this->except($routeGs)) return true;
+        if (isset($_POST["logout"])) {
             $this->unsetSession();
             return false;
         }
-        return true;
+        if (!$this->chkWhitelist()) return false;
+        if (!$this->chkSession()) {
+            if (isset($_POST["account"]) && isset($_POST["password"])) {
+                if ($_POST["account"] != "") {
+                    //登入驗證
+                    if ($this->LoginIn()) {
+                        $this->loginLog($_POST["account"], true);
+                        return $this->chkAuthority($routeGs);
+                    }
+                    $this->loginLog($_POST["account"], false);
+                    return false;
+                }
+            }
+            return false;
+        } else {
+            if ($this->verifiedLogin()) return $this->chkAuthority($routeGs);
+        }
     }
 
     //登入
@@ -67,7 +66,9 @@ class verify extends serverset
         return true;
     }
 
-    //驗證與權限功能補強
+    /**
+     * 驗證與權限功能補強
+     */
     private function verifiedLogin()
     {
         $user = DB::select("SELECT `id`,`authority` FROM `user` WHERE `id` = '" . $_SESSION["id"] . "' AND `is_del` = 0 LIMIT 1");
@@ -104,7 +105,7 @@ class verify extends serverset
     }
 
     //登入紀錄
-    private function loginLog($user, $success)
+    private function loginLog(string $user, bool $success)
     {
         $insert["account"] = $user;
         $insert["session_id"] = session_id();
@@ -136,5 +137,30 @@ class verify extends serverset
             }
         }
         return true;
+    }
+
+    /**
+     * 頁面權限驗證
+     */
+    private function chkAuthority(string $routeName): bool
+    {
+        if ($routeName == "") return true;
+        $req = DB::select("SELECT `authority` FROM `authority` WHERE `id` = '" . $_SESSION["aut"] . "' AND `is_del` = 0 LIMIT 1;");
+        if (empty($req)) return false;
+        $authority = json_decode($req[0]["authority"], true)["r"];
+        $req = DB::select("SELECT `id` FROM `menu` WHERE `url` = '" . $routeName . "' LIMIT 1;");
+        if (empty($req)) return false;
+        $menuId = $req[0]["id"];
+        return in_array($menuId, $authority);
+    }
+
+    /**
+     * 排除
+     */
+    private function except(string $routeName): bool
+    {
+        if ($routeName == "") return false;
+        $exceptArr[] = "csbot";
+        return in_array($routeName, $exceptArr);
     }
 }

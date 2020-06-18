@@ -6,19 +6,27 @@ include './sys/serverset.php';
 
 class DB
 {
+    private static $dbcon;
+
     static function select($SQLCode)
     {
-        return mysqli_fetch_all(mysqli_query(getServer(), $SQLCode), MYSQLI_ASSOC);
+        self::dbCon();
+        $req = mysqli_fetch_all(mysqli_query(self::$dbcon, $SQLCode), MYSQLI_ASSOC);
+        return $req;
     }
 
     static function DBCode($SQLCode)
     {
-        $SQL = getServer();
+        self::dbCon();
         $request = true;
-        if (!$SQL->query($SQLCode)) {
+        if (!self::$dbcon->query($SQLCode)) {
             $request = false;
         }
-        $SQL->close();
         return $request;
+    }
+
+    private static function dbCon()
+    {
+        if (!isset(self::$dbcon)) self::$dbcon = getServer();
     }
 }

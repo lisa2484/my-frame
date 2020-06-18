@@ -37,7 +37,7 @@ class loginlog_con
     function getLogList()
     {
         $adminname = "";
-        if (!empty($_POST["adminname"]) || $_POST["adminname"] != "") $adminname = $_POST["adminname"];
+        if (isset($_POST["adminname"])) $adminname = $_POST["adminname"];
         $time_s = empty($_POST["timestart"]) ? "" : $_POST["timestart"];
         $time_e = empty($_POST["timeend"]) ? "" : $_POST["timeend"];
 
