@@ -11,4 +11,5 @@ $routeGroups["botset"] = "bot_basicset_rou";
 $routeGroups["actionlog"] = "actionlog_rou";
 $routeGroups["autorepmsg"] = "autorepmsg_rou";
 $routeGroups["autoservicerep"] = "autoservicerep_rou";
-$routeGroups["commonmsg"] = "user_commonmsg_rou";
+$routeGroups["usermsg"] = "usermsg_rou";
+$routeGroups["searchautorep"] = "searchautorep_rou";
