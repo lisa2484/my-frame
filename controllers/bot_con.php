@@ -2,17 +2,20 @@
 
 namespace app\controllers;
 
-include "./models/bot_dao.php";
+// include "./models/bot_dao.php";
+include "./models/autorepmsg_dao.php";
 include "./resources/tool/SCtable.php";
 
-use app\models\bot_dao;
+use app\models\autorepmsg_dao;
+// use app\models\bot_dao;
 use SCtable;
 
 class bot_con
 {
     function init()
     {
-        return SCtable::translate($this->proceess(), "CN");
+        // return SCtable::translate($this->proceess(), "CN");
+        return $this->proceess();
     }
 
     private function proceess()
@@ -38,17 +41,18 @@ class bot_con
 
     private function getGreet(): string
     {
-        $btd = new bot_dao;
-        return $btd->getBotGreet();
+        // $btd = new bot_dao;
+        // return $btd->getBotGreet();
+        return "";
     }
 
     private function getKeyWords($say, &$reply): bool
     {
-        $btd = new bot_dao;
-        $keys = $btd->getBotKeyWords();
-        foreach ($keys as $k => $d) {
-            if (mb_strstr($say, $k)) {
-                $reply = $d;
+        $armDao = new autorepmsg_dao;
+        $keys = $armDao->getMsgWhereTimeAndOnf();
+        foreach ($keys as $d) {
+            if (mb_strstr($say, $d["keyword"])) {
+                $reply = $d["msg"];
                 return true;
             }
         }
@@ -62,7 +66,8 @@ class bot_con
 
     private function getNoResult(): string
     {
-        $btd = new bot_dao;
-        return $btd->getBotNoResult();
+        // $btd = new bot_dao;
+        // return $btd->getBotNoResult();
+        return "";
     }
 }
