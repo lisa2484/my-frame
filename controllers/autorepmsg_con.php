@@ -2,11 +2,7 @@
 
 namespace app\controllers;
 
-// include './models/autorepmsg_dao.php';
-
-spl_autoload_register(function ($class) {
-    include "./models/" . $class . ".php";
-});
+include './models/autorepmsg_dao.php';
 
 use app\models\autorepmsg_dao;
 
