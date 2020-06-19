@@ -73,6 +73,7 @@ class verify extends serverset
     {
         $user = DB::select("SELECT `id`,`authority` FROM `user` WHERE `id` = '" . $_SESSION["id"] . "' AND `is_del` = 0 LIMIT 1");
         if (empty($user)) {
+            $this->unsetSession();
             return false;
         }
         if ($user[0]["authority"] != $_SESSION["aut"]) {
@@ -80,13 +81,16 @@ class verify extends serverset
         }
         $authority = DB::select("SELECT id FROM `authority` WHERE `id` = '" . $_SESSION["aut"] . "' LIMIT 1");
         if (empty($authority)) {
+            $this->unsetSession();
             return false;
         }
         if (!isset($_SESSION["time"]) || (time() - $_SESSION["time"]) > 1800) {
+            $this->unsetSession();
             return false;
         }
         $log = DB::select("SELECT `session_id` FROM `login_log` WHERE `account` = '" . $_SESSION["act"] . "' ORDER BY id DESC LIMIT 1");
         if (empty($log) || $log[0]["session_id"] != session_id()) {
+            $this->unsetSession();
             return false;
         }
         $_SESSION["time"] = time();
