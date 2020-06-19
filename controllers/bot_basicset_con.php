@@ -12,12 +12,12 @@
 
         /**
          * 初始：智能客服基本設置
-         * @return array(
-         *              'welcome_val' => string 歡迎訊息配置
-         *              'automsg_val' => string 自動回應訊息配置
-         *              'keyword_val' => string 查無關鍵字訊息配置
-         *              'autoservice_val' => string 智能客服訊息配置
-         *         )
+         * @return string json形式 {
+         *                          "welcome_val": string 歡迎訊息的配置,
+         *                          "automsg_val": string 自動回應訊息的配置,
+         *                          "keyword_val": string 查無關鍵字訊息的配置,
+         *                          "autoservice_val": string 智能客服訊息的配置
+         *                         }
          */
         function init()
         {
