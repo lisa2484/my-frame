@@ -16,11 +16,7 @@ class web_set_con
     function getWebsetList()
     {
         $wsDao = new web_set_dao;
-        return json($wsDao->getWebSetList());
-    }
-
-    function setWebsetList()
-    {
+        return json($wsDao->getWebSetListBySetKey("web_timezone"));
     }
 
     function setWebTimeZone()
