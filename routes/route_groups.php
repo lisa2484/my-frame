@@ -10,3 +10,4 @@ $routeGroups["csbot"] = "csbot_rou";
 $routeGroups["botset"] = "bot_basicset_rou";
 $routeGroups["actionlog"] = "actionlog_rou";
 $routeGroups["autorepmsg"] = "autorepmsg_rou";
+$routeGroups["commonmsg"] = "user_commonmsg_rou";
