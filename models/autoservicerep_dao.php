@@ -25,8 +25,8 @@ class autoservicerep_dao
     function setMsgInsert(array $insertArr): bool
     {
         if (empty($insertArr)) return false;
-        return DB::DBCode("INSERT INTO `" . self::$table . "` (`" . implode("`,`", array_keys($insertArr)) . "`)
-                           VALUE ('" . implode("','", array_values($insertArr)) . "');");
+        return DB::DBCode("INSERT INTO `" . self::$table . "` (`" . implode("`,`", array_keys($insertArr)) . "`,`creator`,`create_dt`,`create_ip`,`updater`,`update_dt`,`update_ip`)
+                           VALUE ('" . implode("','", array_values($insertArr)) . "','" . $_SESSION["act"] . "','" . date("Y-m-d H:i:s") . "','" . getRemoteIP() . "','" . $_SESSION["act"] . "','" . date("Y-m-d H:i:s") . "','" . getRemoteIP() . "');");
     }
 
     function setMsgUpdate(int $id, array $updateArr): bool
@@ -37,7 +37,20 @@ class autoservicerep_dao
             $whereArr[] = "`" . $k . "` = '" . $d . "'";
         }
         return DB::DBCode("UPDATE `" . self::$table . "` 
-                           SET " . implode(",", $whereArr) . "
+                           SET " . implode(",", $whereArr) . ",
+                                `updater` = '" . $_SESSION["act"] . "',
+                                `update_dt` = '" . date("Y-m-d H:i:s") . "',
+                                `update_ip` = '" . getRemoteIP() . "'
                            WHERE `id` = '" . $id . "' AND `is_del` = 0;");
+    }
+
+    function setMsgDelete(int $id): bool
+    {
+        return DB::DBCode("UPDATE `" . self::$table . "`
+                           SET `is_del` = 1,
+                               `updater` = '" . $_SESSION["act"] . "',
+                               `update_dt` = '" . date("Y-m-d H:i:s") . "',
+                               `update_ip` = '" . getRemoteIP() . "'
+                           WHERE `id` = '" . $id . "';");
     }
 }
