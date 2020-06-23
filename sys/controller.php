@@ -18,5 +18,8 @@ function json(array $array)
 
 function returnAPI(array $data, int $status = 0, string $errmsg = "")
 {
-    return json_encode(["Status" => $status, "ErrorMessage" => $errmsg, "Data" => $data]);
+    $arr["Status"] = $status;
+    $arr["ErrorMessage"] = (empty($errmsg) ? "" : ErrorMessage::getErrMsg($errmsg));
+    $arr["Data"] = $data;
+    return json_encode($arr);
 }

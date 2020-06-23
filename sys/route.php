@@ -2,20 +2,23 @@
 
 namespace app;
 // error_reporting(0);
+include "./sys/db_connect.php";
 include "./sys/controller.php";
 include "./sys/mysqlDB.php";
 include "./sys/verify.php";
 include "./sys/tool.php";
-include "./sys/db_connect.php";
+include "./sys/errmsg.php";
+
+use app\models\DB;
 
 class route extends verify
 {
     function init()
     {
         session_start();
+        DB::dbCon();
         $this->setTimeZone();
-        //注入防禦
-        $this->unInjection(getServer());
+        $this->unInjection(DB::getDBCon());
         $script_name = $_SERVER["SCRIPT_NAME"];
         $script_name = str_replace("index.php", "", $script_name);
         $request_url = $_SERVER["REQUEST_URI"];
@@ -23,36 +26,40 @@ class route extends verify
         if (!empty($url) && $url != "/") {
             $urlArr = preg_split("/\//", $url);
             if (!$this->isVerfy($urlArr[0])) {
-                return false;
+                return returnAPI([], 2, $this->getErrMsg());
             }
             $routes = $this->Routes($urlArr[0]);
-            if (empty($routes) || !isset($routes["init"])) return "init or routes error";
+            if (empty($routes) || !isset($routes["init"])) return returnAPI([], 1, "route_err");
             $get = key_exists(1, $urlArr) ? $urlArr[1] : $urlArr[0];
-            if (empty($get) || ($get != $urlArr[0] && !key_exists($get, $routes))) return "route error";
+            if (empty($get) || ($get != $urlArr[0] && !key_exists($get, $routes))) return returnAPI([], 1, "route_err");
             $route = key_exists($get, $routes) ? $routes[$get] : $routes["init"];      //取得路由位置
-            if (empty($route)) return "error";
+            if (empty($route)) return returnAPI([], 1, "route_err");
             $routeArr = preg_split("/\//", $route);
             $con = $routeArr[0];                                        //controller
             $fun =  key_exists(1, $routeArr) ? $routeArr[1] : null;     //function
             $classStr = "app\controllers\\" . $con;
             $classfile = "./controllers/" . $con . ".php";
-            if (!is_file($classfile)) return "classfile error";
+            if (!is_file($classfile)) return returnAPI([], 1, "class_err");
             include($classfile);
-            if (!class_exists($classStr)) return "class error";
+            if (!class_exists($classStr)) return returnAPI([], 1, "class_err");
             $class = new $classStr();
             if ($fun != null) {
-                if (!method_exists($class, $fun)) return "function error";
+                if (!method_exists($class, $fun)) return returnAPI([], 1, "function_err");
                 return $class->$fun();
             }
-            if (!method_exists($class, "init")) return "function error";
+            if (!method_exists($class, "init")) return returnAPI([], 1, "function_err");
             return $class->init();                                  //無function時的進入點init
         } else {
             if (!$this->isVerfy()) {
-                return false;
+                return returnAPI([], 2, $this->getErrMsg());
             }
             $classStr = "app\controllers\main_con";
-            include "./controllers/main_con.php";
+            $classfile = "./controllers/main_con.php";
+            if (!is_file($classfile)) return returnAPI([], 1, "class_err");
+            include $classfile;
+            if (!class_exists($classStr)) return returnAPI([], 1, "class_err");
             $class = new $classStr();
+            if (!method_exists($class, "init")) return returnAPI([], 1, "function_err");
             return $class->init();
         }
     }
@@ -84,6 +91,5 @@ class route extends verify
             $d = mysqli_real_escape_string($dbcon, htmlentities(trim($d)));
             $_POST[$k] = $d;
         }
-        $dbcon->close();
     }
 }

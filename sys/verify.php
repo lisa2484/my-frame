@@ -6,6 +6,7 @@ use app\models\DB;
 
 class verify extends serverset
 {
+    private $errmsg = "";
     //驗證功能
     protected function isVerfy(string $routeGs = "")
     {
@@ -13,25 +14,50 @@ class verify extends serverset
         if ($this->except($routeGs)) return true;
         if (isset($_POST["logout"])) {
             $this->unsetSession();
+            $this->errmsg = "logout";
             return false;
         }
-        if (!$this->chkWhitelist()) return false;
+        if (!$this->chkWhitelist()) {
+            $this->unsetSession();
+            $this->errmsg = "ip_fail";
+            return false;
+        }
         if (!$this->chkSession()) {
             if (isset($_POST["account"]) && isset($_POST["password"])) {
                 if ($_POST["account"] != "") {
                     //登入驗證
                     if ($this->LoginIn()) {
                         $this->loginLog($_POST["account"], true);
-                        return $this->chkAuthority($routeGs);
+                        if ($this->chkAuthority($routeGs)) {
+                            return true;
+                        }
+                        $this->errmsg = "aut_fail";
+                        return false;
                     }
                     $this->loginLog($_POST["account"], false);
+                    $this->errmsg = "login_fail";
                     return false;
                 }
+                $this->errmsg = "login_fail";
+                return false;
             }
+            $this->errmsg = "login_do";
             return false;
         } else {
-            if ($this->verifiedLogin()) return $this->chkAuthority($routeGs);
+            if ($this->verifiedLogin()) {
+                if ($this->chkAuthority($routeGs)) {
+                    return true;
+                }
+                $this->errmsg = "aut_fail";
+                return false;
+            }
+            return false;
         }
+    }
+
+    protected function getErrMsg()
+    {
+        return $this->errmsg;
     }
 
     //登入
@@ -74,6 +100,7 @@ class verify extends serverset
         $user = DB::select("SELECT `id`,`authority` FROM `user` WHERE `id` = '" . $_SESSION["id"] . "' AND `is_del` = 0 LIMIT 1");
         if (empty($user)) {
             $this->unsetSession();
+            $this->errmsg = "user_empty";
             return false;
         }
         if ($user[0]["authority"] != $_SESSION["aut"]) {
@@ -82,15 +109,18 @@ class verify extends serverset
         $authority = DB::select("SELECT id FROM `authority` WHERE `id` = '" . $_SESSION["aut"] . "' LIMIT 1");
         if (empty($authority)) {
             $this->unsetSession();
+            $this->errmsg = "aut_empty";
             return false;
         }
         if (!isset($_SESSION["time"]) || (time() - $_SESSION["time"]) > 1800) {
             $this->unsetSession();
+            $this->errmsg = "login_timeout";
             return false;
         }
         $log = DB::select("SELECT `session_id` FROM `login_log` WHERE `account` = '" . $_SESSION["act"] . "' ORDER BY id DESC LIMIT 1");
         if (empty($log) || $log[0]["session_id"] != session_id()) {
             $this->unsetSession();
+            $this->errmsg = "login_another";
             return false;
         }
         $_SESSION["time"] = time();
