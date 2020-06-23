@@ -35,7 +35,7 @@
                 }
             }
 
-            return json($data_arr);
+            return returnAPI($data_arr);
         }
 
         /**
@@ -48,22 +48,22 @@
 
             for ($i=0; $i < count($this->front_arr); $i++) { 
                 if (array_key_exists($this->front_arr[$i], $_POST)) {
-                    if (strlen($_POST[$this->front_arr[$i]]) != 1) return false;
-                    if (!in_array($_POST[$this->front_arr[$i]], ['0','1'])) return false;
+                    if (strlen($_POST[$this->front_arr[$i]]) != 1) return returnAPI([], 1, "botset_length_err");
+                    if (!in_array($_POST[$this->front_arr[$i]], ['0','1'])) return returnAPI([], 1, "botset_val_err");
 
                     $seting_arr[$this->field_arr[$i]] = $_POST[$this->front_arr[$i]];
 
                 } else {
-                    return false;
+                    return returnAPI([], 1, "param_err");
                 }
             }
 
             foreach ($seting_arr as $key => $value) {
                 $getstatus = $this->getWebSetStatus($key, $value);
-                if (!$getstatus) return $getstatus;
+                if (!$getstatus) return returnAPI([], 1, "botset_set_err");
             }
 
-            return true;
+            return returnAPI([]);
         }
 
         /**

@@ -26,6 +26,23 @@ class ErrorMessage
         $arr["userset_aut_empty"] = "权限设定不可为空";
         $arr["userset_add_repeat"] = "该帐号名称已经被使用";
         $arr["userset_add_fail"] = "使用者增加失败";
+
+        //參數
+        $arr["param_err"] = "参数错误";
+
+        //執行動作
+        $arr["add_err"] = "新增错误";
+        $arr["upd_err"] = "修改错误";
+        $arr["del_err"] = "刪除错误";
+
+        //修改密碼
+        $arr["editpwd_oldpwd_err"] = "原密码错误";
+
+        //智能客服訊息配置
+        $arr["botset_length_err"] = "长度错误";
+        $arr["botset_val_err"] = "值错误";
+        $arr["botset_set_err"] = "设定错误";
+
         return $arr;
     }
 }
