@@ -68,11 +68,11 @@ class user_con
         $userData = $userDao->selectUserByID($id);
         if (empty($userData)) return false;
         $userData = $userData[0];
-        $opad = md5($userData["account"] . $fopad . strtotime($userData["create_dt"]));
+        $opad = md5($userData["account"] . $fopad . $userData["create_dt"]);
         if ($opad != $userData["password"]) {
             return false;
         } else {
-            $npad = md5($userData["account"] . $fpad . strtotime($userData["create_dt"]));
+            $npad = md5($userData["account"] . $fpad . $userData["create_dt"]);
             return $userDao->updateUserForPad($id, $npad);
         }
     }
