@@ -41,9 +41,9 @@ class loginlog_con
         $time_s = empty($_POST["timestart"]) ? "" : $_POST["timestart"];
         $time_e = empty($_POST["timeend"]) ? "" : $_POST["timeend"];
 
-        if (!isset($_POST["page"])) return false;
+        if (!isset($_POST["page"])) return returnAPI([], 1, "param_err");
         $page = $_POST["page"];
-        if (!isset($_POST["limit"])) return false;
+        if (!isset($_POST["limit"])) return returnAPI([], 1, "param_err");
         $limit = $_POST["limit"];
 
         $loginlogDao = new login_log_dao;
@@ -56,6 +56,6 @@ class loginlog_con
             'data' => $logdata
         );
 
-        return json($data_arr);
+        return returnAPI($data_arr);
     }
 }

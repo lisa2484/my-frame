@@ -109,4 +109,13 @@ class user_dao
                                `update_ip` = '" . getRemoteIP() . "'
                            WHERE `id` = '" . $id . "';");
     }
+
+    /**
+     * 抓取使用者名稱
+     * @return array 回傳table表單資料 MYSQLI_ASSOC
+     */
+    function getUserAcc(): array
+    {
+        return DB::select("SELECT `id`,`user_name` FROM `" . self::$table_name . "` WHERE `is_del` = 0;");
+    }
 }

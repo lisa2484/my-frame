@@ -12,4 +12,6 @@ $routeGroups["actionlog"] = "actionlog_rou";
 $routeGroups["autorepmsg"] = "autorepmsg_rou";
 $routeGroups["autoservicerep"] = "autoservicerep_rou";
 $routeGroups["usermsg"] = "usermsg_rou";
+$routeGroups["userpwd"] = "userpwd_rou";
 $routeGroups["searchautorep"] = "searchautorep_rou";
+$routeGroups["customermsg"] = "messages_main_rou";

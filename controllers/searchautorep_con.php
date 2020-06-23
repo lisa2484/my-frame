@@ -10,9 +10,9 @@ class searchautorep_con
 {
     function init()
     {
-        if (!isset($_POST["page"])) return false;
+        if (!isset($_POST["page"])) return returnAPI([], 1, "param_err");
         $page = $_POST["page"];
-        if (!isset($_POST["limit"])) return false;
+        if (!isset($_POST["limit"])) return returnAPI([], 1, "param_err");
         $limit = $_POST["limit"];
 
         $searchDao = new searchautorep_dao;
@@ -25,42 +25,54 @@ class searchautorep_con
             'data' => $msgdata
         );
 
-        return json($data_arr);
+        return returnAPI($data_arr);
     }
 
     function setSearchAutoRepAdd()
     {
-        if (!isset($_POST["msg"]) || $_POST["msg"] == "") return false;
+        if (!isset($_POST["msg"]) || $_POST["msg"] == "") return returnAPI([], 1, "param_err");
         $msg = $_POST["msg"];
 
         $searchDao = new searchautorep_dao;
 
-        return $searchDao->addSearchAutoRep($msg);
+        if ($searchDao->addSearchAutoRep($msg)) {
+            return returnAPI([]);
+        } else {
+            return returnAPI([], 1, "add_err");
+        }
     }
 
     function setSearchAutoRepUpd()
     {
-        if (!isset($_POST["id"])) return false;
-        if (empty($_POST["id"])) return false;
+        if (!isset($_POST["id"])) return returnAPI([], 1, "param_err");
+        if (empty($_POST["id"])) return returnAPI([], 1, "param_err");
         $id = $_POST["id"];
-        if (!isset($_POST["msg"]) || $_POST["msg"] == "") return false;
+        if (!isset($_POST["msg"]) || $_POST["msg"] == "") return returnAPI([], 1, "param_err");
         $msg = $_POST["msg"];
-        if (!isset($_POST["status"]) || $_POST["status"] == "") return false;
+        if (!isset($_POST["status"]) || $_POST["status"] == "") return returnAPI([], 1, "param_err");
         $status = $_POST["status"];
 
         $searchDao = new searchautorep_dao;
 
-        return $searchDao->updSearchAutoRep($id, $msg, $status);
+        if ($searchDao->updSearchAutoRep($id, $msg, $status)) {
+            return returnAPI([]);
+        } else {
+            return returnAPI([], 1, "upd_err");
+        }
     }
 
     function setSearchAutoRepDel()
     {
-        if (!isset($_POST["id"])) return false;
-        if (empty($_POST["id"])) return false;
+        if (!isset($_POST["id"])) return returnAPI([], 1, "param_err");
+        if (empty($_POST["id"])) return returnAPI([], 1, "param_err");
         $id = $_POST["id"];
 
         $searchDao = new searchautorep_dao;
 
-        return $searchDao->delSearchAutoRep($id);
+        if ($searchDao->delSearchAutoRep($id)) {
+            return returnAPI([]);
+        } else {
+            return returnAPI([], 1, "del_err");
+        }
     }
 }

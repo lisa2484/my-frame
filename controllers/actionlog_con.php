@@ -36,13 +36,13 @@
             if (isset($_POST["page"])) {
                 $page = $_POST["page"];
             } else {
-                return false;
+                return returnAPI([], 1, "param_err");
             }
 
             if (isset($_POST["pagenum"])) {
                 $limit = $_POST["pagenum"];
             } else {
-                return false;
+                return returnAPI([], 1, "param_err");
             }
 
             if (!empty($adminname) || !empty($time_s) || !empty($time_e)) {
@@ -92,6 +92,6 @@
                 'data' => $logdata
             );
 
-            return json($data_arr);
+            return returnAPI($data_arr);
         }
     }
