@@ -15,46 +15,41 @@ class user_con
         $userDao = new user_dao;
         $autDao = new authority_dao;
         $datas = $userDao->getUser();
-        $authority = $autDao->getAll();
-        return json(["datas" => $datas, "authority" => $authority]);
+        $authority = $autDao->getUserType();
+        $autArr = [];
+        foreach ($authority as $a) {
+            $autArr[$a["id"]] = $a["authority_name"];
+        }
+        foreach ($datas as $k => $d) {
+            $datas[$k]["authority_name"] = $autArr[$d["authority"]];
+        }
+        return returnAPI(["list" => $datas, "authority_list" => $authority]);
     }
 
     function addUser()
     {
-        if (!isset($_POST["act"]) || $_POST["act"] == "") return false;
+        if (!isset($_POST["act"]) || $_POST["act"] == "") return returnAPI([], 1, "userset_act_empty");
         $account = $_POST["act"];
-        if (!isset($_POST["pad"]) || $_POST["pad"] == "") return false;
+        if (!isset($_POST["pad"]) || $_POST["pad"] == "") return returnAPI([], 1, "userset_pwd_empty");
         $password = $_POST["pad"];
-        if (empty($_POST["aut"])) return false;
+        if (empty($_POST["aut"])) return returnAPI([], 1, "userset_aut_empty");
         $authority = $_POST["aut"];
-        isset($_POST["name"]) ? $name = $_POST["name"] : $name = "";
         $time = time();
         $userDao = new user_dao;
-        $redata = $userDao->selectUser($account);
+        $redata = $userDao->getUserByAccount($account);
         if (empty($redata)) {
             $pad = md5($account . $password . $time);
-            return $userDao->insertUser($account, $pad, $name, $authority, $time);
+            if ($userDao->insertUser($account, $pad, $authority, $time)) return returnAPI([], 0, "userset_add_success");
+            return returnAPI([], 0, "userset_add_fail");
         } else {
-            return json(["account-repeat"]);
+            return returnAPI([], 1, "userset_add_repeat");
         }
     }
 
-    function setUserName()
+    function set()
     {
-        if (!isset($_POST["name"]) || $_POST["name"] == "") return false;
-        $name = $_POST["name"];
-        $userDao = new user_dao;
-        if ($userDao->setUserName($_SESSION["id"], $name)) {
-            $_SESSION["name"] = $name;
-            return true;
-        }
-        return false;
+        if (empty($_POST["aut"])) return returnAPI([], 1, "");
     }
-
-    function setUserImg()
-    {
-    }
-
     function editPassword()
     {
         if (!key_exists("id", $_POST)) return false;

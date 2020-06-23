@@ -19,6 +19,7 @@ function json(array $array)
 function returnAPI(array $data, int $status = 0, string $errmsg = "")
 {
     $arr["Status"] = $status;
+    $arr["ip"] = getRemoteIP();
     $arr["ErrorMessage"] = (empty($errmsg) ? "" : ErrorMessage::getErrMsg($errmsg));
     $arr["Data"] = $data;
     return json_encode($arr);

@@ -22,9 +22,9 @@ class user_dao
      * @param string $act 使用者帳號
      * @return array 回傳table表單資料
      */
-    function selectUser(string $act): array
+    function getUserByAccount(string $act): array
     {
-        return DB::select("SELECT * FROM `" . self::$table_name . "` WHERE `account` = '" . $act . "' AND `is_del` = 0;");
+        return DB::select("SELECT * FROM `" . self::$table_name . "` WHERE `account` = '" . $act . "' AND `is_del` = 0 LIMIT 1;");
     }
 
     /**
@@ -36,12 +36,11 @@ class user_dao
      * @param int $time 建立時間
      * @return bool 回傳是否成功
      */
-    function insertUser(string $act, string $pad, string $name, int $aut, int $time): bool
+    function insertUser(string $act, string $pad, int $aut, int $time): bool
     {
         return DB::DBCode("INSERT INTO `" . self::$table_name . "` (`account`,`password`,`user_name`,`authority`,`creator`,`create_dt`,`create_ip`,`updater`,`update_dt`,`update_ip`,`chg_pw_time`) 
                            VALUE ('" . $act . "',
                                   '" . $pad . "',
-                                  '" . $name . "',
                                   '" . $aut . "',
                                   '" . $_SESSION["act"] . "',
                                   '" . date("Y-m-d H:i:s", $time) . "',

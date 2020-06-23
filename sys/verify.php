@@ -7,6 +7,7 @@ use app\models\DB;
 class verify extends serverset
 {
     private $errmsg = "";
+    private $status = 2;
     //驗證功能
     protected function isVerfy(string $routeGs = "")
     {
@@ -23,62 +24,23 @@ class verify extends serverset
             return false;
         }
         if (!$this->chkSession()) {
-            if (isset($_POST["account"]) && isset($_POST["password"])) {
-                if ($_POST["account"] != "") {
-                    //登入驗證
-                    if ($this->LoginIn()) {
-                        $this->loginLog($_POST["account"], true);
-                        if ($this->chkAuthority($routeGs)) {
-                            return true;
-                        }
-                        $this->errmsg = "aut_fail";
-                        return false;
-                    }
-                    $this->loginLog($_POST["account"], false);
-                    $this->errmsg = "login_fail";
-                    return false;
-                }
-                $this->errmsg = "login_fail";
-                return false;
-            }
             $this->errmsg = "login_do";
             return false;
-        } else {
-            if ($this->verifiedLogin()) {
-                if ($this->chkAuthority($routeGs)) {
-                    return true;
-                }
-                $this->errmsg = "aut_fail";
-                return false;
+        }
+        if ($this->verifiedLogin()) {
+            if ($this->chkAuthority($routeGs)) {
+                return true;
             }
+            $this->errmsg = "aut_fail";
+            $this->status = 1;
             return false;
         }
+        return false;
     }
 
     protected function getErrMsg()
     {
-        return $this->errmsg;
-    }
-
-    //登入
-    private function LoginIn()
-    {
-        $user = DB::select("SELECT * FROM `user` WHERE `user_name` = '" . $_POST["account"] . "' AND `is_del` = 0 LIMIT 1");
-        if (!empty($user)) {
-            $user = $user[0];
-            if (!isset($_POST["password"])) return false;
-            if (md5($user["account"] . $_POST["password"] . $user["create_dt"]) == $user["password"]) {
-                $_SESSION["id"] = $user["id"];
-                $_SESSION["act"] = $user["account"];
-                $_SESSION["name"] = $user["user_name"];
-                $_SESSION["aut"] = $user["authority"];
-                $autName = DB::select("SELECT `authority_name` FROM authority WHERE `id` = '" . $user["id"] . "'");
-                $_SESSION["aut_name"] = isset($autName[0]["authority_name"]) ? $autName[0]["authority_name"] : "";
-                $_SESSION["time"] = time();
-                return true;
-            }
-        }
-        return false;
+        return ["status" => $this->status, "msg" => $this->errmsg];
     }
 
     //確認session資料
@@ -138,32 +100,11 @@ class verify extends serverset
         unset($_SESSION["time"]);
     }
 
-    //登入紀錄
-    private function loginLog(string $user, bool $success)
-    {
-        $insert["account"] = $user;
-        $insert["session_id"] = session_id();
-        $headers = apache_request_headers();
-        $headers["REMOTE_ADDR"] = $_SERVER["REMOTE_ADDR"];
-        $insert["headers"] = json_encode($headers);
-        $insert["ip"] = getRemoteIP();
-        $insert["login_date"] = date("Y-m-d H:i:s");
-        $insert["user_name"] = ($success ? $_SESSION["name"] : "");
-        if (isset($_SESSION["id"])) {
-            $autName = DB::select("SELECT `authority_name` FROM authority WHERE `id` = '" . $_SESSION["id"] . "'");
-            $insert["authority_name"] = $autName[0]["authority_name"];
-        } else {
-            $insert["authority_name"] = "";
-        }
-        $success ? $insert["success"] = 1 : $insert["success"] = 0;
-        DB::DBCode("INSERT INTO `login_log` (`" . implode("`,`", array_keys($insert)) . "`) VALUE ('" . implode("','", array_values($insert)) . "')");
-    }
-
     //確認IP白名單
     private function chkWhitelist()
     {
         $set = DB::select("SELECT `value` FROM `web_set` WHERE `set_key` = 'whitelist_switch'");
-        if (!empty($set)) {
+        if (!empty($set[0]['value'])) {
             $ip = getRemoteIP();
             $req = DB::select("SELECT id FROM `ipwhitelist` WHERE `ip` = '" . $ip . "' AND `is_del` = 0 AND `onf` = 1 LIMIT 1");
             if (empty($req)) {
@@ -195,6 +136,7 @@ class verify extends serverset
     {
         if ($routeName == "") return false;
         $exceptArr[] = "csbot";
+        $exceptArr[] = "login";
         return in_array($routeName, $exceptArr);
     }
 }

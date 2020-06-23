@@ -41,4 +41,9 @@ class login_log_dao
         $page = ($page - 1) * $limit;
         return DB::select("SELECT `id`, `account`, `ip`, `user_name`, `authority_name`, `login_date` FROM `" . self::$table_name . "` " . $str_sql . " ORDER BY `login_date` DESC LIMIT " . $page . "," . $limit . ";");
     }
+
+    function setLoginLogInsert(array $insertArr)
+    {
+        return DB::DBCode("INSERT INTO `login_log` (`" . implode("`,`", array_keys($insertArr)) . "`) VALUE ('" . implode("','", array_values($insertArr)) . "')");
+    }
 }

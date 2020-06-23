@@ -21,6 +21,11 @@ class ErrorMessage
         $arr["login_another"] = "此帐号已从其他电脑登入";
         $arr["ip_fail"] = "IP位置错误";
         $arr["aut_fail"] = "您没有权限浏览此页面";
+        $arr["userset_act_empty"] = "帐号不可为空";
+        $arr["userset_pwd_empty"] = "密码不可为空";
+        $arr["userset_aut_empty"] = "权限设定不可为空";
+        $arr["userset_add_repeat"] = "该帐号名称已经被使用";
+        $arr["userset_add_fail"] = "使用者增加失败";
         return $arr;
     }
 }

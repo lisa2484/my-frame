@@ -26,7 +26,8 @@ class route extends verify
         if (!empty($url) && $url != "/") {
             $urlArr = preg_split("/\//", $url);
             if (!$this->isVerfy($urlArr[0])) {
-                return returnAPI([], 2, $this->getErrMsg());
+                $rep = $this->getErrMsg();
+                return returnAPI([], $rep["status"], $rep["msg"]);
             }
             $routes = $this->Routes($urlArr[0]);
             if (empty($routes) || !isset($routes["init"])) return returnAPI([], 1, "route_err");
@@ -51,7 +52,8 @@ class route extends verify
             return $class->init();                                  //無function時的進入點init
         } else {
             if (!$this->isVerfy()) {
-                return returnAPI([], 2, $this->getErrMsg());
+                $rep = $this->getErrMsg();
+                return returnAPI([], $rep["status"], $rep["msg"]);
             }
             $classStr = "app\controllers\main_con";
             $classfile = "./controllers/main_con.php";

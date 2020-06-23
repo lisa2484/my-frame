@@ -28,6 +28,6 @@ class main_con
                 }
             }
         }
-        return json(['menus' => $mainMenus, 'belongs' => $belongs, 'autname' => $autDatas[0]["authority_name"]]);
+        return returnAPI(['menus' => $mainMenus, 'belongs' => $belongs, 'autname' => $autDatas[0]["authority_name"], 'username' => $_SESSION["name"]]);
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-$routeGroups["menu"] = "menu_route";
+$routeGroups["login"] = "login_rou";
 $routeGroups["authority"] = "authority_rou";
 $routeGroups["userset"] = "user_rou";
 $routeGroups["whitelist"] = "whitelist_rou";
@@ -13,3 +13,5 @@ $routeGroups["autorepmsg"] = "autorepmsg_rou";
 $routeGroups["autoservicerep"] = "autoservicerep_rou";
 $routeGroups["usermsg"] = "usermsg_rou";
 $routeGroups["searchautorep"] = "searchautorep_rou";
+$routeGroups["chatroom_set"] = "chatroom_set_rou";
+$routeGroups["chatroom_menu"] = "chatroom_menu_rou";
