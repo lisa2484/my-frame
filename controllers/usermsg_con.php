@@ -8,6 +8,9 @@ use app\models\usermsg_dao;
 
 class usermsg_con
 {
+    /**
+     * 個人設置-常用語設置
+     */
     function init()
     {
         $usermsgDao = new usermsg_dao;

@@ -64,6 +64,7 @@ class messages_main_con
 
         $data_arr = array(
             'total' => $msgmaintotal,
+            'totalpage' => ceil($msgmaintotal/$limit),
             'page' => $page,
             'acclist' => $useracc,
             'data' => $msgmain_arr
