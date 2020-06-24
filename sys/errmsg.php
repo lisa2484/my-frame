@@ -32,9 +32,9 @@ class ErrorMessage
         $arr["param_err"] = "参数错误";
 
         //執行動作
-        $arr["add_err"] = "新增错误";
-        $arr["upd_err"] = "修改错误";
-        $arr["del_err"] = "刪除错误";
+        $arr["add_err"] = "新增失败";
+        $arr["upd_err"] = "修改失败";
+        $arr["del_err"] = "刪除失败";
 
         //修改密碼
         $arr["editpwd_oldpwd_err"] = "原密码错误";

@@ -52,8 +52,9 @@ class loginlog_con
 
         $data_arr = array(
             'total' => $logtotal,
+            'totalpage' => ceil($logtotal/$limit),
             'page' => $page,
-            'data' => $logdata
+            'list' => $logdata
         );
 
         return returnAPI($data_arr);

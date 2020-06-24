@@ -39,8 +39,8 @@
                 return returnAPI([], 1, "param_err");
             }
 
-            if (isset($_POST["pagenum"])) {
-                $limit = $_POST["pagenum"];
+            if (isset($_POST["limit"])) {
+                $limit = $_POST["limit"];
             } else {
                 return returnAPI([], 1, "param_err");
             }
@@ -88,8 +88,9 @@
 
             $data_arr = array(
                 'total' => $logtotal,
+                'totalpage' => ceil($logtotal/$limit),
                 'page' => $page,
-                'data' => $logdata
+                'list' => $logdata
             );
 
             return returnAPI($data_arr);

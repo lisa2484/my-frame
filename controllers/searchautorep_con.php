@@ -21,8 +21,9 @@ class searchautorep_con
 
         $data_arr = array(
             'total' => $msgtotal,
+            'totalpage' => ceil($msgtotal/$limit),
             'page' => $page,
-            'data' => $msgdata
+            'list' => $msgdata
         );
 
         return returnAPI($data_arr);
