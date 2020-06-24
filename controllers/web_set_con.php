@@ -16,7 +16,9 @@ class web_set_con
     function getWebsetList()
     {
         $wsDao = new web_set_dao;
-        return json($wsDao->getWebSetListBySetKey("web_timezone"));
+        $timezone = $wsDao->getWebSetListBySetKey("web_timezone");
+        (empty($timezone) ? $returnArr["web_tz"] = 0 : $returnArr["web_tz"] = $timezone[0]["value"]);
+        return returnAPI($returnArr);
     }
 
     function setWebTimeZone()
@@ -25,7 +27,10 @@ class web_set_con
         $value = $_POST["value"];
         if (strlen($value) > 1) return false;
         if (!in_array($value, [0, 1])) return false;
-        return $this->setWebset("web_timezone", $value);
+        if ($this->setWebset("web_timezone", $value)) {
+            return returnAPI([]);
+        }
+        return returnAPI([], 1, "upd_err");
     }
 
     private function setWebset($setkey, $value)

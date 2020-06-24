@@ -15,7 +15,7 @@ class route extends verify
 {
     function init()
     {
-        session_start();
+        if (!isset($_SESSION)) return returnAPI([], 1, "param_err");
         DB::dbCon();
         $this->setTimeZone();
         $this->unInjection(DB::getDBCon());

@@ -73,6 +73,7 @@ class user_con
         $id = $_POST["id"];
         if (!is_numeric($id)) return returnAPI([], 1, "param_err");
         $uDao = new user_dao;
-        return $uDao->setDelete($id);
+        if ($uDao->setDelete($id)) return returnAPI([]);
+        return returnAPI([], 1, "del_err");
     }
 }
