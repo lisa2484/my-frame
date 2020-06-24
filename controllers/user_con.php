@@ -38,45 +38,40 @@ class user_con
         $userDao = new user_dao;
         $redata = $userDao->getUserByAccount($account);
         if (empty($redata)) {
-            $pad = md5($account . $password . $time);
+            $pad = md5($account . $password . date("Y-m-d H:i:s", $time));
             if ($userDao->insertUser($account, $pad, $authority, $time)) return returnAPI([], 0, "userset_add_success");
             return returnAPI([], 0, "userset_add_fail");
-        } else {
-            return returnAPI([], 1, "userset_add_repeat");
         }
+        return returnAPI([], 1, "userset_add_repeat");
     }
 
     function set()
     {
-        if (empty($_POST["aut"])) return returnAPI([], 1, "");
-    }
-    function editPassword()
-    {
-        if (!key_exists("id", $_POST)) return false;
+        if (!isset($_POST["id"]) || !is_numeric($_POST["id"])) return returnAPI([], 1, "param_err");
         $id = $_POST["id"];
-        if (!is_numeric($id)) return false;
-        if (!key_exists("old_password", $_POST)) return false;
-        $fopad = $_POST["old_password"];
-        if (!key_exists("new_password", $_POST)) return false;
-        $fpad = $_POST["new_password"];
-        $userDao = new user_dao;
-        $userData = $userDao->selectUserByID($id);
-        if (empty($userData)) return false;
-        $userData = $userData[0];
-        $opad = md5($userData["account"] . $fopad . $userData["create_dt"]);
-        if ($opad != $userData["password"]) {
-            return false;
-        } else {
-            $npad = md5($userData["account"] . $fpad . $userData["create_dt"]);
-            return $userDao->updateUserForPad($id, $npad);
+        if (isset($_POST["aut"])) {
+            if (!is_numeric($_POST["aut"])) return returnAPI([], 1, "param_err");
+            if ($_POST["aut"] != "") $aut = $_POST["aut"];
         }
+        if (isset($_POST["pad"]) && $_POST["pad"] != "") $pad = $_POST["pad"];
+        if (!isset($aut) && !isset($pad)) return returnAPI([], 1, "param_err");
+        $userDao = new user_dao;
+        if (isset($pad)) {
+            $user = $userDao->getUserByID($id);
+            $pad = md5($user[0]["account"], $pad, $user[0]["create_dt"]);
+            if ($user[0]["password"] == $pad) return returnAPI([], 1, "userset_pwd_repeat");
+        }
+        if ($userDao->setUserSetting($id, $aut, $pad)) {
+            return returnAPI([]);
+        }
+        return returnAPI([], 1, "upd_err");
     }
 
     function delUser()
     {
-        if (!key_exists("id", $_POST)) return false;
+        if (!key_exists("id", $_POST)) return returnAPI([], 1, "param_err");
         $id = $_POST["id"];
-        if (!is_numeric($id)) return false;
+        if (!is_numeric($id)) return returnAPI([], 1, "param_err");
         $uDao = new user_dao;
         return $uDao->setDelete($id);
     }

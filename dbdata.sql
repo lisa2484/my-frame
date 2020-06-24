@@ -11,12 +11,31 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 
+-- 傾印  資料表 laravel.action_log 結構
+CREATE TABLE IF NOT EXISTS `action_log` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `ip` varchar(50) NOT NULL,
+  `user` varchar(50) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL COMMENT '管理者帳號',
+  `datetime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '操作時間',
+  `action` mediumtext NOT NULL COMMENT '執行動作',
+  `remark` varchar(50) NOT NULL COMMENT '操作功能',
+  `fun` varchar(50) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL COMMENT '操作頁面',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `user` (`user`) USING BTREE,
+  KEY `fun` (`fun`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='事件紀錄';
+
+-- 取消選取資料匯出。
+
 -- 傾印  資料表 laravel.authority 結構
 CREATE TABLE IF NOT EXISTS `authority` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `authority_name` varchar(50) NOT NULL DEFAULT '0',
-  `authority` longtext,
-  `is_del` int(1) DEFAULT '0',
+  `authority_name` varchar(50) NOT NULL,
+  `authority` longtext NOT NULL,
+  `updater` varchar(50) NOT NULL,
+  `update_dt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_ip` varchar(50) NOT NULL,
+  `is_del` int(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='權限表';
 
@@ -32,7 +51,7 @@ CREATE TABLE IF NOT EXISTS `autorepmsg` (
   `end_d` date NOT NULL DEFAULT '0000-00-00' COMMENT '結束日期',
   `start_t` time NOT NULL DEFAULT '00:00:00' COMMENT '開始時間',
   `end_t` time NOT NULL DEFAULT '00:00:00' COMMENT '結束時間',
-  `time_limit` int(1) NOT NULL DEFAULT '1' COMMENT '1:限制時間 0:不限制時間',
+  `time_limit` int(1) NOT NULL DEFAULT '1' COMMENT '2:只限制時間  1:限制日期與時間 0:不限制時間',
   `onf` int(1) NOT NULL DEFAULT '1' COMMENT '1:開啟 0:關閉',
   `creator` varchar(50) NOT NULL COMMENT '建立者',
   `create_dt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '建立時間',
@@ -125,10 +144,10 @@ CREATE TABLE IF NOT EXISTS `login_log` (
 CREATE TABLE IF NOT EXISTS `menu` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `belong` int(10) unsigned NOT NULL DEFAULT '0',
-  `name` varchar(50) NOT NULL DEFAULT '',
+  `name` varchar(50) NOT NULL,
   `url` varchar(50) DEFAULT '',
-  `seq` int(10) unsigned DEFAULT '0',
-  `icon` varchar(50) DEFAULT NULL,
+  `seq` int(10) unsigned NOT NULL DEFAULT '0',
+  `icon` varchar(50) DEFAULT '',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -141,6 +160,7 @@ CREATE TABLE IF NOT EXISTS `messages_dtl` (
   `msg_from` int(1) NOT NULL COMMENT '1:會員 2:客服 3:bot',
   `content` varchar(1000) NOT NULL COMMENT '內容',
   `filename` varchar(100) NOT NULL COMMENT '上傳檔案名稱',
+  `time` int(15) NOT NULL COMMENT '時戳',
   PRIMARY KEY (`id`),
   KEY `main_id` (`main_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='對話訊息明細\r\n非後台可修改可移除資料';
@@ -230,8 +250,11 @@ CREATE TABLE IF NOT EXISTS `usermsg` (
 -- 傾印  資料表 laravel.web_set 結構
 CREATE TABLE IF NOT EXISTS `web_set` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `set_key` varchar(50) NOT NULL,
-  `value` varchar(200) NOT NULL DEFAULT '',
+  `set_key` varchar(50) NOT NULL COMMENT '設定key',
+  `value` text NOT NULL,
+  `updater` varchar(50) NOT NULL COMMENT '更新人',
+  `update_dt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新日期',
+  `update_ip` varchar(50) NOT NULL COMMENT '更新IP',
   PRIMARY KEY (`id`),
   UNIQUE KEY `set_key` (`set_key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='網站設定';

@@ -41,6 +41,11 @@ class login_con
         return returnAPI([], 2, "login_fail");
     }
 
+    function getLoginStatus()
+    {
+        if (!$this->chkSession()) return returnAPI(["ip" => getRemoteIP(), "login" => false]);
+        return returnAPI(["ip" => getRemoteIP(), "login" => true]);
+    }
 
     //登入紀錄
     private function loginLog(string $user, bool $success)
@@ -61,5 +66,15 @@ class login_con
         $success ? $insert["success"] = 1 : $insert["success"] = 0;
         $logDao = new login_log_dao;
         $logDao->setLoginLogInsert($insert);
+    }
+
+    private function chkSession()
+    {
+        if (!isset($_SESSION["id"]) || !is_numeric($_SESSION["id"])) return false;
+        if (!isset($_SESSION["name"])) return false;
+        if (!isset($_SESSION["act"])) return false;
+        if (!isset($_SESSION["aut"]) || !is_numeric($_SESSION["aut"])) return false;
+        if (!isset($_SESSION["aut_name"])) return false;
+        return true;
     }
 }

@@ -67,14 +67,20 @@ class user_dao
                            WHERE `id` = '" . $id . "' AND `is_del` = 0;");
     }
 
+    function setUserSetting(int $id, ?int $aut, ?string $pad): bool
+    {
+        if (!isset($aut) && !isset($pad)) return false;
+        $setstr = "";
+    }
+
     /**
      * 抓取指定使用者的資料
      * @param int $id
      * @return array 回傳table表單資料 MYSQLI_ASSOC
      */
-    function selectUserByID(int $id): array
+    function getUserByID(int $id): array
     {
-        return DB::select("SELECT * FROM `" . self::$table_name . "` WHERE `id` = '" . $id . "' AND `is_del` = 0;");
+        return DB::select("SELECT * FROM `" . self::$table_name . "` WHERE `id` = '" . $id . "' AND `is_del` = 0 LIMIT 1;");
     }
 
     /**

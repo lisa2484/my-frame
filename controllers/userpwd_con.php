@@ -25,7 +25,7 @@ class userpwd_con
         if (!key_exists("new_password", $_POST)) return returnAPI([], 1, "param_err");
         $fpad = $_POST["new_password"];
         $userDao = new user_dao;
-        $userData = $userDao->selectUserByID($id);
+        $userData = $userDao->getUserByID($id);
         if (empty($userData)) return returnAPI([], 1, "param_err");
         $userData = $userData[0];
         $opad = md5($userData["account"] . $fopad . strtotime($userData["create_dt"]));

@@ -26,6 +26,7 @@ class ErrorMessage
         $arr["userset_aut_empty"] = "权限设定不可为空";
         $arr["userset_add_repeat"] = "该帐号名称已经被使用";
         $arr["userset_add_fail"] = "使用者增加失败";
+		$arr["userset_pwd_repeat"] = "密码重复";
 
         //參數
         $arr["param_err"] = "参数错误";
