@@ -12,7 +12,13 @@ class userpwd_con
 {
     function init()
     {
-        return returnAPI([], 1, "function_err");
+        $data_arr = array(
+            'id' => $_SESSION["id"],
+            'account' => $_SESSION["act"],
+            'name' => $_SESSION["name"]
+        );
+
+        return returnAPI($data_arr);
     }
 
     function editPassword()

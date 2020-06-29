@@ -20,6 +20,7 @@ class loginlog_con
      * 抓取登入紀錄資料
      * @return array(
      *         'total' => string 總數量,
+     *         'totalpage' => string 總頁碼,
      *         'page' => string 當前頁碼,
      *         'data' => array(
      *                   0 => array(
