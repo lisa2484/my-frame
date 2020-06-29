@@ -30,6 +30,7 @@ class ErrorMessage
 
         //參數
         $arr["param_err"] = "参数错误";
+		$arr["param_empty"] = "参数不可为空";
 
         //執行動作
         $arr["add_err"] = "新增失败";

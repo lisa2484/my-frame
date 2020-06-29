@@ -38,7 +38,7 @@ class user_dao
      */
     function insertUser(string $act, string $pad, int $aut, int $time): bool
     {
-        return DB::DBCode("INSERT INTO `" . self::$table_name . "` (`account`,`password`,`user_name`,`authority`,`creator`,`create_dt`,`create_ip`,`updater`,`update_dt`,`update_ip`,`chg_pw_time`) 
+        return DB::DBCode("INSERT INTO `" . self::$table_name . "` (`account`,`password`,`authority`,`creator`,`create_dt`,`create_ip`,`updater`,`update_dt`,`update_ip`,`chg_pw_time`) 
                            VALUE ('" . $act . "',
                                   '" . $pad . "',
                                   '" . $aut . "',
@@ -70,7 +70,19 @@ class user_dao
     function setUserSetting(int $id, ?int $aut, ?string $pad): bool
     {
         if (!isset($aut) && !isset($pad)) return false;
-        $setstr = "";
+        $arr = [];
+        if (isset($aut)) $arr[] = "`authority` = '" . $aut . "'";
+        if (isset($pad)) {
+            $arr[] = "`password` = '" . $pad . "'";
+            $arr[] = "`chg_pw_time` = '" . time() . "'";
+        }
+        $arr[] = "`updater` = '" . $_SESSION["act"] . "'";
+        $arr[] = "`update_dt` = '" . date("Y-m-d H:i:s") . "'";
+        $arr[] = "`update_ip` = '" . getRemoteIP() . "'";
+        $setstr = "UPDATE `" . self::$table_name . "`
+                   SET " . implode(",", $arr) . " 
+                   WHERE `id` = '" . $id . "' AND `is_del` = 0;";
+        return DB::DBCode($setstr);
     }
 
     /**

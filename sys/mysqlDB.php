@@ -20,6 +20,10 @@ class DB extends DBConnect
         $request = true;
         if (!self::$dbcon->query($SQLCode)) {
             $request = false;
+            if (!is_dir("./log")) mkdir("./log");
+            $f = fopen("./log/mysqlerr" . date("Ymd"), "a");
+            fwrite($f, date("His") . " mysqlerror:" . mysqli_error(self::$dbcon) . PHP_EOL);
+            fclose($f);
         }
         return $request;
     }

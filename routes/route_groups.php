@@ -17,3 +17,4 @@ $routeGroups["customermsg"] = "messages_main_rou";
 $routeGroups["searchautorep"] = "searchautorep_rou";
 $routeGroups["chatroom_set"] = "chatroom_set_rou";
 $routeGroups["chatroom_menu"] = "chatroom_menu_rou";
+$routeGroups["botwelcome"] = "bot_welcome_rou";

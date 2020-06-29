@@ -40,7 +40,7 @@ class user_con
         if (empty($redata)) {
             $pad = md5($account . $password . date("Y-m-d H:i:s", $time));
             if ($userDao->insertUser($account, $pad, $authority, $time)) return returnAPI([], 0, "userset_add_success");
-            return returnAPI([], 0, "userset_add_fail");
+            return returnAPI([], 1, "userset_add_fail");
         }
         return returnAPI([], 1, "userset_add_repeat");
     }
@@ -49,6 +49,8 @@ class user_con
     {
         if (!isset($_POST["id"]) || !is_numeric($_POST["id"])) return returnAPI([], 1, "param_err");
         $id = $_POST["id"];
+        $aut = null;
+        $pad = null;
         if (isset($_POST["aut"])) {
             if (!is_numeric($_POST["aut"])) return returnAPI([], 1, "param_err");
             if ($_POST["aut"] != "") $aut = $_POST["aut"];
@@ -58,7 +60,7 @@ class user_con
         $userDao = new user_dao;
         if (isset($pad)) {
             $user = $userDao->getUserByID($id);
-            $pad = md5($user[0]["account"], $pad, $user[0]["create_dt"]);
+            $pad = md5($user[0]["account"] . $pad . $user[0]["create_dt"]);
             if ($user[0]["password"] == $pad) return returnAPI([], 1, "userset_pwd_repeat");
         }
         if ($userDao->setUserSetting($id, $aut, $pad)) {
@@ -70,10 +72,14 @@ class user_con
     function delUser()
     {
         if (!key_exists("id", $_POST)) return returnAPI([], 1, "param_err");
-        $id = $_POST["id"];
-        if (!is_numeric($id)) return returnAPI([], 1, "param_err");
+        $ids = explode(",", $_POST["id"]);
+        foreach ($ids as $i) {
+            if (!is_numeric($i)) return returnAPI([], 1, "param_err");
+        }
         $uDao = new user_dao;
-        if ($uDao->setDelete($id)) return returnAPI([]);
-        return returnAPI([], 1, "del_err");
+        foreach ($ids as $id) {
+            if (!$uDao->setDelete($id)) return returnAPI([], 1, "del_err");
+        }
+        return returnAPI([]);
     }
 }
