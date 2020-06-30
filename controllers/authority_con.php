@@ -12,36 +12,26 @@ class authority_con
 {
     function init()
     {
-        // $autDao = new authority_dao;
-        // $menuDao = new menu_dao;
-        // $datas = $autDao->getAll();
-        // $menus = $menuDao->getMenuSettingAll();
-        // $mainMenus = [];
-        // $belongs = [];
-        // foreach ($menus as $menu) {
-        //     if ($menu["belong"] == 0) {
-        //         $mainMenus[] = $menu;
-        //     } else {
-        //         $belongs[$menu["belong"]][] = $menu;
-        //     }
-        // }
-        // return view("settings/authority", ["datas" => $datas, "menu" => $mainMenus, "bel" => $belongs]);
-        return returnAPI([]);
+        $autDao = new authority_dao;
+        $menuDao = new menu_dao;
+        $datas = $autDao->getAuthorityByID(2);
+        if (empty($datas)) return returnAPI([], 1, "sql_err");
+        $menus = $menuDao->getMenuByIDNotIn([14]);
+        if (empty($menus)) return returnAPI([], 1, "sql_err");
+        $datas = json_decode($datas[0]["authority"], true)["r"];
+        return returnAPI(["menus" => $menus, "authority" => $datas]);
     }
-
-    // function add()
-    // {
-    // $autDao = new authority_dao;
-    // return $autDao->insert($_POST["name"]);
-    // }
 
     function edit()
     {
+        if (!key_exists("ids", $_POST) || empty($_POST["ids"])) return returnAPI([], 1, "param_err");
+        $ids = explode(",", $_POST["ids"]);
+        foreach ($ids as $id) {
+            if (!is_numeric($id)) return returnAPI([], 1, "param_err");
+        }
+        $arr["r"] = $ids;
+        $autDao = new authority_dao;
+        if ($autDao->setUpdateForAuthority(2, json_encode($arr))) return returnAPI([]);
+        return returnAPI([], 1, "upd_err");
     }
-
-    // function del()
-    // {
-    // $autDao = new authority_dao;
-    // return $autDao->delete($_POST["id"]);
-    // }
 }

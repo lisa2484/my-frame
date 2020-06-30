@@ -21,6 +21,11 @@ class authority_dao
         return DB::select("SELECT `id`,`authority_name`,`authority` FROM `" . self::$table_name . "` WHERE `id` = '" . $aid . "' AND `is_del` = 0 LIMIT 1");
     }
 
+    function setUpdateForAuthority($id, $aut)
+    {
+        return DB::DBCode("UPDATE `" . self::$table_name . "` SET `authority` = '" . $aut . "' WHERE `id` = '" . $id . "';");
+    }
+
     function update($id, $name, $aut)
     {
         return DB::DBCode("UPDATE `" . self::$table_name . "` SET `authority_name` = '" . $name . "', `authority` = '" . $aut . "' WHERE `id` = '" . $id . "' AND `is_del` = 0");
