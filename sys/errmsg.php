@@ -39,7 +39,7 @@ class ErrorMessage
         //執行動作
         $arr["add_err"] = "新增失败";
         $arr["upd_err"] = "修改失败";
-        $arr["del_err"] = "刪除失败";
+        $arr["del_err"] = "删除失败";
 
         //修改密碼
         $arr["editpwd_oldpwd_err"] = "原密码错误";
@@ -48,6 +48,10 @@ class ErrorMessage
         $arr["botset_length_err"] = "长度错误";
         $arr["botset_val_err"] = "值错误";
         $arr["botset_set_err"] = "设定错误";
+
+        //IP白名單
+        $arr["whitelist_add_err"] = "IP重复";
+        $arr["whitelist_setswitch_err"] = "设定错误";
 
         return $arr;
     }

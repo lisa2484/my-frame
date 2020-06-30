@@ -42,7 +42,7 @@ class whitelist_dao
                                   '" . date("Y-m-d H:i:s") . "',
                                   '" . getRemoteIP() . "',
                                   '" . $_SESSION["act"] . "',
-                                  '" . date("Y-m-d H:i:s") . "'
+                                  '" . date("Y-m-d H:i:s") . "',
                                   '" . getRemoteIP() . "');");
     }
 

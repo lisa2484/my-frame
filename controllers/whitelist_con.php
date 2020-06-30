@@ -17,54 +17,84 @@ class whitelist_con
 
     function getWhitelistList()
     {
-        if (!key_exists("page", $_POST)) return false;
+        if (!key_exists("page", $_POST)) return returnAPI([], 1, "param_empty");
         $page = $_POST["page"];
-        if (!key_exists("limit", $_POST)) return false;
+        if (!key_exists("limit", $_POST)) return returnAPI([], 1, "param_empty");
         $limit = $_POST["limit"];
         $wDao = new whitelist_dao;
         $datas = $wDao->getList($page, $limit);
-        return json($datas);
+        return returnAPI($datas);
     }
 
     function setWhitelistAdd()
     {
-        if (!key_exists("ip", $_POST)) return false;
+        if (!key_exists("ip", $_POST)) return returnAPI([], 1, "param_empty");
         $ip = $_POST["ip"];
-        if (!filter_var($ip, FILTER_VALIDATE_IP)) return false;
+        if (!filter_var($ip, FILTER_VALIDATE_IP)) return returnAPI([], 1, "param_err");
         $wDao = new whitelist_dao;
-        if (empty($wDao->getIP($ip))) return $wDao->insertIP($ip);
-        return false;
+
+        if (empty($wDao->getIP($ip))){
+            if ($wDao->insertIP($ip)) {
+                return returnAPI([]);
+            } else {
+                return returnAPI([], 1, "add_err");
+            }
+        } else {
+            return returnAPI([], 1, "whitelist_add_err");
+        }
     }
 
     function setWhitelistEdit()
     {
-        if (!key_exists("ip", $_POST)) return false;
-        if (!key_exists("id", $_POST)) return false;
+        if (!key_exists("ip", $_POST)) return returnAPI([], 1, "param_empty");
+        if (!key_exists("id", $_POST)) return returnAPI([], 1, "param_empty");
         $ip = $_POST["ip"];
-        if (!filter_var($ip, FILTER_VALIDATE_IP)) return false;
+        if (!filter_var($ip, FILTER_VALIDATE_IP)) return returnAPI([], 1, "param_err");
         $id = $_POST["id"];
-        if (!is_numeric($id) || empty($id)) return false;
+        if (!is_numeric($id) || empty($id)) return returnAPI([], 1, "param_err");
         $wDao = new whitelist_dao;
-        return $wDao->setIP($id, $ip);
+
+        if ($wDao->setIP($id, $ip)) {
+            return returnAPI([]);
+        } else {
+            return returnAPI([], 1, "upd_err");
+        }
     }
 
     function setWhitelistSwitch()
     {
-        if (!key_exists("value", $_POST)) return false;
+        if (!key_exists("value", $_POST)) return returnAPI([], 1, "param_empty");
         $value = $_POST["value"];
-        if (strlen($value) > 1) return false;
-        if (!in_array($value, [0, 1])) return false;
+        if (strlen($value) > 1) return returnAPI([], 1, "param_err");
+        if (!in_array($value, [0, 1])) return returnAPI([], 1, "param_err");
         $wsDao = new web_set_dao;
-        if (empty($wsDao->getWebSetListBySetKey("whitelist_switch"))) return $wsDao->setWebSetAdd("whitelist_switch", $value);
-        return $wsDao->setWebSetEdit("whitelist_switch", $value);
+
+        if (empty($wsDao->getWebSetListBySetKey("whitelist_switch"))){
+            if ($wsDao->setWebSetAdd("whitelist_switch", $value)) {
+                return returnAPI([]);
+            } else {
+                return returnAPI([], 1, "whitelist_setswitch_err");
+            }
+        } else {
+            if ($wsDao->setWebSetEdit("whitelist_switch", $value)) {
+                return returnAPI([]);
+            } else {
+                return returnAPI([], 1, "upd_err");
+            }
+        }
     }
 
     function setWhitelistDelete()
     {
-        if (!key_exists("id", $_POST)) return false;
+        if (!key_exists("id", $_POST)) return returnAPI([], 1, "param_empty");
         $id = $_POST["id"];
-        if (!is_numeric($id) || empty($id)) return false;
+        if (!is_numeric($id) || empty($id)) return returnAPI([], 1, "param_err");
         $wDao = new whitelist_dao;
-        return $wDao->deleteIP($id);
+
+        if ($wDao->deleteIP($id)) {
+            return returnAPI([]);
+        } else {
+            return returnAPI([], 1, "del_err");
+        }
     }
 }
