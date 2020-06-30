@@ -29,6 +29,7 @@ class user_con
     function addUser()
     {
         if (!isset($_POST["act"]) || $_POST["act"] == "") return returnAPI([], 1, "userset_act_empty");
+        if(!$this->chkAccount($_POST["act"])) return returnAPI([],1,"userset_act_spcr");
         $account = $_POST["act"];
         if (!isset($_POST["pad"]) || $_POST["pad"] == "") return returnAPI([], 1, "userset_pwd_empty");
         $password = $_POST["pad"];
@@ -81,5 +82,11 @@ class user_con
             if (!$uDao->setDelete($id)) return returnAPI([], 1, "del_err");
         }
         return returnAPI([]);
+    }
+
+    private function chkAccount($str): bool
+    {
+        if (preg_match("/^[0-9a-zA-Z]+$/", $str)) return true;
+        return false;
     }
 }

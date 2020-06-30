@@ -22,11 +22,15 @@ class ErrorMessage
         $arr["ip_fail"] = "IP位置错误";
         $arr["aut_fail"] = "您没有权限浏览此页面";
         $arr["userset_act_empty"] = "帐号不可为空";
+        $arr["userset_act_spcr"] = "帐号不可使用特殊字元";
         $arr["userset_pwd_empty"] = "密码不可为空";
         $arr["userset_aut_empty"] = "权限设定不可为空";
         $arr["userset_add_repeat"] = "该帐号名称已经被使用";
         $arr["userset_add_fail"] = "使用者增加失败";
-		$arr["userset_pwd_repeat"] = "密码重复";
+		$arr["userset_pwd_repeat"] = "新密码不可与旧密码相同";
+		
+		//mysql
+		$arr["sql_err"] = "资料库错误";
 
         //參數
         $arr["param_err"] = "参数错误";
