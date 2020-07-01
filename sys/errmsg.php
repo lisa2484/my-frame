@@ -54,6 +54,9 @@ class ErrorMessage
         $arr["whitelist_add_err"] = "IP重复";
         $arr["whitelist_setswitch_err"] = "设定错误";
 
+        //個人設置
+        $arr["upload_err"] = "上传错误";
+
         return $arr;
     }
 }
