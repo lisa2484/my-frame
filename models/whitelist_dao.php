@@ -16,7 +16,7 @@ class whitelist_dao
      */
     function getList(int $page, int $limit): array
     {
-        return DB::select("SELECT * FROM `" . self::$table . "` WHERE `is_del` = 0 LIMIT " . ($page - 1) * $limit . "," . $limit . ";");
+        return DB::select("SELECT `id`, `ip`, `creator`, `updater` FROM `" . self::$table . "` WHERE `is_del` = 0 LIMIT " . ($page - 1) * $limit . "," . $limit . ";");
     }
 
     /**
