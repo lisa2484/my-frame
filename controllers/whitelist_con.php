@@ -47,7 +47,7 @@ class whitelist_con
         if (!filter_var($ip, FILTER_VALIDATE_IP)) return returnAPI([], 1, "param_err");
         $wDao = new whitelist_dao;
 
-        if (empty($wDao->getIP($ip))){
+        if (empty($wDao->getIP($ip))) {
             if ($wDao->insertIP($ip)) {
                 return returnAPI([]);
             } else {
@@ -83,7 +83,7 @@ class whitelist_con
         if (!in_array($value, [0, 1])) return returnAPI([], 1, "param_err");
         $wsDao = new web_set_dao;
 
-        if (empty($wsDao->getWebSetListBySetKey("whitelist_switch"))){
+        if (empty($wsDao->getWebSetListBySetKey("whitelist_switch"))) {
             if ($wsDao->setWebSetAdd("whitelist_switch", $value)) {
                 return returnAPI([]);
             } else {
@@ -98,17 +98,15 @@ class whitelist_con
         }
     }
 
-    function setWhitelistDelete()
+    function setWhitelistDeleteList()
     {
-        if (!key_exists("id", $_POST)) return returnAPI([], 1, "param_empty");
-        $id = $_POST["id"];
-        if (!is_numeric($id) || empty($id)) return returnAPI([], 1, "param_err");
-        $wDao = new whitelist_dao;
-
-        if ($wDao->deleteIP($id)) {
-            return returnAPI([]);
-        } else {
-            return returnAPI([], 1, "del_err");
+        if (!isset($_POST["id"])) return returnAPI([], 1, "param_empty");
+        $ids = explode(",", $_POST["id"]);
+        foreach ($ids as $id) {
+            if (!is_numeric($id)) return returnAPI([], 1, "param_err");
         }
+        $wDao = new whitelist_dao;
+        if ($wDao->setDeleteList($ids)) return returnAPI([]);
+        return returnAPI([], 1, "del_err");
     }
 }

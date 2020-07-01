@@ -78,18 +78,13 @@ class whitelist_dao
                            WHERE `id` = '" . $id . "';");
     }
 
-    /**
-     * 刪除IP
-     * @param int $id id
-     * @return bool 
-     */
-    function deleteIP(int $id): bool
+    function setDeleteList(array $ids): bool
     {
         return DB::DBCode("UPDATE `" . self::$table . "` 
                            SET `is_del` = 1 ,
                                `updater` = '" . $_SESSION["act"] . "',
                                `update_dt` = '" . date("Y-m-d H:i:s") . "',
                                `update_ip` = '" . getRemoteIP() . "'
-                           WHERE `id` = '" . $id . "'");
+                           WHERE `id` IN (" . implode(",", $ids) . ")");
     }
 }

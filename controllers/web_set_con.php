@@ -23,10 +23,10 @@ class web_set_con
 
     function setWebTimeZone()
     {
-        if (!key_exists("value", $_POST)) return false;
+        if (!key_exists("value", $_POST)) return returnAPI([], 1, "param_err");
         $value = $_POST["value"];
-        if (strlen($value) > 1) return false;
-        if (!in_array($value, [0, 1])) return false;
+        if (strlen($value) > 1) return returnAPI([], 1, "param_err");
+        if (!in_array($value, [0, 1])) return returnAPI([], 1, "param_err");
         if ($this->setWebset("web_timezone", $value)) {
             return returnAPI([]);
         }

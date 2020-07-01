@@ -36,9 +36,25 @@ class messages_main_dao
 
         $str_sql = "";
         if (!empty($where)) $str_sql = "WHERE " . implode(" AND ", $where);
-    
+
         $page = ($page - 1) * $limit;
 
         return DB::select("SELECT * FROM `" . self::$table_name . "` " . $str_sql . " ORDER BY `id` DESC LIMIT " . $page . "," . $limit . ";");
+    }
+
+    function getMsgMainForNotLimit(array $where): array
+    {
+        if (empty($where)) return DB::select("SELECT * FROM `" . self::$table_name . "`");
+        $arr = [];
+        foreach ($where as $k => $d) {
+            switch ($k) {
+                case "date":
+                    $arr[] = "`start_time` BETWEEN '" . $d . " 00:00:00' AND '" . $d . " 23:59:59'";
+                    break;
+                default:
+                    $arr[] = "`" . $k . "` = '" . $d . "'";
+            }
+        }
+        return DB::select("SELECT * FROM `" . self::$table_name . "` WHERE " . implode(" AND ", $arr));
     }
 }
