@@ -28,8 +28,9 @@ class whitelist_con
         $data = $wsDao->getWebSetListBySetKey("whitelist_switch");
         if (empty($data)) {
             $switch = 0;
+        } else {
+            $switch = $data[0]["value"];
         }
-        $switch = $data[0]["value"];
 
         $data_arr = array(
             'switch' => $switch,
