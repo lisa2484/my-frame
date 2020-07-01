@@ -39,8 +39,12 @@ class loginlog_con
     {
         $adminname = "";
         if (isset($_POST["adminname"])) $adminname = $_POST["adminname"];
-        $time_s = empty($_POST["timestart"]) ? "" : $_POST["timestart"];
-        $time_e = empty($_POST["timeend"]) ? "" : $_POST["timeend"];
+        $time_s = empty($_POST["timestart"]) ? "" : $_POST["timestart"] . " 00:00:00";
+        $time_e = empty($_POST["timeend"]) ? "" : $_POST["timeend"] . " 23:59:59";
+        
+        if ($time_s > $time_e) {
+            return returnAPI([], 1, "param_err");
+        }
 
         if (!isset($_POST["page"])) return returnAPI([], 1, "param_err");
         $page = $_POST["page"];
