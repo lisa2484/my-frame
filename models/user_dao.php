@@ -135,4 +135,9 @@ class user_dao
     {
         return DB::select("SELECT `id`,`user_name` FROM `" . self::$table_name . "` WHERE `is_del` = 0;");
     }
+
+    function updUserPhoto(int $id, string $imgname): bool
+    {
+        return DB::DBCode("UPDATE `" . self::$table_name . "` SET `img_name` = '" . $imgname . "', `updater` = '" . $_SESSION["act"] . "', `update_dt` = '" . date("Y-m-d H:i:s") . "', `update_ip` = '" . getRemoteIP() . "' WHERE `id` = '" . $id . "'");
+    }
 }
