@@ -23,7 +23,20 @@ class whitelist_con
         $limit = $_POST["limit"];
         $wDao = new whitelist_dao;
         $datas = $wDao->getList($page, $limit);
-        return returnAPI($datas);
+
+        $wsDao = new web_set_dao;
+        $data = $wsDao->getWebSetListBySetKey("whitelist_switch");
+        if (empty($data)) {
+            $switch = 0;
+        }
+        $switch = $data[0]["value"];
+
+        $data_arr = array(
+            'switch' => $switch,
+            'list' => $datas
+        );
+
+        return returnAPI($data_arr);
     }
 
     function setWhitelistAdd()
