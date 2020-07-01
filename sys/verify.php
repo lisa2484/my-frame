@@ -9,9 +9,9 @@ class verify extends serverset
     private $errmsg = "";
     private $status = 2;
     //驗證功能
-    protected function isVerfy(string $routeGs = "")
+    protected function isVerfy(array $route = [])
     {
-        $routeGs = trim($routeGs);
+        empty($route) ? $routeGs = "" : $routeGs = trim($route[0]);
         if ($this->except($routeGs)) return true;
         if (isset($_POST["logout"])) {
             $this->unsetSession();
@@ -29,7 +29,10 @@ class verify extends serverset
         }
         if ($this->verifiedLogin()) {
             if ($this->chkAuthority($routeGs)) {
-                return true;
+                if ($this->actionLogAdd($route)) return true;
+                $this->errmsg = "action_log_err";
+                $this->status = 1;
+                return false;
             }
             $this->errmsg = "aut_fail";
             $this->status = 1;
@@ -138,5 +141,22 @@ class verify extends serverset
         $exceptArr[] = "csbot";
         $exceptArr[] = "login";
         return in_array($routeName, $exceptArr);
+    }
+
+    private function actionLogAdd(array $route)
+    {
+        if (!isset($route[1])) return true;
+        $fun = "";
+        if (preg_match("/^(add)/", $route[1])) $fun = "新增";
+        if (!empty($fun) || preg_match("/^(edit)/", $route[1])) $fun = "修改";
+        if (!empty($fun) || preg_match("/^(del)/", $route[1])) $fun = "删除";
+        if (!empty($fun) || preg_match("/^(switch)/", $route[1])) $fun = "开关修改";
+        if (empty($fun)) return true;
+        return DB::DBCode("INSERT INTO `action_log` (`ip`,`user`,`action`,`remark`,`fun`) 
+                           VALUE ('" . getRemoteIP() . "',
+                                  '" . $_SESSION["act"] . "',
+                                  '" . json_encode($_POST) . "',
+                                  '" . $route[0] . "',
+                                  '" . $fun . "')");
     }
 }

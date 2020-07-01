@@ -25,7 +25,7 @@ class route extends verify
         $url = str_replace($script_name, "", $request_url);
         if (!empty($url) && $url != "/") {
             $urlArr = preg_split("/\//", $url);
-            if (!$this->isVerfy($urlArr[0])) {
+            if (!$this->isVerfy($urlArr)) {
                 $rep = $this->getErrMsg();
                 return returnAPI([], $rep["status"], $rep["msg"]);
             }

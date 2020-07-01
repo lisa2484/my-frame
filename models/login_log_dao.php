@@ -44,6 +44,6 @@ class login_log_dao
 
     function setLoginLogInsert(array $insertArr)
     {
-        return DB::DBCode("INSERT INTO `login_log` (`" . implode("`,`", array_keys($insertArr)) . "`) VALUE ('" . implode("','", array_values($insertArr)) . "')");
+        return DB::DBCode("INSERT INTO `" . self::$table_name . "` (`" . implode("`,`", array_keys($insertArr)) . "`) VALUE ('" . implode("','", array_values($insertArr)) . "')");
     }
 }

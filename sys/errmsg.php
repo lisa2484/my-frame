@@ -28,6 +28,7 @@ class ErrorMessage
         $arr["userset_add_repeat"] = "该帐号名称已经被使用";
         $arr["userset_add_fail"] = "使用者增加失败";
 		$arr["userset_pwd_repeat"] = "新密码不可与旧密码相同";
+		$arr["action_log_err"] = "功能记录失败，将不进行任何修改";
 		
 		//mysql
 		$arr["sql_err"] = "资料库错误";
