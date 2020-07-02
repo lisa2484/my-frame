@@ -33,6 +33,14 @@
             $time_s = isset($_POST["timestart"]) ? $_POST["timestart"] : "" ;
             $time_e = isset($_POST["timeend"]) ? $_POST["timeend"] : "" ;
 
+            if ($time_s == "" ^ $time_e == "") {
+                return returnAPI([], 1, "param_empty");
+            }
+    
+            if ($time_s > $time_e) {
+                return returnAPI([], 1, "param_err");
+            }
+            
             if (isset($_POST["page"])) {
                 $page = $_POST["page"];
             } else {
@@ -52,8 +60,8 @@
             }
 
             if (!empty($time_s) || !empty($time_e)) {
-                $time_s = empty($time_s) ? date("Y-m-01 00:00:00") : $time_s;
-                $time_e = empty($time_e) ? date("Y-m-d H:i:s") : $time_e;
+                $time_s = $time_s . " 00:00:00";
+                $time_e = $time_e . " 23:59:59";
 
                 $time_sql = " `datetime` BETWEEN '$time_s' AND '$time_e' ";
                 array_push($str_sql_arr, $time_sql);
@@ -72,14 +80,14 @@
 
             $logtotal = $actionlogDao->getActionLogTotal($str_sql);
 
-            if ($logtotal == 0) {
-                $page = 1;
-            } else {
-                $page = empty($page) ? 1 : $page;
-                if ($page < 1) $page = 1;
+            $totalpage = ceil($logtotal/$limit);
 
-                $page_max = ceil($logtotal/$limit);
-                if ($page > $page_max) $page = $page_max;
+            if ($logtotal == 0) {
+                if ($page != 1) {
+                    return returnAPI([], 1, "param_err");
+                }
+            } else {
+                if ($page > $totalpage) return returnAPI([], 1, "param_err");
             }
 
             $offset = $limit * ($page - 1);
@@ -88,7 +96,7 @@
 
             $data_arr = array(
                 'total' => $logtotal,
-                'totalpage' => ceil($logtotal/$limit),
+                'totalpage' => $totalpage,
                 'page' => $page,
                 'list' => $logdata
             );
