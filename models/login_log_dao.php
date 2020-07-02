@@ -33,13 +33,21 @@ class login_log_dao
      */
     function getLoginLog(string $account, string $strdt, string $enddt, int $page, int $limit): array
     {
-        $where = [];
+        $where[] = "`success` = 1";
         if (!empty($strdt) && !empty($enddt)) $where[] = "`login_date` BETWEEN '" . $strdt . "' AND '" . $enddt . "'";
         if ($account != "") $where[] = "`account` = '" . $account . "'";
-        $str_sql = "";
-        if (!empty($where)) $str_sql = "WHERE " . implode(" AND ", $where);
+        $str_sql = "WHERE " . implode(" AND ", $where);
         $page = ($page - 1) * $limit;
         return DB::select("SELECT `id`, `account`, `ip`, `user_name`, `authority_name`, `login_date` FROM `" . self::$table_name . "` " . $str_sql . " ORDER BY `login_date` DESC LIMIT " . $page . "," . $limit . ";");
+    }
+
+    function getLoginLogForExport(string $account, string $strdt, string $enddt): array
+    {
+        $where[] = "`success` = 1";
+        if (!empty($strdt) && !empty($enddt)) $where[] = "`login_date` BETWEEN '" . $strdt . "' AND '" . $enddt . "'";
+        if ($account != "") $where[] = "`account` = '" . $account . "'";
+        $str_sql = "WHERE " . implode(" AND ", $where);
+        return DB::select("SELECT `account`, `user_name`, `authority_name`, `ip` FROM `" . self::$table_name . "` " . $str_sql . " ORDER BY `login_date` DESC;");
     }
 
     function setLoginLogInsert(array $insertArr)

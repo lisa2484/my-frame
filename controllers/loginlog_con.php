@@ -41,7 +41,7 @@ class loginlog_con
         if (isset($_POST["adminname"])) $adminname = $_POST["adminname"];
         $time_s = empty($_POST["timestart"]) ? "" : $_POST["timestart"] . " 00:00:00";
         $time_e = empty($_POST["timeend"]) ? "" : $_POST["timeend"] . " 23:59:59";
-        
+
         if ($time_s == "" ^ $time_e == "") {
             return returnAPI([], 1, "param_empty");
         }
@@ -58,7 +58,7 @@ class loginlog_con
         $loginlogDao = new login_log_dao;
         $logtotal = $loginlogDao->getLoginLogTotal($adminname, $time_s, $time_e);
 
-        $totalpage = ceil($logtotal/$limit);
+        $totalpage = ceil($logtotal / $limit);
         if ($totalpage == 0) {
             if ($page != 1) {
                 return returnAPI([], 1, "param_err");
@@ -83,7 +83,31 @@ class loginlog_con
     {
         set_time_limit(0);
         ini_set("memory_limit", "512M");
-        if (isset($_POST["adminname"]));
-        
+        header('Content-Type: application/csv');
+        header('Content-Disposition: attachment; filename="loginLog.csv"');
+        $adminname = "";
+        $time_s = "";
+        $time_e = "";
+        if (isset($_POST["adminname"]) && $_POST["adminname"] != "") $adminname = $_POST["adminname"];
+        if (isset($_POST["timestart"]) && !empty($_POST["timestart"])) $time_s = $_POST["timestart"] . " 00:00:00";
+        if (isset($_POST["timeend"]) && !empty($_POST["timeend"])) $time_e = $_POST["timeend"] . " 23:59:59";
+        $loginlogDao = new login_log_dao;
+        $logdata = $loginlogDao->getLoginLogForExport($adminname, $time_s, $time_e);
+        $title = $this->getTitle();
+        $f = fopen("php://output", "w");
+        fputcsv($f, $title);
+        foreach ($logdata as $data) {
+            fputcsv($f, array_values($data));
+        }
+        fclose($f);
+    }
+
+    private function getTitle()
+    {
+        $arr[] = "帐号";
+        $arr[] = "昵称";
+        $arr[] = "权限";
+        $arr[] = "登入IP";
+        return $arr;
     }
 }

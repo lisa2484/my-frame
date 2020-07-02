@@ -77,6 +77,8 @@ class messages_main_con
     {
         set_time_limit(0);
         ini_set("memory_limit", "512M");
+        header('Content-Type: application/csv');
+        header('Content-Disposition: attachment; filename="messages_main.csv"');
         $msgmDao = new messages_main_dao;
         $where = [];
         if (isset($_POST["member"]) && $_POST["member"] != "") $where["member_id"] = $_POST["member"];
@@ -110,8 +112,6 @@ class messages_main_con
             fputcsv($file, $arr);
         }
         fclose($file);
-        header('Content-Type: application/csv');
-        header('Content-Disposition: attachment; filename="messages_main.csv"');
     }
 
     private function getTitle()
