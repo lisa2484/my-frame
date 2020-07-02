@@ -70,16 +70,13 @@ class searchautorep_con
 
     function setSearchAutoRepDel()
     {
-        if (!isset($_POST["id"])) return returnAPI([], 1, "param_err");
-        if (empty($_POST["id"])) return returnAPI([], 1, "param_err");
-        $id = $_POST["id"];
-
-        $searchDao = new searchautorep_dao;
-
-        if ($searchDao->delSearchAutoRep($id)) {
-            return returnAPI([]);
-        } else {
-            return returnAPI([], 1, "del_err");
+        if (!isset($_POST["id"]) || empty($_POST["id"])) return returnAPI([], 1, "param_err");
+        $ids = explode(",", $_POST["id"]);
+        foreach ($ids as $id) {
+            if (!is_numeric($id)) return returnAPI([], 1, "param_err");
         }
+        $searchDao = new searchautorep_dao;
+        if ($searchDao->deleteList($ids)) return returnAPI([]);
+        return returnAPI([], 1, "del_err");
     }
 }
