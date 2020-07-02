@@ -42,6 +42,10 @@ class loginlog_con
         $time_s = empty($_POST["timestart"]) ? "" : $_POST["timestart"] . " 00:00:00";
         $time_e = empty($_POST["timeend"]) ? "" : $_POST["timeend"] . " 23:59:59";
         
+        if ($time_s == "" ^ $time_e == "") {
+            return returnAPI([], 1, "param_empty");
+        }
+
         if ($time_s > $time_e) {
             return returnAPI([], 1, "param_err");
         }
@@ -53,11 +57,21 @@ class loginlog_con
 
         $loginlogDao = new login_log_dao;
         $logtotal = $loginlogDao->getLoginLogTotal($adminname, $time_s, $time_e);
+
+        $totalpage = ceil($logtotal/$limit);
+        if ($totalpage == 0) {
+            if ($page != 1) {
+                return returnAPI([], 1, "param_err");
+            }
+        } else {
+            if ($page > $totalpage) return returnAPI([], 1, "param_err");
+        }
+
         $logdata = $loginlogDao->getLoginLog($adminname, $time_s, $time_e, $page, $limit);
 
         $data_arr = array(
             'total' => $logtotal,
-            'totalpage' => ceil($logtotal/$limit),
+            'totalpage' => $totalpage,
             'page' => $page,
             'list' => $logdata
         );

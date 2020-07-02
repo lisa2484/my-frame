@@ -37,6 +37,13 @@ class actionlog_con
         $page = $_POST["page"];
         $limit = $_POST["limit"];
 
+        if ($time_s == "" ^ $time_e == "") {
+            return returnAPI([], 1, "param_empty");
+        }
+
+        if ($time_s > $time_e) {
+            return returnAPI([], 1, "param_err");
+        }
         $where = [];
         if (!empty($time_s) && !empty($time_e)) {
             $where["s_d"] = $time_s . " 00:00:00";
