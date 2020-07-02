@@ -148,9 +148,9 @@ class verify extends serverset
         if (!isset($route[1])) return true;
         $fun = "";
         if (preg_match("/^(add)/", $route[1])) $fun = "新增";
-        if (!empty($fun) || preg_match("/^(edit)/", $route[1])) $fun = "修改";
-        if (!empty($fun) || preg_match("/^(del)/", $route[1])) $fun = "删除";
-        if (!empty($fun) || preg_match("/^(switch)/", $route[1])) $fun = "开关修改";
+        if (empty($fun) && preg_match("/^(edit)/", $route[1])) $fun = "修改";
+        if (empty($fun) && preg_match("/^(del)/", $route[1])) $fun = "删除";
+        if (empty($fun) && preg_match("/^(switch)/", $route[1])) $fun = "开关修改";
         if (empty($fun)) return true;
         return DB::DBCode("INSERT INTO `action_log` (`ip`,`user`,`action`,`remark`,`fun`) 
                            VALUE ('" . getRemoteIP() . "',

@@ -27,7 +27,7 @@ class authority_con
         if (!key_exists("ids", $_POST) || empty($_POST["ids"])) return returnAPI([], 1, "param_err");
         $ids = explode(",", $_POST["ids"]);
         foreach ($ids as $id) {
-            if (!is_numeric($id)) return returnAPI([], 1, "param_err");
+            if (!is_numeric($id) || $id == 14) return returnAPI([], 1, "param_err");
         }
         $arr["r"] = $ids;
         $autDao = new authority_dao;

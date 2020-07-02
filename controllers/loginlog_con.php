@@ -64,4 +64,12 @@ class loginlog_con
 
         return returnAPI($data_arr);
     }
+
+    function getCsv()
+    {
+        set_time_limit(0);
+        ini_set("memory_limit", "512M");
+        if (isset($_POST["adminname"]));
+        
+    }
 }
