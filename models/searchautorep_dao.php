@@ -9,19 +9,19 @@ class searchautorep_dao
     /**
      * 抓取關鍵字訊息總筆數
      */
-    function getSearchAutoRepTotal(): int
+    function getSearchAutoRepTotal(string $keyword): int
     {
-        $total = DB::select("SELECT count(*) FROM `" . self::$table_name . "` WHERE `is_del` = 0 ");
+        $total = DB::select("SELECT count(*) FROM `" . self::$table_name . "` WHERE `is_del` = 0 AND `msg` LIKE '%$keyword%'");
         return $total[0]['count(*)'];
     }
 
     /**
      * 抓取關鍵字訊息紀錄
      */
-    function getSearchAutoRep($page, $limit): array
+    function getSearchAutoRep(string $keyword, $page, $limit): array
     {
         $offset = $limit * ($page - 1);
-        return DB::select("SELECT `id`, `msg`, `onf` FROM `" . self::$table_name . "` WHERE `is_del` = 0 ORDER BY `create_dt` DESC LIMIT " . $limit . " OFFSET " . $offset);
+        return DB::select("SELECT `id`, `msg`, `onf` FROM `" . self::$table_name . "` WHERE `is_del` = 0 AND `msg` LIKE '%$keyword%' ORDER BY `create_dt` DESC LIMIT " . $limit . " OFFSET " . $offset);
     }
 
     function addSearchAutoRep(string $msg): bool

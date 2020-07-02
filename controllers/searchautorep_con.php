@@ -10,18 +10,24 @@ class searchautorep_con
 {
     function init()
     {
+        $keyword = isset($_POST["keyword"]) ? $_POST["keyword"] : "";
         if (!isset($_POST["page"])) return returnAPI([], 1, "param_err");
         $page = $_POST["page"];
         if (!isset($_POST["limit"])) return returnAPI([], 1, "param_err");
         $limit = $_POST["limit"];
 
         $searchDao = new searchautorep_dao;
-        $msgtotal = $searchDao->getSearchAutoRepTotal();
-        $msgdata = $searchDao->getSearchAutoRep($page, $limit);
+        $msgtotal = $searchDao->getSearchAutoRepTotal($keyword);
+        $msgdata = $searchDao->getSearchAutoRep($keyword, $page, $limit);
+
+        $totalpage = ceil($msgtotal / $limit);
+        if ($totalpage > 0) {
+            if ($page > $totalpage) return returnAPI([], 1, "param_err");
+        }
 
         $data_arr = array(
             'total' => $msgtotal,
-            'totalpage' => ceil($msgtotal/$limit),
+            'totalpage' => $totalpage,
             'page' => $page,
             'list' => $msgdata
         );
