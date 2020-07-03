@@ -15,7 +15,7 @@ class login_log_dao
      */
     function getLoginLogTotal(string $account, string $strdt, string $enddt): int
     {
-        $where = [];
+        $where[] = "`success` = 1";
         if (!empty($strdt) && !empty($enddt)) $where[] = "`login_date` BETWEEN '" . $strdt . "' AND '" . $enddt . "'";
         if ($account != "") $where[] = "`account` = '" . $account . "'";
         $str_sql = "";
