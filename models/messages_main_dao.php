@@ -57,4 +57,12 @@ class messages_main_dao
         }
         return DB::select("SELECT * FROM `" . self::$table_name . "` WHERE " . implode(" AND ", $arr));
     }
+
+    function setMsgMainForChatroom(array $insert, int &$id = 0): bool
+    {
+        $success = DB::DBCode("INSERT INTO `" . self::$table_name . "` (`" . implode("`,`", array_keys($insert)) . "`)
+                               VALUE ('" . implode("','", array_values($insert)) . "')");
+        if ($success) $id = mysqli_insert_id(DB::getDBCon());
+        return $success;
+    }
 }

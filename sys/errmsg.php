@@ -29,6 +29,9 @@ class ErrorMessage
         $arr["userset_add_fail"] = "使用者增加失败";
 		$arr["userset_pwd_repeat"] = "新密码不可与旧密码相同";
 		$arr["action_log_err"] = "功能记录失败，将不进行任何修改";
+		$arr["chatroom_create_err"] = "聊天室建立失败";
+		$arr["chatroom_exist"] = "聊天室已存在";
+		$arr["chatroom_empty"] = "聊天室尚未建立";
 		
 		//mysql
 		$arr["sql_err"] = "资料库错误";
