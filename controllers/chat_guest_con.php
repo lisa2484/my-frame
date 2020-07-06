@@ -89,7 +89,7 @@ class chat_guest_con
         if (!$mmDao->setMsgUpdate($_SESSION["chatroomid"], $mmupdate)) return returnAPI([], 1, "chatroom_insert_err");
         $rep["reply"] = "";
         $rep["id"] = $id;
-        if ($data[0]["user_id"] == "智能客服" && !empty($this->autoservice_sw)) {
+        if ($data[0]["user_id"] == "智能客服") {
             $bid = 0;
             $rep["reply"] = $this->botResponse($mdDao, $_POST["say"], $bid);
             if (!empty($bid)) $rep["id"] = $bid;
