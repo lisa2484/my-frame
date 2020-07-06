@@ -56,4 +56,12 @@ class searchautorep_dao
                                `update_ip` = '" . getRemoteIP() . "'
                            WHERE `id` IN (" . implode(",", $ids) . ")");
     }
+
+    /**
+     * 修改狀態開關
+     */
+    function updOnfSwitch(int $id, int $status): bool
+    {
+        return DB::DBCode("UPDATE `" . self::$table_name . "` SET `onf` = '" . $status . "' WHERE `id` = '" . $id . "';");
+    }
 }

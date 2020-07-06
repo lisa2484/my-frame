@@ -133,7 +133,7 @@ class user_dao
      */
     function getUserAcc(): array
     {
-        return DB::select("SELECT `id`,`user_name` FROM `" . self::$table_name . "` WHERE `is_del` = 0;");
+        return DB::select("SELECT `id`,`account` FROM `" . self::$table_name . "` WHERE `is_del` = 0;");
     }
 
     function updUserPhoto(int $id, string $imgname): bool

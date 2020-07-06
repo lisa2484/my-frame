@@ -17,19 +17,19 @@ class searchautorep_con
         $limit = $_POST["limit"];
 
         $searchDao = new searchautorep_dao;
-        $msgtotal = $searchDao->getSearchAutoRepTotal($keyword);
-        $msgdata = $searchDao->getSearchAutoRep($keyword, $page, $limit);
+        $searchtotal = $searchDao->getSearchAutoRepTotal($keyword);
+        $searchdata = $searchDao->getSearchAutoRep($keyword, $page, $limit);
 
-        $totalpage = ceil($msgtotal / $limit);
+        $totalpage = ceil($searchtotal / $limit);
         if ($totalpage > 0) {
             if ($page > $totalpage) return returnAPI([], 1, "param_err");
         }
 
         $data_arr = array(
-            'total' => $msgtotal,
+            'total' => $searchtotal,
             'totalpage' => $totalpage,
             'page' => $page,
-            'list' => $msgdata
+            'list' => $searchdata
         );
 
         return returnAPI($data_arr);
@@ -78,5 +78,19 @@ class searchautorep_con
         $searchDao = new searchautorep_dao;
         if ($searchDao->deleteList($ids)) return returnAPI([]);
         return returnAPI([], 1, "del_err");
+    }
+
+    //狀態修改
+    function setSearchAutoRepOnf()
+    {
+        if (!key_exists("id", $_POST) || !is_numeric($_POST["id"])) return returnAPI([], 1, "param_err");
+        $id = $_POST["id"];
+        if (!key_exists("onf", $_POST) || !in_array($_POST["onf"], [0, 1])) return returnAPI([], 1, "param_err");
+        $onf = $_POST["onf"];
+
+        $searchDao = new searchautorep_dao;
+
+        if ($searchDao->updOnfSwitch($id, $onf)) return returnAPI([]);
+        return returnAPI([], 1, "upd_err");
     }
 }
