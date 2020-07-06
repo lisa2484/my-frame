@@ -32,6 +32,8 @@ class ErrorMessage
 		$arr["chatroom_create_err"] = "聊天室建立失败";
 		$arr["chatroom_exist"] = "聊天室已存在";
 		$arr["chatroom_empty"] = "聊天室尚未建立";
+		$arr["chatroom_insert_err"] = "聊天室留言失败";
+		$arr["chatroom_over"] = "此聊天室已关闭";
 		
 		//mysql
 		$arr["sql_err"] = "资料库错误";
