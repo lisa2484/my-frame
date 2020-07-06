@@ -16,8 +16,25 @@ class autoservicerep_con
     function get()
     {
         $asDao = new autoservicerep_dao;
-        return returnAPI($asDao->getWebData());
+        $datas = $asDao->getWebData();
+        $layers = 0;
+        if (!empty($datas)) {
+            $ids = [];
+            $pids = [];
+
+            // $layers = $this->getLaysers($datas);
+        }
+        return returnAPI(["layers" => $layers, "list" => $datas]);
     }
+
+    // private function getLaysers(int $id, array &$datas): int
+    // {
+    //     $layer = 0;
+    //     foreach ($datas as $d) {
+    //         if ($d["parent_id"] == $id)return $this->getLaysers($d["parent_id"],$id);
+    //     }
+    //     return 0;
+    // }
 
     function add()
     {

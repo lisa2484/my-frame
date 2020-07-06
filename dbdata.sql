@@ -161,6 +161,7 @@ CREATE TABLE IF NOT EXISTS `messages_dtl` (
   `content` varchar(1000) NOT NULL COMMENT '內容',
   `filename` varchar(100) NOT NULL COMMENT '上傳檔案名稱',
   `time` int(15) NOT NULL COMMENT '時戳',
+  `service_name` varchar(50) NOT NULL DEFAULT '' COMMENT '客服暱稱',
   PRIMARY KEY (`id`),
   KEY `main_id` (`main_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='對話訊息明細\r\n非後台可修改可移除資料';
@@ -170,19 +171,19 @@ CREATE TABLE IF NOT EXISTS `messages_dtl` (
 -- 傾印  資料表 laravel.messages_main 結構
 CREATE TABLE IF NOT EXISTS `messages_main` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `status` int(11) NOT NULL COMMENT '狀態',
-  `member_id` varchar(50) NOT NULL COMMENT '會員帳號',
-  `member_name` varchar(50) NOT NULL COMMENT '會員姓名',
+  `status` int(11) NOT NULL DEFAULT '0' COMMENT '狀態 0:等待對話 1:處理中 2:處理完畢 3:垃圾訊息',
+  `member_id` varchar(50) NOT NULL DEFAULT '' COMMENT '會員帳號',
+  `member_name` varchar(50) NOT NULL DEFAULT '' COMMENT '會員姓名',
   `member_env` varchar(10) NOT NULL COMMENT '會員使用環境',
   `member_ip` varchar(50) NOT NULL COMMENT '會員IP',
-  `member_loc` varchar(50) NOT NULL COMMENT '會員地區',
+  `member_loc` varchar(50) NOT NULL DEFAULT '' COMMENT '會員地區',
   `member_from` varchar(50) NOT NULL COMMENT '來源網站',
   `user_id` varchar(50) NOT NULL COMMENT '客服ID',
   `start_time` int(15) NOT NULL COMMENT '開始時戳',
   `end_time` int(15) NOT NULL COMMENT '結束時戳',
-  `rep_len` int(15) NOT NULL COMMENT '首次回應時戳',
-  `circle_count` int(15) NOT NULL COMMENT '訊息數量',
-  `evaluation` int(11) NOT NULL COMMENT '評價',
+  `rep_len` int(15) NOT NULL DEFAULT '0' COMMENT '首次回應時戳',
+  `circle_count` int(15) NOT NULL DEFAULT '0' COMMENT '訊息數量',
+  `evaluation` int(11) NOT NULL DEFAULT '0' COMMENT '評價',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='對話訊息主檔\r\n非後台可刪除資料';
 
@@ -244,6 +245,18 @@ CREATE TABLE IF NOT EXISTS `usermsg` (
   KEY `user_id` (`user_id`),
   KEY `tag` (`tag`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='客服常用語';
+
+-- 取消選取資料匯出。
+
+-- 傾印  資料表 laravel.user_online_status 結構
+CREATE TABLE IF NOT EXISTS `user_online_status` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(10) unsigned NOT NULL COMMENT 'userID',
+  `status` int(1) unsigned NOT NULL DEFAULT '0' COMMENT '上線狀態 0:off 1:on',
+  `last_online_time` int(15) unsigned NOT NULL DEFAULT '0' COMMENT '最後上線時戳',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `user_id` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='客服上線狀態';
 
 -- 取消選取資料匯出。
 

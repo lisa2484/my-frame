@@ -140,6 +140,7 @@ class verify extends serverset
         if ($routeName == "") return false;
         $exceptArr[] = "csbot";
         $exceptArr[] = "login";
+        $exceptArr[] = "chat_guest";
         return in_array($routeName, $exceptArr);
     }
 

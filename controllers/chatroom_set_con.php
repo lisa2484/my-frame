@@ -17,7 +17,6 @@ class chatroom_set_con
     {
         $wsDao = new web_set_dao;
         $datas = $wsDao->getWebSetList();
-        if (empty($datas)) return returnAPI([], 1, "sql_err");
         $keys = self::getChatroomSetKey();
         $repArr = [];
         $rDatas = [];
