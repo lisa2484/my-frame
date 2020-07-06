@@ -44,15 +44,41 @@ class chatroom_set_con
 
     function set()
     {
+        $key_arr = ['logo_i', 'ser_i', 'vis_i'];
         $keys = self::getChatroomSetKey();
-        foreach (array_keys($_POST) as $p) {
-            if (key_exists($p, $keys)) {
-                $key = $p;
-                break;
+        
+        if (empty($_FILES)) {
+            $keys = self::getChatroomSetKey();
+            foreach (array_keys($_POST) as $p) {
+                if (key_exists($p, $keys)) {
+                    $key = $p;
+                    break;
+                }
+            }
+        } else {
+            $f_key = array_keys($_FILES);
+
+            if (in_array($f_key[0], $key_arr)) {
+                $key = $f_key[0];
+            } else {
+                return returnAPI([], 1, "param_err");
             }
         }
+
+        if (in_array($key, $key_arr)) {
+            $upload_str = $this->setChatImg($key);
+
+            if ($upload_str == "upload_err" || $upload_str == "file_err") {
+                return returnAPI([], 1, $upload_str);
+            } else {
+                $val = $upload_str;
+            }
+        } else {
+            $val = $_POST[$key];
+        }
+
         if (!isset($key)) return returnAPI([], 1, "param_empty");
-        if ($this->setWebset($keys[$key], $_POST[$key])) return returnAPI([]);
+        if ($this->setWebset($keys[$key], $val)) return returnAPI([]);
         return returnAPI([], 1, "upd_err");
     }
 
@@ -60,7 +86,7 @@ class chatroom_set_con
     {
         $keys = self::getChatroomSetKey();
         foreach ($keys as $k => $d) {
-            if (!key_exists($k, $_POST) || $_POST[$k] == "") return returnAPI([], 1, "param_err");
+            if (!key_exists($k, $_POST)) return returnAPI([], 1, "param_err");
             $datas[] = [$d, $_POST[$k]];
         }
         foreach ($datas as $data) {
@@ -90,5 +116,39 @@ class chatroom_set_con
         $wsDao = new web_set_dao;
         if (empty($wsDao->getWebSetListBySetKey($setkey))) return $wsDao->setWebSetAdd($setkey, $value);
         return $wsDao->setWebSetEdit($setkey, $value);
+    }
+
+    private function setChatImg($key)
+    {
+        $filename = "";
+        if (!empty($_FILES)) {
+            if (!$this->updateFile($filename, $key)) return "upload_err";
+            return $filename;
+        } else {
+            return "file_err";
+        }
+
+        // $userDao = new user_dao;
+
+        // if ($userDao->updUserPhoto($_SESSION["id"], $filename)) {
+        //     return returnAPI([]);
+        // } else {
+        //     return returnAPI([], 1, "upd_err");
+        // }
+    }
+
+    private function updateFile(&$filename, $key)
+    {
+        if (empty($_FILES)) return false;
+        $type = pathinfo($_FILES[$key]["name"]);
+        if (!isset($type["extension"])) return false;
+        if (!in_array($type["extension"], ["jpg", "gif", "jpeg", "png", "bmp"])) return false;
+        $path = "./resources/img";
+        if (!is_dir($path)) {
+            mkdir($path);
+        }
+        $crmn = "chatroom_". $key . "_" . date("YmdHis") . "." . $type["extension"];
+        $filename = $crmn;
+        return move_uploaded_file($_FILES[$key]["tmp_name"], "$path/$crmn");
     }
 }

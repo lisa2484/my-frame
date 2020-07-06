@@ -18,7 +18,7 @@ class chatroom_menu_dao
         $max = DB::select("SELECT max(`sort`) AS m
                            FROM `" . self::$table . "`
                            WHERE `is_del` = 0;");
-        if (empty($max)) return 0;
+        if (empty($max[0]["m"])) return 0;
         return $max[0]["m"];
     }
 
