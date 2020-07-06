@@ -45,6 +45,7 @@ class action_log_dao
                                               FROM `" . self::$table_name . "` AS `a` 
                                               LEFT JOIN `" . self::$menu_t . "` AS `m` 
                                               ON `a`.`remark` = `m`.`url` 
+                                              ORDER BY `a`.`datetime` DESC
                                               LIMIT " . (($page - 1) * $limit) . "," . $limit);
         $arr = [];
         if (isset($where["s_d"]) && isset($where["e_d"])) $arr[] = "`a`.`datetime` BETWEEN '" . $where["s_d"] . "' AND '" . $where["e_d"] . "'";

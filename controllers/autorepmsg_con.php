@@ -51,6 +51,7 @@ class autorepmsg_con
         if (key_exists("end_d", $_POST) && !empty($_POST["end_d"])) $updateArr["end_d"] = $_POST["end_d"];
         if (key_exists("start_t", $_POST) && !empty($_POST["start_t"])) $updateArr["start_t"] = $_POST["start_t"];
         if (key_exists("end_t", $_POST) && !empty($_POST["end_t"])) $updateArr["end_t"] = $_POST["end_t"];
+        if (key_exists("onf", $_POST) && $_POST["onf"] != "") $updateArr["onf"] = $_POST["onf"];
         if (empty($updateArr)) return returnAPI([], 1, "param_err");
         $amsgDao = new autorepmsg_dao;
         if ($amsgDao->setMsgUpdate($id, $updateArr)) return returnAPI([]);
