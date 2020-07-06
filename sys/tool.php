@@ -24,3 +24,17 @@ function validateDate($date, $format = 'Y-m-d H:i:s')
     $d = DateTime::createFromFormat($format, $date);
     return $d && $d->format($format) == $date;
 }
+
+function updateImg(&$filename, string $url, string $name, $key = "file")
+{
+    if (empty($_FILES)) return false;
+    $type = pathinfo($_FILES[$key]["name"]);
+    if (!isset($type["extension"])) return false;
+    if (!in_array(strtolower($type["extension"]), ["jpg", "gif", "jpeg", "png", "bmp"])) return false;
+    $path = "./resources/" . $url;
+    if (!is_dir($path)) {
+        mkdir($path);
+    }
+    $filename = $name . date("YmdHis") . "." . $type["extension"];
+    return move_uploaded_file($_FILES[$key]["tmp_name"], "$path/$filename");
+}

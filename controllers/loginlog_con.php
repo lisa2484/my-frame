@@ -84,7 +84,7 @@ class loginlog_con
         set_time_limit(0);
         ini_set("memory_limit", "512M");
         header('Content-Type: application/csv');
-        header('Content-Disposition: attachment; filename="loginLog.csv"');
+        header('Content-Disposition: attachment; filename=loginLog.csv');
         $adminname = "";
         $time_s = "";
         $time_e = "";

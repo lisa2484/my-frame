@@ -58,11 +58,31 @@ class messages_main_dao
         return DB::select("SELECT * FROM `" . self::$table_name . "` WHERE " . implode(" AND ", $arr));
     }
 
+    function getMsgByID(int $id): array
+    {
+        return DB::select("SELECT * FROM `" . self::$table_name . "` WHERE `id` = '" . $id . "' LIMIT 1;");
+    }
+
     function setMsgMainForChatroom(array $insert, int &$id = 0): bool
     {
         $success = DB::DBCode("INSERT INTO `" . self::$table_name . "` (`" . implode("`,`", array_keys($insert)) . "`)
                                VALUE ('" . implode("','", array_values($insert)) . "')");
         if ($success) $id = mysqli_insert_id(DB::getDBCon());
         return $success;
+    }
+
+    function setMsgUpdate(int $id, array $update)
+    {
+        $upstr = [];
+        foreach ($update as $k => $d) {
+            switch ($k) {
+                case 'circle_count':
+                    $upstr[] = "`" . $k . "` = `" . $k . "` + 1";
+                    break;
+                default:
+                    $upstr[] = "`" . $k . "` = '" . $d . "'";
+            }
+        }
+        return DB::DBCode("UPDATE `" . self::$table_name . "` SET " . implode(",", $upstr) . " WHERE `id` = '" . $id . "';");
     }
 }
