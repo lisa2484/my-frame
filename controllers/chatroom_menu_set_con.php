@@ -17,7 +17,19 @@ class chatroom_menu_set_con
     {
         $cmDao = new chatroom_menu_dao;
         $datas = $cmDao->getMenuSet();
-        return returnAPI($datas);
+
+        $menudata = [];
+        foreach ($datas as $keys => $values) {
+            foreach ($datas[$keys] as $key => $value) {
+                if ($key == "filename") {
+                    $menudata[$keys][$key] = "resources/chatroom_menu/" . $value;
+                } else {
+                    $menudata[$keys][$key] = $value;
+                }
+            }
+        }
+
+        return returnAPI($menudata);
     }
 
     function add()

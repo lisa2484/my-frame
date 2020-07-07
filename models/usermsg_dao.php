@@ -8,7 +8,13 @@ class usermsg_dao
 
     function getUserMsg($userid): array
     {
-        return DB::select("SELECT `id`, `tag`, `msg`, `sort` FROM " . self::$table_name . " WHERE `user_id` = " . $userid . " AND `is_del` = 0 ");
+        return DB::select("SELECT `id`, `tag`, `msg`, `sort` FROM " . self::$table_name . " WHERE `user_id` = " . $userid . " AND `is_del` = 0 ORDER BY `sort` ASC ");
+    }
+
+    function getSort($sort)
+    {
+        $sortsount = DB::select("SELECT count(*) FROM " . self::$table_name . " WHERE `sort` = " . $sort . " AND `is_del` = 0 limit 1 ");
+        return $sortsount[0]['count(*)'];
     }
 
     function addUserMsg($userid, string $settag, string $msg, int $sort): bool
