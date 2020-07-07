@@ -34,8 +34,8 @@ class chatroom_menu_set_con
 
     function add()
     {
-        if (!key_exists("title", $_POST) || $_POST["title"] = "") return returnAPI([], 1, "param_empty");
-        if (!key_exists("url", $_POST) || $_POST["url"] = "") return returnAPI([], 1, "param_empty");
+        if (!key_exists("title", $_POST) || $_POST["title"] == "") return returnAPI([], 1, "param_empty");
+        if (!key_exists("url", $_POST) || $_POST["url"] == "") return returnAPI([], 1, "param_empty");
         if (empty($_FILES)) return returnAPI([], 1, "param_empty");
         $cmDao = new chatroom_menu_dao;
         $sort = $cmDao->getMaxSort() + 1;
