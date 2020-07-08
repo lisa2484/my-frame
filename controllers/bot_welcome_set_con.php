@@ -15,7 +15,7 @@ class bot_welcome_set_con
         if (empty($data)) {
             return returnAPI(["value" => ""]);
         }
-        return returnAPI(["value" => $data[0]["value"]]);
+        return returnAPI(["value" => html_entity_decode($data[0]["value"])]);
     }
 
     function set()

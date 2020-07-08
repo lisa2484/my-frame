@@ -136,11 +136,6 @@ class user_dao
         return DB::select("SELECT `id`,`account` FROM `" . self::$table_name . "` WHERE `is_del` = 0;");
     }
 
-    function getUserNickName(): array
-    {
-        return DB::select("SELECT `user_name`, `img_name` FROM `" . self::$table_name . "` WHERE `id` = " . $_SESSION["id"] . ";");
-    }
-
     function updUserPhoto(int $id, string $imgname): bool
     {
         return DB::DBCode("UPDATE `" . self::$table_name . "` SET `img_name` = '" . $imgname . "', `updater` = '" . $_SESSION["act"] . "', `update_dt` = '" . date("Y-m-d H:i:s") . "', `update_ip` = '" . getRemoteIP() . "' WHERE `id` = '" . $id . "'");

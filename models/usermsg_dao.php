@@ -36,8 +36,13 @@ class usermsg_dao
                            WHERE `id` = '" . $id . "';");
     }
 
-    function delUserMsg(int $id): bool
+    function delUserMsg(array $id): bool
     {
-        return DB::DBCode("UPDATE `" . self::$table_name . "` SET `is_del` = 1, `updater` = '" . $_SESSION["act"] . "', `update_dt` = '" . date("Y-m-d H:i:s") . "', `update_ip` = '" . getRemoteIP() . "' WHERE `id` = '" . $id . "'");
-    }    
+        return DB::DBCode("UPDATE `" . self::$table_name . "`
+                           SET `is_del` = 1,
+                               `updater` = '" . $_SESSION["act"] . "',
+                               `update_dt` = '" . date("Y-m-d H:i:s") . "',
+                               `update_ip` = '" . getRemoteIP() . "'
+                           WHERE `id` IN (" . implode(",", $id) . ")");
+    } 
 }

@@ -15,7 +15,7 @@ class usermsg_con
         $userDao = new user_dao;
         $usermsgDao = new usermsg_dao;
 
-        $ndatas = $userDao->getUserNickName($_SESSION["id"]);
+        $ndatas = $userDao->getUserByID($_SESSION["id"]);
         $datas = $usermsgDao->getUserMsg($_SESSION["id"]);
 
         $data_arr = array(
@@ -74,16 +74,18 @@ class usermsg_con
     function setUserMsgDel()
     {
         if (!isset($_POST["id"])) return returnAPI([], 1, "param_err");
-        if (empty($_POST["id"])) return returnAPI([], 1, "param_err");
-        $id = $_POST["id"];
+        if (empty($_POST["id"])) return returnAPI([], 1, "param_empty");
+
+        $ids = explode(",", $_POST["id"]);
+
+        foreach ($ids as $id) {
+            if (!is_numeric($id)) return returnAPI([], 1, "param_err");
+        }
 
         $usermsgDao = new usermsg_dao;
 
-        if ($usermsgDao->delUserMsg($id)) {
-            return returnAPI([]);
-        } else {
-            return returnAPI([], 1, "del_err");
-        }
+        if ($usermsgDao->delUserMsg($ids)) return returnAPI([]);
+        return returnAPI([], 1, "del_err");
     }
 
     /**
