@@ -12,11 +12,19 @@ class usermsg_con
 {
     function init()
     {
+        $userDao = new user_dao;
         $usermsgDao = new usermsg_dao;
 
+        $ndatas = $userDao->getUserNickName($_SESSION["id"]);
         $datas = $usermsgDao->getUserMsg($_SESSION["id"]);
 
-        return returnAPI($datas);
+        $data_arr = array(
+            'nickname' => $ndatas[0]['user_name'],
+            'photo' => "resources/img/" . $ndatas[0]['img_name'],
+            'msglist' => $datas
+        );
+
+        return returnAPI($data_arr);
     }
 
     /**
@@ -28,11 +36,12 @@ class usermsg_con
         $tag = $_POST["tag"];
         if (!isset($_POST["msg"]) || $_POST["msg"] == "") return returnAPI([], 1, "param_err");
         $msg = $_POST["msg"];
-        if (!isset($_POST["sort"]) || $_POST["sort"] == "") return returnAPI([], 1, "param_err");
+        if (!isset($_POST["sort"]) || $_POST["sort"] == "" || !is_numeric($_POST["sort"])) return returnAPI([], 1, "param_err");
         $sort = $_POST["sort"];
 
         $usermsgDao = new usermsg_dao;
 
+        if ($usermsgDao->getSort($sort) != 0) return returnAPI([], 1, "sort_err");
         if ($usermsgDao->addUserMsg($_SESSION["id"], $tag, $msg, $sort)) {
             return returnAPI([]);
         } else {
@@ -49,11 +58,12 @@ class usermsg_con
         $tag = $_POST["tag"];
         if (!isset($_POST["msg"]) || $_POST["msg"] == "") return returnAPI([], 1, "param_err");
         $msg = $_POST["msg"];
-        if (!isset($_POST["sort"]) || $_POST["sort"] == "") return returnAPI([], 1, "param_err");
+        if (!isset($_POST["sort"]) || $_POST["sort"] == "" || !is_numeric($_POST["sort"])) return returnAPI([], 1, "param_err");
         $sort = $_POST["sort"];
 
         $usermsgDao = new usermsg_dao;
 
+        if ($usermsgDao->getSort($sort) != 0) return returnAPI([], 1, "sort_err");
         if ($usermsgDao->updUserMsg($_SESSION["id"], $id, $tag, $msg, $sort)) {
             return returnAPI([]);
         } else {
@@ -84,9 +94,9 @@ class usermsg_con
         if (!isset($_POST["nickname"]) || $_POST["nickname"] == "") return returnAPI([], 1, "param_err");
         $nickname = $_POST["nickname"];
 
-        $usermsgDao = new user_dao;
+        $userDao = new user_dao;
 
-        if ($usermsgDao->setUserName($_SESSION["id"], $nickname)) {
+        if ($userDao->setUserName($_SESSION["id"], $nickname)) {
             return returnAPI([]);
         } else {
             return returnAPI([], 1, "upd_err");

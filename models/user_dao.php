@@ -128,12 +128,17 @@ class user_dao
     }
 
     /**
-     * 抓取使用者名稱
+     * 抓取使用者帳號
      * @return array 回傳table表單資料 MYSQLI_ASSOC
      */
     function getUserAcc(): array
     {
         return DB::select("SELECT `id`,`account` FROM `" . self::$table_name . "` WHERE `is_del` = 0;");
+    }
+
+    function getUserNickName(): array
+    {
+        return DB::select("SELECT `user_name`, `img_name` FROM `" . self::$table_name . "` WHERE `id` = " . $_SESSION["id"] . ";");
     }
 
     function updUserPhoto(int $id, string $imgname): bool

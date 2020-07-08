@@ -61,6 +61,7 @@ class ErrorMessage
 
         //個人設置
         $arr["upload_err"] = "上传错误";
+        $arr["sort_err"] = "排序重复";
 
         //客戶畫面配置
         $arr["file_err"] = "檔案错误";

@@ -34,11 +34,11 @@ class userpwd_con
         $userData = $userDao->getUserByID($id);
         if (empty($userData)) return returnAPI([], 1, "param_err");
         $userData = $userData[0];
-        $opad = md5($userData["account"] . $fopad . strtotime($userData["create_dt"]));
+        $opad = md5($userData["account"] . $fopad . $userData["create_dt"]);
         if ($opad != $userData["password"]) {
             return returnAPI([], 1, "editpwd_oldpwd_err");
         } else {
-            $npad = md5($userData["account"] . $fpad . strtotime($userData["create_dt"]));
+            $npad = md5($userData["account"] . $fpad . $userData["create_dt"]);
             
             if ($userDao->updateUserForPad($id, $npad)) {
                 return returnAPI([]);
