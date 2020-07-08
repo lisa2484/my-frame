@@ -63,6 +63,13 @@ class messages_main_dao
         return DB::select("SELECT * FROM `" . self::$table_name . "` WHERE `id` = '" . $id . "' LIMIT 1;");
     }
 
+    function getMsgForNotOverByAcount()
+    {
+        return DB::select("SELECT `id`,`status`,`circle_count`,`user_id`
+                           FROM `" . self::$table_name . "`
+                           WHERE `user_id` = '" . $_SESSION["act"] . "' AND `status` IN (0,1);");
+    }
+
     function setMsgMainForChatroom(array $insert, int &$id = 0): bool
     {
         $success = DB::DBCode("INSERT INTO `" . self::$table_name . "` (`" . implode("`,`", array_keys($insert)) . "`)
@@ -78,6 +85,9 @@ class messages_main_dao
             switch ($k) {
                 case 'circle_count':
                     $upstr[] = "`" . $k . "` = `" . $k . "` + 1";
+                    break;
+                case 'rep_len':
+                    $upstr[] = "`" . $k . "` = IF(`" . $k . "` = 0," . $d . ",`" . $k . "`)";
                     break;
                 default:
                     $upstr[] = "`" . $k . "` = '" . $d . "'";

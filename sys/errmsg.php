@@ -34,7 +34,8 @@ class ErrorMessage
 		$arr["chatroom_empty"] = "聊天室尚未建立";
 		$arr["chatroom_insert_err"] = "聊天室留言失败";
 		$arr["chatroom_over"] = "此聊天室已关闭";
-		
+		$arr["service_empty"] = "此客服已离线";
+		$arr["service_transfer_err"] = "转交失败，请确认伺服器状态后在试一次";
 		//mysql
 		$arr["sql_err"] = "资料库错误";
 

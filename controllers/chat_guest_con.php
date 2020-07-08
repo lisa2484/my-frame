@@ -50,6 +50,7 @@ class chat_guest_con
             $arr["id"] = $data["id"];
             $arr["content"] = $data["content"];
             $arr["file"] = (empty($data["filename"]) ? "" : '/resources/img/chatroom/' . $_SESSION["chatroomid"] . '/' . $data["filename"]);
+            $arr["date"] = date("Y-m-d", $data["time"]);
             $arr["time"] = date("H:i:s", $data["time"]);
             switch ($data["msg_from"]) {
                 case 1:
@@ -214,7 +215,18 @@ class chat_guest_con
         } else {
             foreach ($keys as $k => $d) {
                 if (key_exists($d, $rDatas)) {
-                    $repArr[$k] = $rDatas[$d];
+                    switch ($k) {
+                        case "too_s":
+                            $repArr[$k] = html_entity_decode($rDatas[$d]);
+                            break;
+                        case "logo_i":
+                        case "ser_i":
+                        case "vis_i":
+                            $repArr[$k] = "/resources/img/" . $rDatas[$d];
+                            break;
+                        default:
+                            $repArr[$k] = $rDatas[$d];
+                    }
                 } else {
                     $repArr[$k] = "";
                 }

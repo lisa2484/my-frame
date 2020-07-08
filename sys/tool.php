@@ -25,7 +25,7 @@ function validateDate($date, $format = 'Y-m-d H:i:s')
     return $d && $d->format($format) == $date;
 }
 
-function updateImg(&$filename, string $url, string $name, $key = "file")
+function updateImg(&$filename, string $url, string $name = "", $key = "file")
 {
     if (empty($_FILES)) return false;
     $type = pathinfo($_FILES[$key]["name"]);

@@ -100,8 +100,9 @@ CREATE TABLE IF NOT EXISTS `chatroom_menu` (
   `update_dt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新時間',
   `update_ip` varchar(50) NOT NULL COMMENT '更新IP',
   `is_del` int(1) NOT NULL DEFAULT '0' COMMENT '1:刪除',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='聊天室MENU配置';
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `sort` (`sort`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='聊天室MENU配置';
 
 -- 取消選取資料匯出。
 
@@ -164,7 +165,7 @@ CREATE TABLE IF NOT EXISTS `messages_dtl` (
   `service_name` varchar(50) NOT NULL DEFAULT '' COMMENT '客服暱稱',
   PRIMARY KEY (`id`),
   KEY `main_id` (`main_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='對話訊息明細\r\n非後台可修改可移除資料';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='對話訊息明細\r\n非後台可修改可移除資料';
 
 -- 取消選取資料匯出。
 
