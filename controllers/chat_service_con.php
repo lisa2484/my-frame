@@ -5,6 +5,7 @@ namespace app\controllers;
 include "./models/user_online_status_dao.php";
 include "./models/messages_main_dao.php";
 include "./models/usermsg_dao.php";
+include "./models/messages_dtl_dao.php";
 
 use app\models\messages_dtl_dao;
 use app\models\messages_main_dao;
@@ -25,6 +26,15 @@ class chat_service_con
         return returnAPI(["online" => $onlineType, "service" => $users, "chatroom" => $chatroom, "usermsg" => $usermsg]);
     }
 
+    function getChatroomAndServiceStatus()
+    {
+        $uosDao = new user_online_status_dao;
+        $mmDao = new messages_main_dao;
+        $users = $this->getUserAllOnlineTyep($uosDao);
+        $chatroom = $this->getChatroomType($mmDao);
+        return returnAPI(["service" => $users, "chatroom" => $chatroom]);
+    }
+
     function getChatRooom()
     {
         if (!isset($_POST["chatroom_id"]) || !is_numeric($_POST["chatroom_id"])) return returnAPI([], 1, "param_err");
@@ -41,7 +51,7 @@ class chat_service_con
     function getNewMessages()
     {
         if (!isset($_POST["chatroom_id"]) || !is_numeric($_POST["chatroom_id"])) return returnAPI([], 1, "param_err");
-        if (!isset($_POST["msg_id"]) || ~is_numeric($_POST["msg_id"])) return returnAPI([], 1, "param_err");
+        if (!isset($_POST["msg_id"]) || !is_numeric($_POST["msg_id"])) return returnAPI([], 1, "param_err");
         $cid = $_POST["chatroom_id"];
         $mid = $_POST["msg_id"];
         $mdDao = new messages_dtl_dao;
@@ -54,11 +64,10 @@ class chat_service_con
         if (!isset($_POST["chatroom_id"]) || !is_numeric($_POST["chatroom_id"])) return returnAPI([], 1, "param_err");
         if (!isset($_POST["say"])) return returnAPI([], 1, "param_err");
         $cid = $_POST["chatroom_id"];
-        $mmDao = new messages_main_dao;
-
         $mdDao = new messages_dtl_dao;
         $id = $this->setChatroomDtlInsert($mdDao, $cid, $_POST["say"]);
         if (empty($id)) return returnAPI([], 1, "chatroom_insert_err");
+        $mmDao = new messages_main_dao;
         $this->setChatroomAddCircleCount($mmDao, $cid);
         return returnAPI(["msg_id" => $id]);
     }
@@ -103,6 +112,7 @@ class chat_service_con
         if (isset($_POST["member"])) $update["member_id"] = $_POST["member"];
         if (isset($_POST["name"])) $update["member_name"] = $_POST["name"];
         if (isset($_POST["local"])) $update["member_loc"] = $_POST["local"];
+        if (empty($update)) return returnAPI([], 1, "param_empty");
         $mmDao = new messages_main_dao;
         if ($mmDao->setMsgUpdate($_POST["chatroom_id"], $update)) return returnAPI([]);
         return returnAPI([], 1, "upd_err");
@@ -185,6 +195,7 @@ class chat_service_con
         $id = 0;
         $insert["main_id"] = $cid;
         $insert["content"] = $say;
+        $insert["msg_from"] = 2;
         $filename = "";
         if (updateImg($filename, "chatroom/" . $cid, $_SESSION["act"])) $insert["filename"] = $filename;
         $insert["time"] = time();
