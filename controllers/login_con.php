@@ -47,6 +47,29 @@ class login_con
         return returnAPI(["ip" => getRemoteIP(), "login" => true]);
     }
 
+    /**
+     * 抓日期時間、使用者名稱
+     */
+    function getWebData()
+    {
+        $timedata = time();
+
+        $userDao = new user_dao;
+        $user = $userDao->getUserByID($_SESSION["id"]);
+
+        $data_arr = array(
+            'nickname' => $user[0]['user_name'],
+            'year' => date("Y", $timedata),
+            'month' => date("m", $timedata),
+            'day' => date("d", $timedata),
+            'hour' => date("H", $timedata),
+            'minute' => date("i", $timedata),
+            'second' => date("s", $timedata)
+        );
+
+        return returnAPI($data_arr);
+    }
+
     //登入紀錄
     private function loginLog(string $user, bool $success)
     {
