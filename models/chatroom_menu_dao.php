@@ -10,7 +10,7 @@ class chatroom_menu_dao
     {
         return DB::select("SELECT `id`,`title`,`url`,`sort`,`filename`
                            FROM `" . self::$table . "`
-                           WHERE `is_del` = 0;");
+                           WHERE `is_del` = 0 ORDER BY `sort` ASC;");
     }
 
     function getMaxSort(): int
@@ -20,6 +20,12 @@ class chatroom_menu_dao
                            WHERE `is_del` = 0;");
         if (empty($max[0]["m"])) return 0;
         return $max[0]["m"];
+    }
+
+    function getSort($sort)
+    {
+        $sortsount = DB::select("SELECT count(*) FROM " . self::$table . " WHERE `sort` = " . $sort . " AND `is_del` = 0 limit 1 ");
+        return $sortsount[0]['count(*)'];
     }
 
     function setMenuInsert(array $insertArr): bool

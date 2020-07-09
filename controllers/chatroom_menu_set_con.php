@@ -34,14 +34,22 @@ class chatroom_menu_set_con
 
     function add()
     {
+        $cmDao = new chatroom_menu_dao;
+
         if (!key_exists("title", $_POST) || $_POST["title"] == "") return returnAPI([], 1, "param_empty");
         if (!key_exists("url", $_POST) || $_POST["url"] == "") return returnAPI([], 1, "param_empty");
-        if (empty($_FILES)) return returnAPI([], 1, "param_empty");
-        $cmDao = new chatroom_menu_dao;
-        $sort = $cmDao->getMaxSort() + 1;
+        if (key_exists("sort", $_POST)) {
+            if ($_POST["sort"] == "" || !is_numeric($_POST["sort"])) return returnAPI([], 1, "param_err");
+            $sort = $_POST["sort"];
+        } else {
+            $sort = $cmDao->getMaxSort() + 1;
+        }
+        
+        if (empty($_FILES)) return returnAPI([], 1, "param_empty");        
         if (!is_numeric($sort)) return returnAPI([], 1, "add_err");
         $filename = "";
         if (!$this->updateFile($filename)) return returnAPI([], 1, "add_err");
+        if ($cmDao->getSort($sort) != 0) return returnAPI([], 1, "sort_err");
         $insertArr["title"] = $_POST["title"];
         $insertArr["url"] = $_POST["url"];
         $insertArr["filename"] = $filename;
@@ -52,20 +60,31 @@ class chatroom_menu_set_con
 
     function set()
     {
+        $cmDao = new chatroom_menu_dao;
+        
         if (!key_exists("id", $_POST) || !is_numeric($_POST["id"])) return returnAPI([], 1, "param_err");
         $id = $_POST["id"];
+        $title = "";
+        $url = "";
+        $sort = "";
         if (key_exists("title", $_POST)) $title = $_POST["title"];
         if (key_exists("url", $_POST)) $url = $_POST["url"];
+        if (key_exists("sort", $_POST)) {
+            if ($_POST["sort"] == "" || !is_numeric($_POST["sort"])) return returnAPI([], 1, "param_err");
+            $sort = $_POST["sort"];
+            if ($cmDao->getSort($sort) != 0) return returnAPI([], 1, "sort_err");
+        }
         $updateArr = [];
         if ($title != "") $updateArr["title"] = $title;
         if ($url != "") $updateArr["url"] = $url;
+        if ($sort != "") $updateArr["sort"] = $sort;
         if (empty($updateArr) && empty($_FILES)) return returnAPI([], 1, "param_empty");
         $filename = "";
         if (!empty($_FILES)) {
             if (!$this->updateFile($filename)) return returnAPI([], 1, "upd_err");
         }
         if ($filename != "") $updateArr["filename"] = $filename;
-        $cmDao = new chatroom_menu_dao;
+        
         if ($cmDao->setMenuUpdate($id, $updateArr)) return returnAPI([]);
         return returnAPI([], 1, "upd_err");
     }

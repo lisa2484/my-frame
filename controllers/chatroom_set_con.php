@@ -15,6 +15,8 @@ class chatroom_set_con
 
     function getWebData()
     {
+        $imgkey_arr = ['logo_img', 'service_img', 'visitor_img'];
+        
         $wsDao = new web_set_dao;
         $datas = $wsDao->getWebSetList();
         $keys = self::getChatroomSetKey();
@@ -32,7 +34,13 @@ class chatroom_set_con
         } else {
             foreach ($keys as $k => $d) {
                 if (key_exists($d, $rDatas)) {
-                    $repArr[$k] = $rDatas[$d];
+                    if ($d == "toolbar_set") {
+                        $repArr[$k] = html_entity_decode($rDatas[$d]);
+                    } else if (in_array($d, $imgkey_arr)) {
+                        $repArr[$k] = "resources/img/" . $rDatas[$d];
+                    } else {
+                        $repArr[$k] = $rDatas[$d];
+                    }
                 } else {
                     $repArr[$k] = "";
                 }
@@ -126,14 +134,6 @@ class chatroom_set_con
         } else {
             return "file_err";
         }
-
-        // $userDao = new user_dao;
-
-        // if ($userDao->updUserPhoto($_SESSION["id"], $filename)) {
-        //     return returnAPI([]);
-        // } else {
-        //     return returnAPI([], 1, "upd_err");
-        // }
     }
 
     private function updateFile(&$filename, $key)
