@@ -6,9 +6,9 @@ class autoservicerep_dao
 {
     private static $table = "autoservicerep";
 
-    function getWebData(): array
+    function getList(): array
     {
-        return DB::select("SELECT `id`,`parent_id`,`title`,`msg`,`onf`,`sort`
+        return DB::select("SELECT `id`,`parent_id`,`msg`,`onf`,`sort`
                            FROM `" . self::$table . "`
                            WHERE `is_del` = 0");
     }
@@ -20,6 +20,16 @@ class autoservicerep_dao
                            WHERE `is_del` = 0
                            AND `onf` = 1 
                            AND `parent_id` = '" . $parentId . "';");
+    }
+
+    function getSortRepeat(int $sort): bool
+    {
+        return empty(DB::select("SELECT `id` FROM `" . self::$table . "` WHERE `sort` = '" . $sort . "' AND `is_del` = 0 LIMIT 1"));
+    }
+
+    function setOnf(array $ids): bool
+    {
+        return DB::DBCode("UPDATE `" . self::$table . "` SET `onf` = IF(`id` IN (" . implode(",", $ids) . "),1,0) WHERE `is_del` = 0;");
     }
 
     function setMsgInsert(array $insertArr): bool
@@ -44,13 +54,13 @@ class autoservicerep_dao
                            WHERE `id` = '" . $id . "' AND `is_del` = 0;");
     }
 
-    function setMsgDelete(int $id): bool
+    function setMsgDelete(array $ids): bool
     {
         return DB::DBCode("UPDATE `" . self::$table . "`
                            SET `is_del` = 1,
                                `updater` = '" . $_SESSION["act"] . "',
                                `update_dt` = '" . date("Y-m-d H:i:s") . "',
                                `update_ip` = '" . getRemoteIP() . "'
-                           WHERE `id` = '" . $id . "';");
+                           WHERE `id` IN (" . implode(",", $ids) . ");");
     }
 }

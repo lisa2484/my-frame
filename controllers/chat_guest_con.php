@@ -34,7 +34,8 @@ class chat_guest_con
         $data_arr = array(
             'chatroom_set' => $web_data,
             'service' => $name,
-            'autoservice' => $this->autoservice_sw
+            'autoservice' => $this->autoservice_sw,
+            'welcome' => ''
         );
         return returnAPI($data_arr);
     }
@@ -55,14 +56,16 @@ class chat_guest_con
             switch ($data["msg_from"]) {
                 case 1:
                     $arr["type"] = "guest";
+                    $arr["service_name"] = "";
                     break;
                 case 2:
                     $arr["type"] = "service";
+                    $arr["service_name"] = $data["service_name"];
                     break;
                 case 3:
                     $arr["type"] = "bot";
+                    $arr["service_name"] = "智能客服";
             }
-            $arr["service_name"] = ($data["msg_from"] == 3 ? "智能客服" : $data["service_name"]);
             $returnArr[] = $arr;
         }
         return returnAPI([$returnArr]);
@@ -138,7 +141,9 @@ class chat_guest_con
         return "";
     }
 
-
+    private function getWelcome()
+    {
+    }
 
     private function createChatRoom(&$name)
     {
