@@ -33,7 +33,7 @@ function updateImg(&$filename, string $url, string $name = "", $key = "file")
     if (!in_array(strtolower($type["extension"]), ["jpg", "gif", "jpeg", "png", "bmp"])) return false;
     $path = "./resources/" . $url;
     if (!is_dir($path)) {
-        mkdir($path);
+        mkdir($path, 0777, true);
     }
     $filename = $name . date("YmdHis") . "." . $type["extension"];
     return move_uploaded_file($_FILES[$key]["tmp_name"], "$path/$filename");
