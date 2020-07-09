@@ -20,7 +20,7 @@ class usermsg_con
 
         $data_arr = array(
             'nickname' => $ndatas[0]['user_name'],
-            'photo' => "resources/img/" . $ndatas[0]['img_name'],
+            'photo' => getImgUrl("", $ndatas[0]['img_name']),
             'msglist' => $datas
         );
 
@@ -109,7 +109,7 @@ class usermsg_con
     {
         $filename = "";
         if (!empty($_FILES)) {
-            if (!$this->updateFile($filename)) return returnAPI([], 1, "upload_err");
+            if (!updateImg($filename, "")) return returnAPI([], 1, "upload_err");
         }
 
         $userDao = new user_dao;
@@ -119,20 +119,5 @@ class usermsg_con
         } else {
             return returnAPI([], 1, "upd_err");
         }
-    }
-
-    private function updateFile(&$filename)
-    {
-        if (empty($_FILES)) return false;
-        $type = pathinfo($_FILES["file"]["name"]);
-        if (!isset($type["extension"])) return false;
-        if (!in_array($type["extension"], ["jpg", "gif", "jpeg", "png", "bmp"])) return false;
-        $path = "./resources/img";
-        if (!is_dir($path)) {
-            mkdir($path);
-        }
-        $crmn = "userphoto" . date("YmdHis") . "." . $type["extension"];
-        $filename = $crmn;
-        return move_uploaded_file($_FILES["file"]["tmp_name"], "$path/$crmn");
     }
 }

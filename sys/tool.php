@@ -38,3 +38,13 @@ function updateImg(&$filename, string $url, string $name = "", $key = "file")
     $filename = $name . date("YmdHis") . "." . $type["extension"];
     return move_uploaded_file($_FILES[$key]["tmp_name"], "$path/$filename");
 }
+
+/**
+ * 取得圖片路徑
+ * @param string $dir 資料夾名稱/資料夾名稱
+ * @param string $fileName 檔案名稱
+ */
+function getImgUrl(string $dir, string $fileName): string
+{
+    return "/resources/img/" . $dir . "/" . $fileName;
+}
