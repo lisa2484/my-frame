@@ -39,7 +39,7 @@ class usermsg_con
 
         $data_arr = array(
             'nickname' => $ndatas[0]['user_name'],
-            'photo' => "resources/img/" . $ndatas[0]['img_name'],
+            'photo' => getImgUrl("", $ndatas[0]['img_name']),
             "total" => $msgtotal,
             "totalpage" => $totalpage,
             "page" => $page,
@@ -142,5 +142,4 @@ class usermsg_con
             return returnAPI([], 1, "upd_err");
         }
     }
-
 }

@@ -16,7 +16,7 @@ class chatroom_set_con
     function getWebData()
     {
         $imgkey_arr = ['logo_img', 'service_img', 'visitor_img'];
-        
+
         $wsDao = new web_set_dao;
         $datas = $wsDao->getWebSetList();
         $keys = self::getChatroomSetKey();
@@ -37,7 +37,7 @@ class chatroom_set_con
                     if ($d == "toolbar_set") {
                         $repArr[$k] = html_entity_decode($rDatas[$d]);
                     } else if (in_array($d, $imgkey_arr)) {
-                        $repArr[$k] = "resources/img/" . $rDatas[$d];
+                        $repArr[$k] = getImgUrl("", $rDatas[$d]);
                     } else {
                         $repArr[$k] = $rDatas[$d];
                     }
@@ -53,7 +53,7 @@ class chatroom_set_con
     {
         $key_arr = ['logo_i', 'ser_i', 'vis_i'];
         $keys = self::getChatroomSetKey();
-        
+
         if (empty($_FILES)) {
             $keys = self::getChatroomSetKey();
             foreach (array_keys($_POST) as $p) {

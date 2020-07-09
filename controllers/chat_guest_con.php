@@ -50,7 +50,7 @@ class chat_guest_con
         foreach ($datas as $data) {
             $arr["id"] = $data["id"];
             $arr["content"] = $data["content"];
-            $arr["file"] = (empty($data["filename"]) ? "" : '/resources/img/chatroom/' . $_SESSION["chatroomid"] . '/' . $data["filename"]);
+            $arr["file"] = (empty($data["filename"]) ? "" : getImgUrl('chatroom/' . $_SESSION["chatroomid"], $data["filename"]));
             $arr["date"] = date("Y-m-d", $data["time"]);
             $arr["time"] = date("H:i:s", $data["time"]);
             switch ($data["msg_from"]) {
@@ -227,7 +227,7 @@ class chat_guest_con
                         case "logo_i":
                         case "ser_i":
                         case "vis_i":
-                            $repArr[$k] = "/resources/img/" . $rDatas[$d];
+                            $repArr[$k] = getImgUrl("", $rDatas[$d]);
                             break;
                         default:
                             $repArr[$k] = $rDatas[$d];

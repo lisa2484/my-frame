@@ -22,7 +22,7 @@ class chatroom_menu_set_con
         foreach ($datas as $keys => $values) {
             foreach ($datas[$keys] as $key => $value) {
                 if ($key == "filename") {
-                    $menudata[$keys][$key] = "resources/img/chatroom_menu/" . $value;
+                    $menudata[$keys][$key] = getImgUrl("chatroom_menu", $value);
                 } else {
                     $menudata[$keys][$key] = $value;
                 }
@@ -44,8 +44,8 @@ class chatroom_menu_set_con
         } else {
             $sort = $cmDao->getMaxSort() + 1;
         }
-        
-        if (empty($_FILES)) return returnAPI([], 1, "param_empty");        
+
+        if (empty($_FILES)) return returnAPI([], 1, "param_empty");
         if (!is_numeric($sort)) return returnAPI([], 1, "add_err");
         $filename = "";
         if (!updateImg($filename, "/chatroom_menu", "crmn_")) return returnAPI([], 1, "upload_err");
@@ -61,7 +61,7 @@ class chatroom_menu_set_con
     function set()
     {
         $cmDao = new chatroom_menu_dao;
-        
+
         if (!key_exists("id", $_POST) || !is_numeric($_POST["id"])) return returnAPI([], 1, "param_err");
         $id = $_POST["id"];
         $title = "";
@@ -84,7 +84,7 @@ class chatroom_menu_set_con
             if (!updateImg($filename, "/chatroom_menu", "crmn_")) return returnAPI([], 1, "upload_err");
         }
         if ($filename != "") $updateArr["filename"] = $filename;
-        
+
         if ($cmDao->setMenuUpdate($id, $updateArr)) return returnAPI([]);
         return returnAPI([], 1, "upd_err");
     }

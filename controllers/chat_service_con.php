@@ -163,7 +163,7 @@ class chat_service_con
             foreach ($datas as $data) {
                 $arr["id"] = $data["id"];
                 $arr["content"] = $data["content"];
-                $arr["file"] = (empty($data["filename"]) ? "" : '/resources/img/chatroom/' . $id . '/' . $data["filename"]);
+                $arr["file"] = (empty($data["filename"]) ? "" : getImgUrl('chatroom/' . $id, $data["filename"]));
                 $arr["date"] = date("Y-m-d", $data["time"]);
                 $arr["time"] = date("H:i:s", $data["time"]);
                 switch ($data["msg_from"]) {
