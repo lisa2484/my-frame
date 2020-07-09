@@ -12,9 +12,30 @@ class user_dao
      * 抓取使用者資料
      * @return array 回傳table表單資料 MYSQLI_ASSOC
      */
-    function getUser(): array
+    function getUser(string $account, int $limit, int $page): array
     {
-        return DB::select("SELECT `id`,`user_name`,`authority`,`account`,`create_dt` FROM `" . self::$table_name . "` WHERE `is_del` = 0;");
+        $where[] = "`is_del` = 0";
+        if ($account != "") $where[] = "`account` = '" . $account . "'";
+        $str_sql = "";
+        if (!empty($where)) $str_sql = " WHERE " . implode(" AND ", $where);
+        $page = ($page - 1) * $limit;
+
+        return DB::select("SELECT `id`,`user_name`,`authority`,`account`,`create_dt` FROM `" . self::$table_name . "`" . $str_sql . " ORDER BY `id` DESC LIMIT " . $page . "," . $limit . ";");
+    }
+
+    /**
+     * 抓取使用者所有資料
+     * @return array 回傳table表單資料 MYSQLI_ASSOC
+     */
+    function getUserTotal(string $account): int
+    {
+        $where[] = "`is_del` = 0";
+        if ($account != "") $where[] = "`account` = '" . $account . "'";
+        $str_sql = "";
+        if (!empty($where)) $str_sql = " WHERE " . implode(" AND ", $where);
+
+        $total = DB::select("SELECT count(*) FROM " . self::$table_name . $str_sql);
+        return $total[0]['count(*)'];
     }
 
     /**

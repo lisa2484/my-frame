@@ -12,9 +12,28 @@ class user_con
 {
     function init()
     {
+        $adminname = "";
+        if (isset($_POST["adminname"])) $adminname = $_POST["adminname"];
+        if (!isset($_POST["page"])) return returnAPI([], 1, "param_err");
+        $page = $_POST["page"];
+        if (!isset($_POST["limit"])) return returnAPI([], 1, "param_err");
+        $limit = $_POST["limit"];
+
         $userDao = new user_dao;
         $autDao = new authority_dao;
-        $datas = $userDao->getUser();
+
+        $usertotal = $userDao->getUserTotal($adminname);
+
+        $totalpage = ceil($usertotal / $limit);
+        if ($totalpage == 0) {
+            if ($page != 1) {
+                return returnAPI([], 1, "param_err");
+            }
+        } else {
+            if ($page > $totalpage) return returnAPI([], 1, "param_err");
+        }
+
+        $datas = $userDao->getUser($adminname, $limit, $page);
         $authority = $autDao->getUserType();
         $autArr = [];
         foreach ($authority as $a) {
@@ -23,7 +42,7 @@ class user_con
         foreach ($datas as $k => $d) {
             $datas[$k]["authority_name"] = $autArr[$d["authority"]];
         }
-        return returnAPI(["list" => $datas, "authority_list" => $authority]);
+        return returnAPI(["total" => $usertotal, "totalpage" => $totalpage, "page" => $page, "list" => $datas, "authority_list" => $authority]);
     }
 
     function addUser()

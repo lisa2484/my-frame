@@ -22,7 +22,7 @@ class chatroom_menu_set_con
         foreach ($datas as $keys => $values) {
             foreach ($datas[$keys] as $key => $value) {
                 if ($key == "filename") {
-                    $menudata[$keys][$key] = "resources/chatroom_menu/" . $value;
+                    $menudata[$keys][$key] = "resources/img/chatroom_menu/" . $value;
                 } else {
                     $menudata[$keys][$key] = $value;
                 }
@@ -48,7 +48,7 @@ class chatroom_menu_set_con
         if (empty($_FILES)) return returnAPI([], 1, "param_empty");        
         if (!is_numeric($sort)) return returnAPI([], 1, "add_err");
         $filename = "";
-        if (!$this->updateFile($filename)) return returnAPI([], 1, "add_err");
+        if (!updateImg($filename, "/chatroom_menu", "crmn_")) return returnAPI([], 1, "upload_err");
         if ($cmDao->getSort($sort) != 0) return returnAPI([], 1, "sort_err");
         $insertArr["title"] = $_POST["title"];
         $insertArr["url"] = $_POST["url"];
@@ -81,7 +81,7 @@ class chatroom_menu_set_con
         if (empty($updateArr) && empty($_FILES)) return returnAPI([], 1, "param_empty");
         $filename = "";
         if (!empty($_FILES)) {
-            if (!$this->updateFile($filename)) return returnAPI([], 1, "upd_err");
+            if (!updateImg($filename, "/chatroom_menu", "crmn_")) return returnAPI([], 1, "upload_err");
         }
         if ($filename != "") $updateArr["filename"] = $filename;
         
@@ -111,20 +111,5 @@ class chatroom_menu_set_con
         $cmDao = new chatroom_menu_dao;
         if ($cmDao->setDelete($_POST["id"])) return returnAPI([]);
         return returnAPI([], 1, "del_err");
-    }
-
-    private function updateFile(&$filename)
-    {
-        if (empty($_FILES)) return false;
-        $type = pathinfo($_FILES["file"]["name"]);
-        if (!isset($type["extension"])) return false;
-        if (!in_array($type["extension"], ["jpg", "gif", "jpeg", "png", "bmp"])) return false;
-        $path = "./resources/chatroom_menu";
-        if (!is_dir($path)) {
-            mkdir($path);
-        }
-        $crmn = "crmn" . date("YmdHis") . "." . $type["extension"];
-        $filename = $crmn;
-        return move_uploaded_file($_FILES["file"]["tmp_name"], "$path/$crmn");
     }
 }

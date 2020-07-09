@@ -129,25 +129,10 @@ class chatroom_set_con
     {
         $filename = "";
         if (!empty($_FILES)) {
-            if (!$this->updateFile($filename, $key)) return "upload_err";
+            if (!updateImg($filename, "", "chatroom_" . $key . "_", $key)) return "upload_err";
             return $filename;
         } else {
             return "file_err";
         }
-    }
-
-    private function updateFile(&$filename, $key)
-    {
-        if (empty($_FILES)) return false;
-        $type = pathinfo($_FILES[$key]["name"]);
-        if (!isset($type["extension"])) return false;
-        if (!in_array($type["extension"], ["jpg", "gif", "jpeg", "png", "bmp"])) return false;
-        $path = "./resources/img";
-        if (!is_dir($path)) {
-            mkdir($path);
-        }
-        $crmn = "chatroom_". $key . "_" . date("YmdHis") . "." . $type["extension"];
-        $filename = $crmn;
-        return move_uploaded_file($_FILES[$key]["tmp_name"], "$path/$crmn");
     }
 }
