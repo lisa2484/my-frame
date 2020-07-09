@@ -12,15 +12,37 @@ class usermsg_con
 {
     function init()
     {
+        $tag = "";
+        if (isset($_POST["tag"])) $tag = $_POST["tag"];
+        if (!isset($_POST["page"])) return returnAPI([], 1, "param_err");
+        $page = $_POST["page"];
+        if (!isset($_POST["limit"])) return returnAPI([], 1, "param_err");
+        $limit = $_POST["limit"];
+
         $userDao = new user_dao;
         $usermsgDao = new usermsg_dao;
 
         $ndatas = $userDao->getUserByID($_SESSION["id"]);
-        $datas = $usermsgDao->getUserMsg($_SESSION["id"]);
+
+        $msgtotal = $usermsgDao->getUserMsgTotal($_SESSION["id"], $tag);
+
+        $totalpage = ceil($msgtotal / $limit);
+        if ($totalpage == 0) {
+            if ($page != 1) {
+                return returnAPI([], 1, "param_err");
+            }
+        } else {
+            if ($page > $totalpage) return returnAPI([], 1, "param_err");
+        }
+
+        $datas = $usermsgDao->getUserMsg($_SESSION["id"], $tag, $limit, $page);
 
         $data_arr = array(
             'nickname' => $ndatas[0]['user_name'],
             'photo' => "resources/img/" . $ndatas[0]['img_name'],
+            "total" => $msgtotal,
+            "totalpage" => $totalpage,
+            "page" => $page,
             'msglist' => $datas
         );
 
@@ -109,7 +131,7 @@ class usermsg_con
     {
         $filename = "";
         if (!empty($_FILES)) {
-            if (!$this->updateFile($filename)) return returnAPI([], 1, "upload_err");
+            if (!updateImg($filename, "", "userphoto_")) return returnAPI([], 1, "upload_err");
         }
 
         $userDao = new user_dao;
@@ -121,18 +143,4 @@ class usermsg_con
         }
     }
 
-    private function updateFile(&$filename)
-    {
-        if (empty($_FILES)) return false;
-        $type = pathinfo($_FILES["file"]["name"]);
-        if (!isset($type["extension"])) return false;
-        if (!in_array($type["extension"], ["jpg", "gif", "jpeg", "png", "bmp"])) return false;
-        $path = "./resources/img";
-        if (!is_dir($path)) {
-            mkdir($path);
-        }
-        $crmn = "userphoto" . date("YmdHis") . "." . $type["extension"];
-        $filename = $crmn;
-        return move_uploaded_file($_FILES["file"]["tmp_name"], "$path/$crmn");
-    }
 }

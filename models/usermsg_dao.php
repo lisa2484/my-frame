@@ -6,9 +6,28 @@ class usermsg_dao
 {
     private static $table_name = "usermsg";
 
-    function getUserMsg($userid): array
+    function getUserMsg($userid, string $tag, int $limit, int $page): array
     {
-        return DB::select("SELECT `id`, `tag`, `msg`, `sort` FROM " . self::$table_name . " WHERE `user_id` = " . $userid . " AND `is_del` = 0 ORDER BY `sort` ASC ");
+        $where[] = "`user_id` = " . $userid;
+        $where[] = "`is_del` = 0";
+        if ($tag != "") $where[] = "`tag` = '" . $tag . "'";
+        $str_sql = "";
+        if (!empty($where)) $str_sql = " WHERE " . implode(" AND ", $where);
+        $page = ($page - 1) * $limit;
+        
+        return DB::select("SELECT `id`, `tag`, `msg`, `sort` FROM " . self::$table_name . $str_sql . " ORDER BY `sort` ASC LIMIT " . $page . "," . $limit . ";");
+    }
+
+    function getUserMsgTotal($userid, string $tag): int
+    {
+        $where[] = "`user_id` = " . $userid;
+        $where[] = "`is_del` = 0";
+        if ($tag != "") $where[] = "`tag` = '" . $tag . "'";
+        $str_sql = "";
+        if (!empty($where)) $str_sql = " WHERE " . implode(" AND ", $where);
+
+        $total = DB::select("SELECT count(*) FROM " . self::$table_name . $str_sql);
+        return $total[0]['count(*)'];
     }
 
     function getSort($sort)
