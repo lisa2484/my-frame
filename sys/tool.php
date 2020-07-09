@@ -31,7 +31,7 @@ function updateImg(&$filename, string $url, string $name = "", $key = "file")
     $type = pathinfo($_FILES[$key]["name"]);
     if (!isset($type["extension"])) return false;
     if (!in_array(strtolower($type["extension"]), ["jpg", "gif", "jpeg", "png", "bmp"])) return false;
-    $path = "./resources/" . $url;
+    $path = "./resources/img/" . $url;
     if (!is_dir($path)) {
         mkdir($path, 0777, true);
     }
