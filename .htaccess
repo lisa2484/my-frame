@@ -7,7 +7,7 @@
 RewriteEngine On
 
 RewriteCond %{REQUEST_FILENAME} !^.*/(resources)/(css|js|fonts)/(.*)\.(js|css|otf|eot|svg|ttf|woff|woff2|map)$
-RewriteCond %{REQUEST_FILENAME} !^.*/(resources)/(img)/(.*)\.(gif|jpg|jpeg|png|bmp)$
+RewriteCond %{REQUEST_FILENAME} !^.*/(resources)/*/(.*)\.(gif|jpg|jpeg|png|bmp)$
 #RewriteRule ^ ${DOCUMENT_ROOT}/template2/$1/$2/$3.$4
 #RewriteCond %{REQUEST_FILENAME} !-f
 #RewriteCond %{REQUEST_FILENAME} !-d
