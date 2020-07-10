@@ -14,9 +14,23 @@ class whitelist_dao
      * @param int $limit 要抓取的筆數
      * @return array 回傳table表單資料 MYSQLI_ASSOC
      */
-    function getList(int $page, int $limit): array
+    function getList(string $ip, int $page, int $limit): array
     {
-        return DB::select("SELECT `id`, `ip`, `creator`, `updater` FROM `" . self::$table . "` WHERE `is_del` = 0 LIMIT " . ($page - 1) * $limit . "," . $limit . ";");
+        $where[] = "`is_del` = 0";
+        if ($ip != "") $where[] = "`ip` = '" . $ip . "'";
+        $str_sql = "";
+        if (!empty($where)) $str_sql = "WHERE " . implode(" AND ", $where);
+
+        return DB::select("SELECT `id`, `ip`, `creator`, `updater` FROM `" . self::$table . "` " . $str_sql . " LIMIT " . ($page - 1) * $limit . "," . $limit . ";");
+    }
+
+    function getTotalList(string $ip): int
+    {
+        $ipsql = "";
+        if ($ip != "") $ipsql = "AND `ip` = '" . $ip . "'";
+
+        $total = DB::select("SELECT count(*) FROM `" . self::$table . "` WHERE `is_del` = 0 " . $ipsql);
+        return $total[0]['count(*)'];
     }
 
     /**

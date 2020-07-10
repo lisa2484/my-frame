@@ -17,12 +17,19 @@ class whitelist_con
 
     function getWhitelistList()
     {
+        $ip = "";
+        if (isset($_POST["ip"])) {
+            $ip = $_POST["ip"];
+            if (!filter_var($ip, FILTER_VALIDATE_IP)) return returnAPI([], 1, "param_err");
+        }
         if (!key_exists("page", $_POST)) return returnAPI([], 1, "param_empty");
         $page = $_POST["page"];
         if (!key_exists("limit", $_POST)) return returnAPI([], 1, "param_empty");
         $limit = $_POST["limit"];
         $wDao = new whitelist_dao;
-        $datas = $wDao->getList($page, $limit);
+        $totaldata = $wDao->getTotalList($ip);
+        $totalpage = ceil($totaldata / $limit);
+        $datas = $wDao->getList($ip, $page, $limit);
 
         $wsDao = new web_set_dao;
         $data = $wsDao->getWebSetListBySetKey("whitelist_switch");
@@ -34,6 +41,9 @@ class whitelist_con
 
         $data_arr = array(
             'switch' => $switch,
+            'total' => $totaldata,
+            'totalpage' => $totalpage,
+            'page' => $page,
             'list' => $datas
         );
 

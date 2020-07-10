@@ -38,6 +38,12 @@ class usermsg_dao
         return $sortsount[0]['count(*)'];
     }
 
+    function getSortValue($id)
+    {
+        $sortsount = DB::select("SELECT `sort` FROM " . self::$table_name . " WHERE `id` = " . $id . " AND `is_del` = 0 limit 1 ");
+        return $sortsount[0]['sort'];
+    }
+
     function addUserMsg($userid, string $settag, string $msg, int $sort): bool
     {
         return DB::DBCode("INSERT INTO `" . self::$table_name . "` (`user_id`, `tag`, `msg`, `sort`, `creator`, `create_dt`, `create_ip`) 

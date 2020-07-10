@@ -58,7 +58,7 @@ class login_con
         $user = $userDao->getUserByID($_SESSION["id"]);
 
         $data_arr = array(
-            'nickname' => $user[0]['user_name'],
+            'account' => $user[0]['account'],
             'year' => date("Y", $timedata),
             'month' => date("m", $timedata),
             'day' => date("d", $timedata),

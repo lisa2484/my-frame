@@ -85,7 +85,10 @@ class usermsg_con
 
         $usermsgDao = new usermsg_dao;
 
-        if ($usermsgDao->getSort($sort) != 0) return returnAPI([], 1, "sort_err");
+        if ($sort != $usermsgDao->getSortValue($id)) {
+            if ($usermsgDao->getSort($sort) != 0) return returnAPI([], 1, "sort_err");
+        }
+        
         if ($usermsgDao->updUserMsg($_SESSION["id"], $id, $tag, $msg, $sort)) {
             return returnAPI([]);
         } else {
