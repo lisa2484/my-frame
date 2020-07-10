@@ -30,10 +30,14 @@ class ErrorMessage
 		$arr["userset_pwd_repeat"] = "新密码不可与旧密码相同";
 		$arr["action_log_err"] = "功能记录失败，将不进行任何修改";
 		$arr["chatroom_create_err"] = "聊天室建立失败";
+		$arr["chatroom_null"] = "此聊天室已不存在";
 		$arr["chatroom_exist"] = "聊天室已存在";
 		$arr["chatroom_empty"] = "聊天室尚未建立";
 		$arr["chatroom_insert_err"] = "聊天室留言失败";
+		$arr["chatroom_key_short"] = "关键字过短，请增加关键字长度";
+		$arr["chatroom_service_offline"] = "目前尚无客服在线，请稍后在试";
 		$arr["chatroom_over"] = "此聊天室已关闭";
+		$arr["autoservice_err"] = "智能客服发生错误";
 		$arr["service_empty"] = "此客服已离线";
 		$arr["service_transfer_err"] = "转交失败，请确认伺服器状态后在试一次";
 		//mysql

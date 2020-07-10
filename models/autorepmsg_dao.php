@@ -40,6 +40,23 @@ class autorepmsg_dao
         return $req[0]["i"];
     }
 
+    function getMsgByChatroom(string $key): string
+    {
+        $time = time();
+        $datestr = date("Y-m-d", $time);
+        $timestr = date("H:i:s", $time);
+        $data = DB::select("SELECT `msg`
+                            FROM `" . self::$table . "`
+                            WHERE `is_del` = 0
+                            AND `onf` = 1
+                            AND '" . $datestr . "' BETWEEN `start_d` AND `end_d`
+                            AND '" . $timestr . "' BETWEEN `start_t` AND `end_t`
+                            AND '" . $key . "' LIKE CONCAT('%',`keyword`,'%')
+                            LIMIT 1;");
+        if (empty($data)) return "";
+        return $data[0]["msg"];
+    }
+
     /**
      * 取得資料 依時間與開啟狀況
      */

@@ -25,9 +25,11 @@ class searchautorep_dao
         return DB::select("SELECT `id`, `msg`, `onf` FROM `" . self::$table_name . "` WHERE `is_del` = 0 AND `msg` LIKE '%$keyword%' ORDER BY `create_dt` DESC LIMIT " . $limit . " OFFSET " . $offset);
     }
 
-    function getRepForBot(): array
+    function getRepForBot(): string
     {
-        return DB::select("SELECT `msg` FROM `" . self::$table_name . "` WHERE `is_del` = 0 AND `onf` = 1 ORDER BY RAND() LIMIT 1");
+        $data = DB::select("SELECT `msg` FROM `" . self::$table_name . "` WHERE `is_del` = 0 AND `onf` = 1 ORDER BY RAND() LIMIT 1");
+        if (empty($data)) return "";
+        return $data[0]["msg"];
     }
 
     function addSearchAutoRep(string $msg): bool

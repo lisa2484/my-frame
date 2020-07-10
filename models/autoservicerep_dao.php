@@ -13,13 +13,22 @@ class autoservicerep_dao
                            WHERE `is_del` = 0");
     }
 
-    function getResponseForParentId(int $parentId)
+    function getResponseForParentId(int $parentId): array
     {
-        return DB::select("SELECT `id`,`title`,`msg` 
+        return DB::select("SELECT `id`,`msg` 
                            FROM `" . self::$table . "` 
                            WHERE `is_del` = 0
                            AND `onf` = 1 
                            AND `parent_id` = '" . $parentId . "';");
+    }
+
+    function getResponseForLink(string $say): array
+    {
+        return DB::select("SELECT `id`
+                           FROM `" . self::$table . "`
+                           WHERE `is_del` = 0
+                           AND `onf` = 1
+                           AND `msg` LIKE '%" . $say . "%'");
     }
 
     function getSortRepeat(int $sort): bool

@@ -8,34 +8,59 @@ include "./models/user_online_status_dao.php";
 include "./models/messages_dtl_dao.php";
 include "./models/autorepmsg_dao.php";
 include "./models/searchautorep_dao.php";
+include "./models/autoservicerep_dao.php";
+include "./models/chatroom_menu_dao.php";
 
 use app\models\messages_main_dao;
 use app\models\user_online_status_dao;
 use app\models\web_set_dao;
 use app\models\messages_dtl_dao;
 use app\models\autorepmsg_dao;
+use app\models\autoservicerep_dao;
 use app\models\searchautorep_dao;
+use app\models\chatroom_menu_dao;
 
 class chat_guest_con
 {
     private $autoservice_sw;
     private $wsDao;
+    private $time;
 
     function __construct()
     {
         $this->autoservice_sw = $this->getWebSet("bot_autoservice_switch");
+        $this->time = time();
     }
 
     function init()
     {
-        if (isset($_SESSION["chatroomid"])) return returnAPI([], 1, "chatroom_exist");
-        if (!$this->createChatRoom($name)) return returnAPI([], 1, "chatroom_create_err");
+        if (!isset($_SESSION["chatroomid"])) if (!$this->createChatRoom($name)) return returnAPI([], 1, "chatroom_create_err");
+        if (!isset($name)) {
+            $mmDao = new messages_main_dao;
+            $data = $mmDao->getMsgByID($_SESSION["chatroomid"]);
+            if (empty($data)) return returnAPI([], 1, "chatroom_null");
+            $name = $data[0]["user_id"];
+        }
         $web_data = $this->getWebData();
+        $cmsDao = new chatroom_menu_dao;
+        $menu_data = $cmsDao->getMenuSet();
+        if (!empty($this->autoservice_sw)) {
+            $wel_swi = $this->getWebSet("bot_welcome_switch");
+            if (!empty($wel_swi)) $wel = $this->getWebSet("bot_welcome");
+        }
+        if ($name == "智能客服") {
+            $asrDao = new autoservicerep_dao;
+            $amsg = $asrDao->getResponseForParentId(0);
+        }
         $data_arr = array(
+            'chatroom_id' => $_SESSION["chatroomid"],
             'chatroom_set' => $web_data,
+            'chatroom_type' => ($name == "智能客服" ? 'bot' : 'service'),
+            'menu_set' => $menu_data,
             'service' => $name,
             'autoservice' => $this->autoservice_sw,
-            'welcome' => ''
+            'autoservice_msg' => (isset($amsg) ? $amsg : []),
+            'welcome' => (isset($wel) ? $wel : "")
         );
         return returnAPI($data_arr);
     }
@@ -75,76 +100,103 @@ class chat_guest_con
     {
         if (!isset($_POST["say"]) || ($_POST["say"] == "" && empty($_FILES))) return returnAPI([], 1, "param_err");
         $mmDao = new messages_main_dao;
+        if (!isset($_SESSION["chatroomid"])) return returnAPI([], 1, "chatroom_empty");
         $data = $mmDao->getMsgByID($_SESSION["chatroomid"]);
         if (empty($data)) return returnAPI([], 1, "chatroom_empty");
         if (in_array($data[0]["status"], [2, 3])) return returnAPI([], 1, "chatroom_over");
+        $filename = "";
         if (isset($_FILES["file"])) if (!updateImg($filename, "chatroom/" . $_SESSION["chatroomid"], "guest" . $_SESSION["chatroomid"])) return returnAPI([], 1, "upload_err");
         $mdDao = new messages_dtl_dao;
-        $time = time();
-        $mdinsert["main_id"] = $_SESSION["chatroomid"];
-        $mdinsert["msg_from"] = 1;
-        $mdinsert["content"] = $_POST["say"];
-        $mdinsert["time"] = $time;
-        if (isset($filename)) $mdinsert["filename"] = $filename;
-        $id = 0;
-        if (!$mdDao->setMsgInsert($mdinsert, $id)) return returnAPI([], 1, "chatroom_insert_err");
+        $id = $this->setMsgSave($mdDao, 1, $_POST["say"], $filename);
+        if (empty($id)) return returnAPI([], 1, "chatroom_insert_err");
         $mmupdate["circle_count"] = 1;
-        $mmupdate["end_time"] = $time;
+        $mmupdate["end_time"] = $this->time;
         if (!$mmDao->setMsgUpdate($_SESSION["chatroomid"], $mmupdate)) return returnAPI([], 1, "chatroom_insert_err");
-        $rep["reply"] = "";
-        $rep["id"] = $id;
-        if ($data[0]["user_id"] == "智能客服") {
-            $bid = 0;
-            $rep["reply"] = $this->botResponse($mdDao, $_POST["say"], $bid);
-            if (!empty($bid)) $rep["id"] = $bid;
-        }
-        return returnAPI($rep);
+        return returnAPI(["msg_id" => $id]);
     }
 
-    // function getBotResponse()
-    // {
-    // }
+    /**智能客服 */
+    function getAutoService()
+    {
+        if (!isset($_SESSION["chatroomid"])) return returnAPI([], 1, "chatroom_empty");
+        $asrDao = new autoservicerep_dao;
+        $sarDao = new searchautorep_dao;
+        if (isset($_POST["id"])) {
+            if (!is_numeric($_POST["id"])) return returnAPI([], 1, "param_err");
+            $msgs = $asrDao->getResponseForParentId($_POST["id"]);
+            if (empty($msgs)) {
+                return $this->repBotMsg($sarDao->getRepForBot());
+            }
+            return $this->repBotMsg($msgs);
+        }
+        if (isset($_POST["say"])) {
+            if (strlen($_POST["say"]) < 1) return returnAPI([], 1, "chatroom_key_short");
+            $datas = $asrDao->getResponseForLink($_POST["say"]);
+            if (empty($datas)) {
+                $armDao = new autorepmsg_dao;
+                $msg = $armDao->getMsgByChatroom($_POST["say"]);
+                if (!empty($msg)) return $this->repBotMsg($msg);
+                return $this->repBotMsg($sarDao->getRepForBot());
+            }
+            foreach ($datas as $d) {
+                $m = $asrDao->getResponseForParentId($d["id"]);
+                if (!empty($m)) return $this->repBotMsg($m);
+            }
+            return $this->repBotMsg($sarDao->getRepForBot());
+        }
+        return returnAPI([], 1, "param_err");
+    }
 
+    /**轉交人工 */
+    function setTransfer()
+    {
+        if (!isset($_SESSION["chatroomid"])) return returnAPI([], 1, "chatroom_empty");
+        $uosDao = new user_online_status_dao;
+        $user = $uosDao->getUserIsOnline();
+        if (empty($user)) return returnAPI([], 1, "chatroom_service_offline");
+        $mmDao = new messages_main_dao;
+        if ($mmDao->setMsgUpdate($_SESSION["chatroomid"], ["user_id" => $user[0]["account"]])) return returnAPI([]);
+        return returnAPI([], 1, "upd_err");
+    }
+
+    /**離開聊天室 */
     function setUnsetChatroom()
     {
         unset($_SESSION["chatroomid"]);
         return returnAPI([]);
     }
 
-    private function botResponse(messages_dtl_dao $mdDao, string $say, int &$id = 0): string
+    /**機器人回傳訊息與紀錄 */
+    private function repBotMsg($say)
     {
-        $automsg = $this->getAutorepmsg($say);
-        if ($automsg == "") {
-            $sarDao = new searchautorep_dao;
-            $req = $sarDao->getRepForBot();
-            if (!empty($req)) $automsg = $req[0]["msg"];
-        }
-        if ($automsg != "") {
-            $mdinsert["main_id"] = $_SESSION["chatroomid"];
-            $mdinsert["msg_from"] = 3;
-            $mdinsert["content"] = $automsg;
-            $mdinsert["time"] = time();
-            if (!$mdDao->setMsgInsert($mdinsert, $id)) return "";
-        }
-        return $automsg;
-    }
-
-    private function getAutorepmsg($say): string
-    {
-        $armDao = new autorepmsg_dao;
-        $keys = $armDao->getMsgWhereTimeAndOnf();
-        foreach ($keys as $d) {
-            if (mb_strstr($say, $d["keyword"])) {
-                return $d["msg"];
+        if (is_array($say)) {
+            foreach ($say as $d) {
+                $arr[] = $d["msg"];
             }
+            $id = $this->setMsgSave(new messages_dtl_dao, 3, implode("<br>", $arr));
+            return returnAPI(["msg_id" => $id, "type" => "array", "msg" => $say]);
         }
-        return "";
+        if (is_string($say)) {
+            $id = $this->setMsgSave(new messages_dtl_dao, 3, $say);
+            return returnAPI(["msg_id" => $id, "type" => "string", "msg" => $say]);
+        }
+        return returnAPI([], 1, "autoservice_err");
     }
 
-    private function getWelcome()
+    /**儲存聊天紀錄 */
+    private function setMsgSave(messages_dtl_dao &$mdDao, int $from, string $say, string $fileName = "")
     {
+        $id = 0;
+        $insert["main_id"] = $_SESSION["chatroomid"];
+        $insert["msg_from"] = $from;
+        $insert["content"] = $say;
+        $insert["filename"] = $fileName;
+        $insert["time"] = $this->time;
+        $mdDao->setMsgInsert($insert, $id);
+        return $id;
     }
 
+    /**建立聊天室 */
     private function createChatRoom(&$name)
     {
         if (!isset($_POST["env"])) {
@@ -174,7 +226,7 @@ class chat_guest_con
         }
         $mmDao = new messages_main_dao;
         $id = 0;
-        $time = time();
+        $time = $this->time;
         $insertArr["member_env"] = $_POST["env"];
         $insertArr["member_from"] = $_POST["env"];
         $insertArr["user_id"] = $user;
@@ -190,17 +242,19 @@ class chat_guest_con
         return true;
     }
 
-    private function getWebSet($key)
+    /**取得設定 */
+    private function getWebSet($key): int
     {
         if (!isset($this->wsDao)) $this->wsDao = new web_set_dao;
         $data = $this->wsDao->getWebSetListBySetKey($key);
-        if (empty($data)) {
+        if (!isset($data[0]["value"]) || empty($data[0]["value"])) {
             return 0;
         } else {
             return $data[0]["value"];
         }
     }
 
+    /**取得聊天室設定 */
     private function getWebData()
     {
         if (!isset($this->wsDao)) $this->wsDao = new web_set_dao;
