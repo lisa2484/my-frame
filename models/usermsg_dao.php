@@ -6,16 +6,18 @@ class usermsg_dao
 {
     private static $table_name = "usermsg";
 
-    function getUserMsg($userid, string $tag, int $limit, int $page): array
+    function getUserMsg($userid, string $tag = "", int $limit = 0, int $page = 0): array
     {
         $where[] = "`user_id` = " . $userid;
         $where[] = "`is_del` = 0";
         if ($tag != "") $where[] = "`tag` = '" . $tag . "'";
-        $str_sql = "";
-        if (!empty($where)) $str_sql = " WHERE " . implode(" AND ", $where);
-        $page = ($page - 1) * $limit;
-        
-        return DB::select("SELECT `id`, `tag`, `msg`, `sort` FROM " . self::$table_name . $str_sql . " ORDER BY `sort` ASC LIMIT " . $page . "," . $limit . ";");
+        if ($limit != 0 && $page != 0) {
+            $page = ($page - 1) * $limit;
+            $limit = " LIMIT " . $page . "," . $limit . ";";
+        } else {
+            $limit = "";
+        }
+        return DB::select("SELECT `id`, `tag`, `msg`, `sort` FROM `" . self::$table_name . "` WHERE " . implode(" AND ", $where) . " ORDER BY `sort` ASC " . $limit);
     }
 
     function getUserMsgTotal($userid, string $tag): int
@@ -63,5 +65,5 @@ class usermsg_dao
                                `update_dt` = '" . date("Y-m-d H:i:s") . "',
                                `update_ip` = '" . getRemoteIP() . "'
                            WHERE `id` IN (" . implode(",", $id) . ")");
-    } 
+    }
 }

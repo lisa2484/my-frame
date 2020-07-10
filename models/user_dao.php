@@ -12,7 +12,7 @@ class user_dao
      * 抓取使用者資料
      * @return array 回傳table表單資料 MYSQLI_ASSOC
      */
-    function getUser(string $account, int $limit=0, int $page=0): array
+    function getUser(string $account, int $limit, int $page): array
     {
         $where[] = "`is_del` = 0";
         if ($account != "") $where[] = "`account` = '" . $account . "'";
@@ -20,11 +20,7 @@ class user_dao
         if (!empty($where)) $str_sql = " WHERE " . implode(" AND ", $where);
         $page = ($page - 1) * $limit;
 
-        if ($limit != 0 && $page != 0) {
-            return DB::select("SELECT `id`,`user_name`,`authority`,`account`,`create_dt` FROM `" . self::$table_name . "`" . $str_sql . " ORDER BY `id` DESC LIMIT " . $page . "," . $limit . ";");
-        } else {
-            return DB::select("SELECT `id`,`user_name`,`authority`,`account`,`create_dt` FROM `" . self::$table_name . "` WHERE `is_del` = 0;");
-        }
+        return DB::select("SELECT `id`,`user_name`,`authority`,`account`,`create_dt` FROM `" . self::$table_name . "`" . $str_sql . " ORDER BY `id` DESC LIMIT " . $page . "," . $limit . ";");
     }
 
     /**
