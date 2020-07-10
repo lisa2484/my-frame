@@ -22,10 +22,12 @@ class chatroom_menu_dao
         return $max[0]["m"];
     }
 
-    function getSort($sort)
+    function getSortRepeat(int $sort, int $id = 0): bool
     {
-        $sortsount = DB::select("SELECT count(*) FROM " . self::$table . " WHERE `sort` = " . $sort . " AND `is_del` = 0 limit 1 ");
-        return $sortsount[0]['count(*)'];
+        if (empty($id)) {
+            return empty(DB::select("SELECT `id` FROM `" . self::$table . "` WHERE `sort` = '" . $sort . "' AND `is_del` = 0 LIMIT 1;"));
+        }
+        return empty(DB::select("SELECT `id` FROM `" . self::$table . "` WHERE `sort` = '" . $sort . "' AND `is_del` = 0 AND `id` != '" . $id . "' LIMIT 1;"));
     }
 
     function setMenuInsert(array $insertArr): bool
@@ -56,13 +58,13 @@ class chatroom_menu_dao
                            WHERE `id` = '" . $id . "' AND `is_del` = 0;");
     }
 
-    function setDelete(int $id): bool
+    function setDelete(array $ids): bool
     {
         return DB::DBCode("UPDATE `" . self::$table . "`
                            SET `is_del` = 1,
                                `updater` = '" . $_SESSION["act"] . "',
                                `update_dt` = '" . date("Y-m-d H:i:s") . "',
                                `update_ip` = '" . getRemoteIP() . "'
-                           WHERE `id` = '" . $id . "'");
+                           WHERE `id` IN (" . implode(",", $ids) . ")");
     }
 }
