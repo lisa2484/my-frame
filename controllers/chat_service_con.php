@@ -175,7 +175,7 @@ class chat_service_con
                     case 3:
                         $arr["type"] = "bot";
                 }
-                $arr["service_name"] = ($data["msg_from"] == 3 ? "智能客服" : $data["user_id"]);
+                $arr["service_name"] = ($data["msg_from"] == 3 ? "智能客服" : $data["service_name"]);
                 $reArr[] = $arr;
             }
         }
