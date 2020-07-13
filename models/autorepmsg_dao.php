@@ -14,7 +14,7 @@ class autorepmsg_dao
         $where = "`is_del` = 0";
         if (!empty($whereArr)) {
             foreach ($whereArr as $k => $d) {
-                $where .= " AND `" . $k . "` = '" . $d . "'";
+                $where .= " AND `" . $k . "` LIKE '%" . $d . "%'";
             }
         }
         return DB::select("SELECT `id`,`title`,`keyword`,`msg`,`start_d`,`end_d`,`start_t`,`end_t`,`time_limit`,`onf`
@@ -31,7 +31,7 @@ class autorepmsg_dao
         $where = "`is_del` = 0";
         if (!empty($whereArr)) {
             foreach ($whereArr as $k => $d) {
-                $where .= " AND `" . $k . "` = '" . $d . "'";
+                $where .= " AND `" . $k . "` LIKE '%" . $d . "%'";
             }
         }
         $req = DB::select("SELECT count(`id`) AS i

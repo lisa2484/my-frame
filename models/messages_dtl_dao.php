@@ -32,4 +32,9 @@ class messages_dtl_dao
     {
         DB::DBCode("UPDATE `" . self::$main_table . "` SET `circle_count` = `circle_count` + 1 WHERE `id` = '" . $id . "';");
     }
+
+    function getMessagesMainRecord(int $mainid): array
+    {
+        return DB::select("SELECT * FROM `" . self::$table . "` WHERE `main_id` = '" . $mainid . "'");
+    }
 }

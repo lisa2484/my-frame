@@ -20,11 +20,14 @@ class autorepmsg_con
         if (!key_exists("limit", $_POST) || empty($_POST["limit"])) return returnAPI([], 1, "param_err");
         $limit = $_POST["limit"];
         $where = [];
+        if (key_exists("title", $_POST) && $_POST["title"] != "") $where["title"] = $_POST["title"];
         if (key_exists("keyword", $_POST) && $_POST["keyword"] != "") $where["keyword"] = $_POST["keyword"];
+        if (key_exists("msg", $_POST) && $_POST["msg"] != "") $where["msg"] = $_POST["msg"];
+
         $amsgDao = new autorepmsg_dao;
         $datas = $amsgDao->getAllMsg($page, $limit, $where);
         $total = $amsgDao->getAllMsgTotal($where);
-        return returnAPI(["total" => $total, "datas" => $datas]);
+        return returnAPI(["total" => $total, "totalpage" => ceil($total / $limit), "page" => $page, "datas" => $datas]);
     }
 
     function onfSwitch()

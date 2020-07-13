@@ -3,9 +3,11 @@
 namespace app\controllers;
 
 include "./models/user_dao.php";
+include "./models/messages_dtl_dao.php";
 include "./models/messages_main_dao.php";
 
 use app\models\user_dao;
+use app\models\messages_dtl_dao;
 use app\models\messages_main_dao;
 
 class messages_main_con
@@ -151,5 +153,44 @@ class messages_main_con
         $second = str_pad(($time % 60), 2, "0", STR_PAD_LEFT);
 
         return $hour . ':' . $minute . ':' . $second;
+    }
+
+    function getMsgRecord()
+    {
+        if (!isset($_POST["mainid"])) return returnAPI([], 1, "param_err");
+        if (!is_numeric($_POST["mainid"])) return returnAPI([], 1, "param_err");
+        $mainid = $_POST["mainid"];
+
+        $msgdtl_arr = array();
+
+        $msgdtlDao = new messages_dtl_dao;
+
+        $msgdtldata = $msgdtlDao->getMessagesMainRecord($mainid);
+
+        for ($i = 0; $i < count($msgdtldata); $i++) {
+            switch ($msgdtldata[$i]['msg_from']) {
+                case '1':
+                    $type = "guest";
+                    break;
+                
+                case '2':
+                    $type = "service";
+                    break;
+                    
+                case '3':
+                    $type = "bot";
+                    break;
+            }
+
+            $msgdtl_arr[$i]['id'] = $msgdtldata[$i]['id'];
+            $msgdtl_arr[$i]['content'] = $msgdtldata[$i]['content'];
+            $msgdtl_arr[$i]['file'] = $msgdtldata[$i]['filename'];
+            $msgdtl_arr[$i]['date'] = date("Y-m-d", $msgdtldata[$i]['time']);
+            $msgdtl_arr[$i]['time'] = date("H:i:s", $msgdtldata[$i]['time']);
+            $msgdtl_arr[$i]['type'] = $type;
+            $msgdtl_arr[$i]['service_name'] = $msgdtldata[$i]['service_name'];
+        }
+
+        return returnAPI($msgdtl_arr);
     }
 }
