@@ -88,7 +88,7 @@ class usermsg_con
         if ($sort != $usermsgDao->getSortValue($id)) {
             if ($usermsgDao->getSort($sort) != 0) return returnAPI([], 1, "sort_err");
         }
-        
+
         if ($usermsgDao->updUserMsg($_SESSION["id"], $id, $tag, $msg, $sort)) {
             return returnAPI([]);
         } else {
@@ -134,7 +134,7 @@ class usermsg_con
     {
         $filename = "";
         if (!empty($_FILES)) {
-            if (!updateImg($filename, "", "userphoto_")) return returnAPI([], 1, "upload_err");
+            if (!updateImg($filename, "", "userphoto_" . $_SESSION["id"] . "_")) return returnAPI([], 1, "upload_err");
         }
 
         $userDao = new user_dao;

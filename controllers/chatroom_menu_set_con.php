@@ -69,7 +69,7 @@ class chatroom_menu_set_con
         $updateArr["sort"] = $sort;
         $filename = "";
         if (!empty($_FILES)) {
-            if (!updateImg($filename, "/chatroom_menu", "crmn_")) return returnAPI([], 1, "upload_err");
+            if (!updateImg($filename, "chatroom_menu", "crmn_")) return returnAPI([], 1, "upload_err");
         }
         if ($filename != "") $updateArr["filename"] = $filename;
 

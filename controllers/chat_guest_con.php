@@ -45,6 +45,9 @@ class chat_guest_con
         $web_data = $this->getWebData();
         $cmsDao = new chatroom_menu_dao;
         $menu_data = $cmsDao->getMenuSet();
+        foreach ($menu_data as $k => $d) {
+            $menu_data[$k]["filename"] = getImgUrl("chatroom_menu", $d["filename"]);
+        }
         if ($name == "智能客服") {
             $asrDao = new autoservicerep_dao;
             $amsg = $asrDao->getResponseForParentId(0);
@@ -60,7 +63,7 @@ class chat_guest_con
             'service' => $name,
             'autoservice' => $this->autoservice_sw,
             'autoservice_msg' => (isset($amsg) ? $amsg : []),
-            'welcome' => (isset($wel) ? $wel : "")
+            'welcome' => (isset($wel) ? html_entity_decode($wel) : "")
         ]);
     }
 
@@ -101,6 +104,7 @@ class chat_guest_con
                     $arr["type"] = "bot";
                     $arr["service_name"] = "智能客服";
             }
+            $arr["service_img"] = empty($data["service_img"]) ? "" : getImgUrl("", $data["service_img"]);
             $returnArr[] = $arr;
         }
         return returnAPI([$returnArr]);
@@ -268,6 +272,7 @@ class chat_guest_con
         $insertArr["start_time"] = $time;
         $insertArr["end_time"] = $time;
         $insertArr["member_ip"] = getRemoteIP();
+        if (isset($_POST["loc"]) && !empty($_POST["loc"])) $insertArr["member_loc"] = $_POST["loc"];
         $mmDao->setMsgMainForChatroom($insertArr, $id);
         if (empty($id)) {
             return false;

@@ -6,9 +6,11 @@ include "./models/user_online_status_dao.php";
 include "./models/messages_main_dao.php";
 include "./models/usermsg_dao.php";
 include "./models/messages_dtl_dao.php";
+include "./models/user_dao.php";
 
 use app\models\messages_dtl_dao;
 use app\models\messages_main_dao;
+use app\models\user_dao;
 use app\models\user_online_status_dao;
 use app\models\usermsg_dao;
 
@@ -205,6 +207,7 @@ class chat_service_con
                         $arr["type"] = "bot";
                 }
                 $arr["service_name"] = ($data["msg_from"] == 3 ? "智能客服" : $data["service_name"]);
+                $arr["service_img"] = empty($data["service_img"]) ? "" : getImgUrl("", $data["service_img"]);
                 $reArr[] = $arr;
             }
         }
@@ -221,6 +224,9 @@ class chat_service_con
         if (updateImg($filename, "chatroom/" . $cid, $_SESSION["act"])) $insert["filename"] = $filename;
         $insert["time"] = time();
         $insert["service_name"] = ($_SESSION["name"] == "" ? $_SESSION["act"] : $_SESSION["name"]);
+        $uDao = new user_dao;
+        $img = $uDao->getUserPhoto($_SESSION["id"]);
+        $insert["service_img"] = (empty($img) ? "" : getImgUrl("", $img));
         if (empty($insert["content"]) && $filename) return 0;
         $mdDao->setMsgInsert($insert, $id);
         return $id;
