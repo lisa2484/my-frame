@@ -84,7 +84,6 @@ class messages_main_dao
         foreach ($update as $k => $d) {
             switch ($k) {
                 case 'circle_count':
-                    $upstr[] = "`" . $k . "` = `" . $k . "` + 1";
                     break;
                 case 'rep_len':
                     $upstr[] = "`" . $k . "` = IF(`" . $k . "` = 0," . $d . ",`" . $k . "`)";
@@ -94,5 +93,13 @@ class messages_main_dao
             }
         }
         return DB::DBCode("UPDATE `" . self::$table_name . "` SET " . implode(",", $upstr) . " WHERE `id` = '" . $id . "';");
+    }
+
+    function setMsgStatusOver(int $id): bool
+    {
+        return DB::DBCode("UPDATE `" . self::$table_name . "` 
+                           SET `status` = 3 
+                           WHERE `id` = '" . $id . "' 
+                           AND `status` IN (0,1);");
     }
 }

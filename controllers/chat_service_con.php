@@ -68,7 +68,6 @@ class chat_service_con
         $id = $this->setChatroomDtlInsert($mdDao, $cid, $_POST["say"]);
         if (empty($id)) return returnAPI([], 1, "chatroom_insert_err");
         $mmDao = new messages_main_dao;
-        $this->setChatroomAddCircleCount($mmDao, $cid);
         return returnAPI(["msg_id" => $id]);
     }
 
@@ -176,17 +175,11 @@ class chat_service_con
                     case 3:
                         $arr["type"] = "bot";
                 }
-                $arr["service_name"] = ($data["msg_from"] == 3 ? "智能客服" : $data["service_name"]);
+                $arr["service_name"] = ($data["msg_from"] == 3 ? "智能客服" : $data["user_id"]);
                 $reArr[] = $arr;
             }
         }
         return $reArr;
-    }
-
-    /**設定聊天室訊息數量++ */
-    private function setChatroomAddCircleCount(messages_main_dao &$mmDao, int $id): bool
-    {
-        return $mmDao->setMsgUpdate($id, ["circle_count" => 1, "end_time" => time(), "rep_len" => time()]);
     }
 
     /**聊天室新增訊息 */
