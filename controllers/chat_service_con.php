@@ -159,12 +159,24 @@ class chat_service_con
     private function getOftenMsg(usermsg_dao &$umDao): array
     {
         $reArr = [];
+        $arr = [];
         $usermsgs = $umDao->getUserMsg($_SESSION["id"]);
         if (!empty($usermsgs)) {
             foreach ($usermsgs as $data) {
-                $arr["tag"] = $data["tag"];
-                $arr["msg"] = $data["msg"];
-                $reArr[] = $arr;
+                $arr[$data["tag"]][] = $data["msg"];
+            }
+            $id = 1;
+            foreach ($arr as $k => $d) {
+                $tar = [];
+                $tar["tag"] = $k;
+                $tar["id"] = $id++;
+                $t = [];
+                foreach ($d as $c) {
+                    $t["id"] = $id++;
+                    $t["tag"] = $c;
+                    $tar["content"][] = $t;
+                }
+                $reArr[] = $tar;
             }
         }
         return $reArr;
