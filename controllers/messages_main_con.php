@@ -189,6 +189,7 @@ class messages_main_con
             $msgdtl_arr[$i]['time'] = date("H:i:s", $msgdtldata[$i]['time']);
             $msgdtl_arr[$i]['type'] = $type;
             $msgdtl_arr[$i]['service_name'] = $msgdtldata[$i]['service_name'];
+            $msgdtl_arr[$i]['service_img'] = getImgUrl('chatroom', $msgdtldata[$i]['service_img']);
         }
 
         return returnAPI($msgdtl_arr);
