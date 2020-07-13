@@ -122,6 +122,7 @@ class chat_guest_con
         if (empty($id)) return returnAPI([], 1, "chatroom_insert_err");
         return returnAPI([
             "msg_id" => $id,
+            "file" => (empty($filename) ? "" : getImgUrl("chatroom/" . $_SESSION["chatroomid"], $filename)),
             "date" => date("Y-m-d", $this->time),
             "time" => date("H:i:s", $this->time)
         ]);

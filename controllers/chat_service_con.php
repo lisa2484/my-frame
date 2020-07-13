@@ -14,6 +14,13 @@ use app\models\usermsg_dao;
 
 class chat_service_con
 {
+    private $time;
+
+    function __construct()
+    {
+        $this->time = time();
+    }
+
     function init()
     {
         $uosDao = new user_online_status_dao;
@@ -23,7 +30,12 @@ class chat_service_con
         $onlineType = $this->getUserOnlineType($users);
         $chatroom = $this->getChatroomType($mmDao);
         $usermsg = $this->getOftenMsg($umDao);
-        return returnAPI(["online" => $onlineType, "service" => $users, "chatroom" => $chatroom, "usermsg" => $usermsg]);
+        return returnAPI([
+            "online" => $onlineType,
+            "service" => $users,
+            "chatroom" => $chatroom,
+            "usermsg" => $usermsg
+        ]);
     }
 
     function getChatroomAndServiceStatus()
@@ -65,10 +77,15 @@ class chat_service_con
         if (!isset($_POST["say"])) return returnAPI([], 1, "param_err");
         $cid = $_POST["chatroom_id"];
         $mdDao = new messages_dtl_dao;
-        $id = $this->setChatroomDtlInsert($mdDao, $cid, $_POST["say"]);
+        $filename = "";
+        $id = $this->setChatroomDtlInsert($mdDao, $cid, $_POST["say"], $filename);
         if (empty($id)) return returnAPI([], 1, "chatroom_insert_err");
-        $mmDao = new messages_main_dao;
-        return returnAPI(["msg_id" => $id]);
+        return returnAPI([
+            "msg_id" => $id,
+            "file" => (empty($filename) ? "" : getImgUrl("chatroom/" . $cid, $filename)),
+            "date" => date("Y-m-d", $this->time),
+            "time" => date("H:i:s", $this->time)
+        ]);
     }
 
     function setChatRoomType()
@@ -183,13 +200,12 @@ class chat_service_con
     }
 
     /**聊天室新增訊息 */
-    private function setChatroomDtlInsert(messages_dtl_dao &$mdDao, int $cid, string $say): int
+    private function setChatroomDtlInsert(messages_dtl_dao &$mdDao, int $cid, string $say, string &$filename = ""): int
     {
         $id = 0;
         $insert["main_id"] = $cid;
         $insert["content"] = $say;
         $insert["msg_from"] = 2;
-        $filename = "";
         if (updateImg($filename, "chatroom/" . $cid, $_SESSION["act"])) $insert["filename"] = $filename;
         $insert["time"] = time();
         $insert["service_name"] = ($_SESSION["name"] == "" ? $_SESSION["act"] : $_SESSION["name"]);
