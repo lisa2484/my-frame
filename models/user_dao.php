@@ -161,4 +161,15 @@ class user_dao
     {
         return DB::DBCode("UPDATE `" . self::$table_name . "` SET `img_name` = '" . $imgname . "', `updater` = '" . $_SESSION["act"] . "', `update_dt` = '" . date("Y-m-d H:i:s") . "', `update_ip` = '" . getRemoteIP() . "' WHERE `id` = '" . $id . "'");
     }
+
+    function getUserPhoto(string $user): string
+    {
+        $data = DB::select("SELECT `img_name` 
+                            FROM `" . self::$table_name . "`
+                            WHERE `account` = '" . $user . "' 
+                            AND `is_del` = 0 
+                            LIMIT 1;");
+        if (empty($data)) return "";
+        return $data[0]["img_name"];
+    }
 }
