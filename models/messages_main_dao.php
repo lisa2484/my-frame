@@ -5,6 +5,7 @@ namespace app\models;
 class messages_main_dao
 {
     private static $table_name = "messages_main";
+    private static $user_table = "user";
 
     function getMessagesMainTotal(string $member, string $name, string $device, string $ip, string $adminname, string $date_s, string $date_e): int
     {
@@ -61,6 +62,16 @@ class messages_main_dao
     function getMsgByID(int $id): array
     {
         return DB::select("SELECT * FROM `" . self::$table_name . "` WHERE `id` = '" . $id . "' LIMIT 1;");
+    }
+
+    function getMsgDataForChatroom(int $id): array
+    {
+        return DB::select("SELECT `m`.`status`,`m`.`member_id`,`m`.`member_name`,`m`.`member_env`,`m`.`member_ip`,`m`.`member_loc`,`m`.`member_from`,`u`.`account`,`u`.`user_name` 
+                           FROM `" . self::$table_name . "` AS `m`
+                           LEFT JOIN `" . self::$user_table . "` AS `u`
+                           ON `m`.`user_id` = `u`.`account`
+                           AND `u`.`is_del` = 0
+                           WHERE `m`.`id` = '" . $id . "'");
     }
 
     function getMsgForNotOverByAcount()

@@ -11,7 +11,16 @@ class autoservicerep_dao
         return DB::select("SELECT `id`,`parent_id`,`msg`,`onf`,`sort`
                            FROM `" . self::$table . "`
                            WHERE `is_del` = 0 
-                           ORDER BY `parent_id` ASC,`id` ASC;");
+                           ORDER BY `parent_id` ASC,`sort` ASC;");
+    }
+
+    function getListForOnf(): array
+    {
+        return DB::select("SELECT `id`,`parent_id`,`msg`,`onf`,`sort`
+                           FROM `" . self::$table . "`
+                           WHERE `onf` = 1
+                           AND `is_del` = 0
+                           ORDER BY `parent_id` ASC,`sort` ASC;");
     }
 
     function getResponseForParentId(int $parentId): array

@@ -6,6 +6,7 @@ class messages_dtl_dao
 {
     private static $table = "messages_dtl";
     private static $main_table = "messages_main";
+    private static $user_table = "user";
 
     function getMsgByNewMessage(int $mid, int $id)
     {
@@ -14,6 +15,18 @@ class messages_dtl_dao
                            WHERE `main_id` = '" . $mid . "'
                            AND `id` > '" . $id . "'
                            ORDER BY `id` ASC");
+    }
+
+    function getMsgByMsgJsonUser(int $mid, int $id)
+    {
+        return DB::select("SELECT `d`.`id`,`d`.`msg_from`,`d`.`content`,`d`.`filename`,`d`.`time`,`d`.`service_name`,`d`.`service_img`,`u`.`user_name`
+                           FROM `" . self::$table . "` AS `d`
+                           LEFT JOIN `" . self::$user_table . "` AS `u`
+                           ON `d`.`service_name` = `u`.`account`
+                           AND `u`.`is_del` = 0
+                           WHERE `d`.`main_id` = '" . $mid . "'
+                           AND `d`.`id` > '" . $id . "' 
+                           ORDER BY `d`.`id` ASC");
     }
 
     function setMsgInsert(array $insertArr, int &$id = 0)

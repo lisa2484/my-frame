@@ -6,3 +6,4 @@ $routes["out"] = "chat_guest_con/setUnsetChatroom";
 $routes["bot"] = "chat_guest_con/getAutoService";
 $routes["eva"] = "chat_guest_con/setEvaluation";
 $routes["call"] = "chat_guest_con/setTransfer";
+$routes["question"] = "chat_guest_con/getAutoServicerep";

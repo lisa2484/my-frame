@@ -17,20 +17,21 @@ class autoservicerep_con
     {
         $asDao = new autoservicerep_dao;
         $datas = $asDao->getList();
-        $layers = 0;
         if (!empty($datas)) {
             $pIDs = [];
+            $onf = [];
             foreach ($datas as $data) {
                 $pIDs[$data["parent_id"]][] = $data["id"];
+                if (!empty($data["onf"])) $onf[] = $data["id"];
             }
             $sDatas = [];
             foreach ($datas as $data) {
-                $sDatas[$data["id"]] = ["id" => $data["id"], "msg" => $data["msg"]];
+                $sDatas[$data["id"]] = ["id" => $data["id"], "msg" => $data["msg"], "sort" => $data["sort"]];
             }
             $redata = [];
             $this->setDatas(0, $pIDs, $sDatas, $redata);
         }
-        return returnAPI(["max_layers" => $layers, "list" => $redata]);
+        return returnAPI(["list" => $redata, "onf" => $onf]);
     }
 
     private function setDatas(int $id, array &$pIDs, array &$datas, array &$rdata, array &$out = [])
@@ -41,6 +42,7 @@ class autoservicerep_con
                 if (!in_array($id, $out)) {
                     $r["id"] = $datas[$i]["id"];
                     $r["msg"] = $datas[$i]["msg"];
+                    $r["sort"] = $datas[$i]["sort"];
                 }
                 $r["list"] = [];
                 $this->setDatas($i, $pIDs, $datas, $r["list"], $out);

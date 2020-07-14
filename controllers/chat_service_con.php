@@ -185,15 +185,15 @@ class chat_service_con
     }
 
     /**取得聊天室聊天訊息 */
-    private function getChatroomNewMessage(messages_dtl_dao &$mdDao, int $id, int $mid): array
+    private function getChatroomNewMessage(messages_dtl_dao &$mdDao, int $mid, int $id): array
     {
-        $datas = $mdDao->getMsgByNewMessage($id, $mid);
+        $datas = $mdDao->getMsgByMsgJsonUser($mid, $id);
         $reArr = [];
         if (!empty($datas)) {
             foreach ($datas as $data) {
                 $arr["id"] = $data["id"];
                 $arr["content"] = $data["content"];
-                $arr["file"] = (empty($data["filename"]) ? "" : getImgUrl('chatroom/' . $id, $data["filename"]));
+                $arr["file"] = (empty($data["filename"]) ? "" : getImgUrl('chatroom/' . $mid, $data["filename"]));
                 $arr["date"] = date("Y-m-d", $data["time"]);
                 $arr["time"] = date("H:i:s", $data["time"]);
                 switch ($data["msg_from"]) {
@@ -206,8 +206,8 @@ class chat_service_con
                     case 3:
                         $arr["type"] = "bot";
                 }
-                $arr["service_name"] = ($data["msg_from"] == 3 ? "智能客服" : $data["service_name"]);
-                $arr["service_img"] = empty($data["service_img"]) ? "" : getImgUrl("", $data["service_img"]);
+                $arr["service_name"] = ($data["msg_from"] == 3 ? "智能客服" : (empty($data["user_name"]) ? $data["service_name"] : $data["user_name"]));
+                $arr["service_img"] = (empty($data["service_img"]) ? "" : getImgUrl("", $data["service_img"]));
                 $reArr[] = $arr;
             }
         }
@@ -223,10 +223,10 @@ class chat_service_con
         $insert["msg_from"] = 2;
         if (updateImg($filename, "chatroom/" . $cid, $_SESSION["act"])) $insert["filename"] = $filename;
         $insert["time"] = time();
-        $insert["service_name"] = ($_SESSION["name"] == "" ? $_SESSION["act"] : $_SESSION["name"]);
+        $insert["service_name"] = $_SESSION["act"];
         $uDao = new user_dao;
         $img = $uDao->getUserPhoto($_SESSION["id"]);
-        $insert["service_img"] = (empty($img) ? "" : getImgUrl("", $img));
+        $insert["service_img"] = $img;
         if (empty($insert["content"]) && $filename) return 0;
         $mdDao->setMsgInsert($insert, $id);
         return $id;
