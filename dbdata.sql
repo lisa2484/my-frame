@@ -157,7 +157,7 @@ CREATE TABLE IF NOT EXISTS `menu` (
 CREATE TABLE IF NOT EXISTS `messages_dtl` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `main_id` int(11) NOT NULL COMMENT '主檔ID',
-  `msg_from` int(1) NOT NULL COMMENT '1:會員 2:客服 3:bot',
+  `msg_from` int(1) NOT NULL COMMENT '1:會員 2:客服 3:bot 4:system',
   `content` varchar(1000) NOT NULL COMMENT '內容',
   `filename` varchar(100) NOT NULL COMMENT '上傳檔案名稱',
   `time` int(15) NOT NULL COMMENT '時戳',

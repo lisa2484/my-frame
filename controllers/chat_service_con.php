@@ -212,6 +212,9 @@ class chat_service_con
                         break;
                     case 3:
                         $arr["type"] = "bot";
+                        break;
+                    case 4:
+                        $arr["type"] = "system";
                 }
                 $arr["service_name"] = ($data["msg_from"] == 3 ? "智能客服" : (empty($data["user_name"]) ? $data["service_name"] : $data["user_name"]));
                 $arr["service_img"] = (empty($data["service_img"]) ? "" : getImgUrl("", $data["service_img"]));

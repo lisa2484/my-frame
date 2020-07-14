@@ -46,9 +46,9 @@ class autoservicerep_dao
         return empty(DB::select("SELECT `id` FROM `" . self::$table . "` WHERE `parent_id` = '" . $parentId . "' AND `sort` = '" . $sort . "' AND `is_del` = 0 LIMIT 1"));
     }
 
-    function setOnf(array $ids): bool
+    function setOnf(array $ids, int $onf): bool
     {
-        return DB::DBCode("UPDATE `" . self::$table . "` SET `onf` = IF(`id` IN (" . implode(",", $ids) . "),1,0) WHERE `is_del` = 0;");
+        return DB::DBCode("UPDATE `" . self::$table . "` SET `onf` = '" . $onf . "' WHERE `is_del` = 0 AND `id` IN (" . implode(",", $ids) . ");");
     }
 
     function setMsgInsert(array $insertArr): bool

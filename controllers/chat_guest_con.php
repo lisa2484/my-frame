@@ -146,6 +146,10 @@ class chat_guest_con
                 case 3:
                     $arr["type"] = "bot";
                     $arr["service_name"] = "智能客服";
+                    break;
+                case 4:
+                    $arr["type"] = "system";
+                    $arr["service_name"] = "";
             }
             $arr["service_img"] = empty($data["service_img"]) ? "" : getImgUrl("", $data["service_img"]);
             $returnArr[] = $arr;
