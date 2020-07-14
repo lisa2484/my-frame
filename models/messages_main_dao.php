@@ -98,7 +98,7 @@ class messages_main_dao
     function setMsgStatusOver(int $id): bool
     {
         return DB::DBCode("UPDATE `" . self::$table_name . "` 
-                           SET `status` = 3 
+                           SET `status` = 2 
                            WHERE `id` = '" . $id . "' 
                            AND `status` IN (0,1);");
     }
