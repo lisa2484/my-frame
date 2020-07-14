@@ -72,7 +72,7 @@ class actionlog_con
         header('Content-Type: application/csv');
         header('Content-Disposition: attachment; filename=actionLog.csv');
 
-        $adminname = "admin1";
+        $adminname = "";
         $time_s = "";
         $time_e = "";
 
