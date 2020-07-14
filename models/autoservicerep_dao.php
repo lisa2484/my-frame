@@ -10,7 +10,8 @@ class autoservicerep_dao
     {
         return DB::select("SELECT `id`,`parent_id`,`msg`,`onf`,`sort`
                            FROM `" . self::$table . "`
-                           WHERE `is_del` = 0");
+                           WHERE `is_del` = 0 
+                           ORDER BY `parent_id` ASC,`id` ASC;");
     }
 
     function getResponseForParentId(int $parentId): array

@@ -23,22 +23,32 @@ class autoservicerep_con
             foreach ($datas as $data) {
                 $pIDs[$data["parent_id"]][] = $data["id"];
             }
-            $layers = $this->getLayser(0, $pIDs);
+            $sDatas = [];
+            foreach ($datas as $data) {
+                $sDatas[$data["id"]] = ["id" => $data["id"], "msg" => $data["msg"]];
+            }
+            $redata = [];
+            $this->setDatas(0, $pIDs, $sDatas, $redata);
         }
-        return returnAPI(["max_layers" => $layers, "list" => $datas]);
+        return returnAPI(["max_layers" => $layers, "list" => $redata]);
     }
 
-    private function getLayser(int $id, array &$pIDs, int $layers = 0): int
+    private function setDatas(int $id, array &$pIDs, array &$datas, array &$rdata, array &$out = [])
     {
         if (in_array($id, array_keys($pIDs))) {
-            $layer = 0;
             foreach ($pIDs[$id] as $i) {
-                $l = $this->getLayser($i, $pIDs, $layers + 1);
-                if ($l > $layer) $layer = $l;
+                $r = [];
+                if (!in_array($id, $out)) {
+                    $r["id"] = $datas[$i]["id"];
+                    $r["msg"] = $datas[$i]["msg"];
+                }
+                $r["list"] = [];
+                $this->setDatas($i, $pIDs, $datas, $r["list"], $out);
+                if (empty($r["list"])) unset($r["list"]);
+                $rdata[] = $r;
             }
-            if ($layer > $layers) $layers = $layer;
         }
-        return $layers;
+        $out[] = $id;
     }
 
     function add()

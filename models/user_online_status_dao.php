@@ -51,15 +51,14 @@ class user_online_status_dao
     {
         $str = "";
         if (!empty($switch)) $str = ",`last_online_time` = " . time();
-        if (DB::DBCode("UPDATE `" . self::$table . "`
-                        SET `status` = '" . $switch . "'" . $str . "
-                        WHERE `user_id` = '" . $id . "';"))
-            if (empty(mysqli_affected_rows(DB::getDBCon()))) {
+        $success = DB::DBCode("UPDATE `" . self::$table . "`
+                               SET `status` = '" . $switch . "'" . $str . "
+                               WHERE `user_id` = '" . $id . "';");
+        if ($success && empty(mysqli_affected_rows(DB::getDBCon()))) {
+            if (empty(DB::select("SELECT `id` FROM `" . self::$table . "` WHERE `user_id` = `" . $id . "` LIMIT 1")))
                 return DB::DBCode("INSERT INTO `" . self::$table . "` (`user_id`,`status`,`last_online_time`)
                                    VALUE ('" . $id . "','" . $switch . "','" . time() . "');");
-            } else {
-                return true;
-            }
-        return false;
+        }
+        return $success;
     }
 }

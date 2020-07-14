@@ -12,20 +12,15 @@ class whitelist_con
 {
     function init()
     {
-        return $this->getWhitelistList();
-    }
-
-    function getWhitelistList()
-    {
+        if (!isset($_POST["page"]) || !is_numeric($_POST["page"])) return returnAPI([], 1, "param_empty");
+        $page = $_POST["page"];
+        if (!isset($_POST["limit"]) || !is_numeric($_POST["limit"])) return returnAPI([], 1, "param_empty");
+        $limit = $_POST["limit"];
         $ip = "";
-        if (isset($_POST["ip"])) {
+        if (isset($_POST["ip"]) && $_POST["ip"] != "") {
             $ip = $_POST["ip"];
             if (!filter_var($ip, FILTER_VALIDATE_IP)) return returnAPI([], 1, "param_err");
         }
-        if (!key_exists("page", $_POST)) return returnAPI([], 1, "param_empty");
-        $page = $_POST["page"];
-        if (!key_exists("limit", $_POST)) return returnAPI([], 1, "param_empty");
-        $limit = $_POST["limit"];
         $wDao = new whitelist_dao;
         $totaldata = $wDao->getTotalList($ip);
         $totalpage = ceil($totaldata / $limit);
@@ -52,9 +47,8 @@ class whitelist_con
 
     function setWhitelistAdd()
     {
-        if (!key_exists("ip", $_POST)) return returnAPI([], 1, "param_empty");
+        if (!isset($_POST["ip"]) || !filter_var($_POST["ip"], FILTER_VALIDATE_IP)) return returnAPI([], 1, "param_err");
         $ip = $_POST["ip"];
-        if (!filter_var($ip, FILTER_VALIDATE_IP)) return returnAPI([], 1, "param_err");
         $wDao = new whitelist_dao;
 
         if (empty($wDao->getIP($ip))) {
@@ -70,10 +64,9 @@ class whitelist_con
 
     function setWhitelistEdit()
     {
-        if (!key_exists("ip", $_POST)) return returnAPI([], 1, "param_empty");
-        if (!key_exists("id", $_POST)) return returnAPI([], 1, "param_empty");
+        if (!isset($_POST["ip"]) || !filter_var($_POST["ip"], FILTER_VALIDATE_IP)) return returnAPI([], 1, "param_err");
+        if (!isset($_POST["id"])) return returnAPI([], 1, "param_err");
         $ip = $_POST["ip"];
-        if (!filter_var($ip, FILTER_VALIDATE_IP)) return returnAPI([], 1, "param_err");
         $id = $_POST["id"];
         if (!is_numeric($id) || empty($id)) return returnAPI([], 1, "param_err");
         $wDao = new whitelist_dao;
@@ -87,10 +80,8 @@ class whitelist_con
 
     function setWhitelistSwitch()
     {
-        if (!key_exists("value", $_POST)) return returnAPI([], 1, "param_empty");
+        if (!isset($_POST["value"]) || !in_array($_POST["value"], [0, 1])) return returnAPI([], 1, "param_err");
         $value = $_POST["value"];
-        if (strlen($value) > 1) return returnAPI([], 1, "param_err");
-        if (!in_array($value, [0, 1])) return returnAPI([], 1, "param_err");
         $wsDao = new web_set_dao;
 
         if (empty($wsDao->getWebSetListBySetKey("whitelist_switch"))) {

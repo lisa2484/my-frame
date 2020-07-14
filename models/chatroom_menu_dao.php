@@ -25,9 +25,9 @@ class chatroom_menu_dao
     function getSortRepeat(int $sort, int $id = 0): bool
     {
         if (empty($id)) {
-            return empty(DB::select("SELECT `id` FROM `" . self::$table . "` WHERE `sort` = '" . $sort . "' AND `is_del` = 0 LIMIT 1;"));
+            return !empty(DB::select("SELECT `id` FROM `" . self::$table . "` WHERE `sort` = '" . $sort . "' AND `is_del` = 0 LIMIT 1;"));
         }
-        return empty(DB::select("SELECT `id` FROM `" . self::$table . "` WHERE `sort` = '" . $sort . "' AND `is_del` = 0 AND `id` != '" . $id . "' LIMIT 1;"));
+        return !empty(DB::select("SELECT `id` FROM `" . self::$table . "` WHERE `sort` = '" . $sort . "' AND `is_del` = 0 AND `id` != '" . $id . "' LIMIT 1;"));
     }
 
     function setMenuInsert(array $insertArr): bool

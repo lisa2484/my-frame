@@ -40,6 +40,10 @@ class chat_guest_con
             $mmDao = new messages_main_dao;
             $data = $mmDao->getMsgByID($_SESSION["chatroomid"]);
             if (empty($data)) return returnAPI([], 1, "chatroom_null");
+            if (in_array($data[0]["status"], [2, 3])) {
+                unset($_SESSION["chatroomid"]);
+                return returnAPI([], 1, "chatroom_over");
+            }
             $name = $data[0]["user_id"];
         }
         $web_data = $this->getWebData();
