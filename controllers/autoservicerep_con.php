@@ -83,7 +83,7 @@ class autoservicerep_con
     function editOnf()
     {
         if (!isset($_POST["id"])) return returnAPI([], 1, "param_err");
-        if (!isset($_POST["onf"]) || in_array($_POST["onf"], [0, 1])) return returnAPI([], 1, "param_err");
+        if (!isset($_POST["onf"]) || !in_array($_POST["onf"], [0, 1])) return returnAPI([], 1, "param_err");
         $ids = explode(",", $_POST["id"]);
         if (empty($ids)) return returnAPI([], 1, "param_err");
         foreach ($ids as $i) {
