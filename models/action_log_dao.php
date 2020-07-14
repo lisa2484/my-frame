@@ -57,4 +57,17 @@ class action_log_dao
                            WHERE " . implode(" AND ", $arr) . "
                            LIMIT " . (($page - 1) * $limit) . "," . $limit);
     }
+
+    function getActionLogForExport(string $account, string $strdt, string $enddt): array
+    {
+        $str_sql = "";
+        // $where = [];
+        if (!empty($strdt) && !empty($enddt)) $where[] = "`datetime` BETWEEN '" . $strdt . "' AND '" . $enddt . "'";
+        if ($account != "") $where[] = "`user` = '" . $account . "'";
+
+        if (!empty($where)) $str_sql = "WHERE " . implode(" AND ", $where);
+
+        // $str_sql = "WHERE " . implode(" AND ", $where);
+        return DB::select("SELECT `id`, `datetime`, `user`, `ip`, `fun`, `remark` FROM `" . self::$table_name . "` " . $str_sql . " ORDER BY `id` DESC;");
+    }
 }

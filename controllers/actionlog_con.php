@@ -64,4 +64,45 @@ class actionlog_con
 
         return returnAPI($data_arr);
     }
+
+    function getCsv()
+    {
+        set_time_limit(0);
+        ini_set("memory_limit", "512M");
+        header('Content-Type: application/csv');
+        header('Content-Disposition: attachment; filename=actionLog.csv');
+
+        $adminname = "admin1";
+        $time_s = "";
+        $time_e = "";
+
+        if (isset($_POST["adminname"]) && $_POST["adminname"] != "") $adminname = $_POST["adminname"];
+        if (isset($_POST["timestart"]) && !empty($_POST["timestart"])) $time_s = $_POST["timestart"] . " 00:00:00";
+        if (isset($_POST["timeend"]) && !empty($_POST["timeend"])) $time_e = $_POST["timeend"] . " 23:59:59";
+
+        $actionlogDao = new action_log_dao;
+        $logdata = $actionlogDao->getActionLogForExport($adminname, $time_s, $time_e);
+        
+        $title = $this->getTitle();
+        
+        $f = fopen("php://output", "w");        
+        fputcsv($f, $title);
+
+        foreach ($logdata as $data) {
+            fputcsv($f, array_values($data));
+        }
+        fclose($f);
+    }
+
+    private function getTitle()
+    {
+        $arr[] = "编号";
+        $arr[] = "操作时间";
+        $arr[] = "帐号";
+        $arr[] = "IP";
+        $arr[] = "操作页面";
+        $arr[] = "操作功能";
+
+        return $arr;
+    }
 }

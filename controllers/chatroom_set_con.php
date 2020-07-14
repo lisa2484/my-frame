@@ -91,10 +91,24 @@ class chatroom_set_con
 
     function setList()
     {
+        $key_arr = ['logo_i', 'ser_i', 'vis_i'];
+        
         $keys = self::getChatroomSetKey();
         foreach ($keys as $k => $d) {
-            if (!key_exists($k, $_POST)) return returnAPI([], 1, "param_err");
-            $datas[] = [$d, $_POST[$k]];
+            if (in_array($k, $key_arr)) {
+                if ($_FILES[$k]['name'] != "") {
+                    $upload_str = $this->setChatImg($k);
+
+                    if ($upload_str == "upload_err" || $upload_str == "file_err") {
+                        return returnAPI([], 1, $upload_str);
+                    } else {
+                        $datas[] = [$d, $upload_str];
+                    }
+                }
+            } else {
+                if (!key_exists($k, $_POST)) return returnAPI([], 1, "param_err");
+                $datas[] = [$d, $_POST[$k]];
+            }
         }
         foreach ($datas as $data) {
             if (!$this->setWebset($data[0], $data[1])) return returnAPI([], 1, "upd_err");
