@@ -41,9 +41,9 @@ class autoservicerep_dao
                            AND `msg` LIKE '%" . $say . "%'");
     }
 
-    function getSortRepeat(int $sort): bool
+    function getSortRepeat(int $parentId, int $sort): bool
     {
-        return empty(DB::select("SELECT `id` FROM `" . self::$table . "` WHERE `sort` = '" . $sort . "' AND `is_del` = 0 LIMIT 1"));
+        return empty(DB::select("SELECT `id` FROM `" . self::$table . "` WHERE `parent_id` = '" . $parentId . "' AND `sort` = '" . $sort . "' AND `is_del` = 0 LIMIT 1"));
     }
 
     function setOnf(array $ids): bool

@@ -47,5 +47,5 @@ function updateImg(&$filename, string $url, string $name = "", $key = "file")
 function getImgUrl(string $dir, string $fileName): string
 {
     $dir = (empty($dir) ? "" : $dir . "/");
-    return "/resources/img/" . $dir . $fileName;
+    return "resources/img/" . $dir . $fileName;
 }

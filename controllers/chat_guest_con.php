@@ -219,7 +219,11 @@ class chat_guest_con
         $user = $uosDao->getUserIsOnline();
         if (empty($user)) return returnAPI([], 1, "chatroom_service_offline");
         $mmDao = new messages_main_dao;
-        if ($mmDao->setMsgUpdate($_SESSION["chatroomid"], ["user_id" => $user[0]["account"]])) return returnAPI([]);
+        if ($mmDao->setMsgUpdate($_SESSION["chatroomid"], ["user_id" => $user[0]["account"]])) {
+            $mdDao = new messages_dtl_dao;
+            $this->setSystemMsg($mdDao, $_SESSION["chatroomid"], '智能客服已将聊天室转给其他客服');
+            return returnAPI([]);
+        }
         return returnAPI([], 1, "upd_err");
     }
 
@@ -229,9 +233,20 @@ class chat_guest_con
         if (isset($_SESSION["chatroomid"]) && is_numeric($_SESSION["chatroomid"])) {
             $mmDao = new messages_main_dao;
             $mmDao->setMsgStatusOver($_SESSION["chatroomid"]);
+            $mdDao = new messages_dtl_dao;
+            $this->setSystemMsg($mdDao, $_SESSION["chatroomid"], '访客已离开聊天室');
         }
         unset($_SESSION["chatroomid"]);
         return returnAPI([]);
+    }
+
+    private function setSystemMsg(messages_dtl_dao &$mdDao, int $cid, string $msg)
+    {
+        $insert["main_id"] = $cid;
+        $insert["content"] = $msg;
+        $insert["msg_from"] = 4;
+        $insert["time"] = time();
+        $mdDao->setMsgInsert($insert);
     }
 
     /**機器人回傳訊息與紀錄 */

@@ -78,9 +78,8 @@ class chat_service_con
         if (!isset($_POST["chatroom_id"]) || !is_numeric($_POST["chatroom_id"])) return returnAPI([], 1, "param_err");
         if (!isset($_POST["say"])) return returnAPI([], 1, "param_err");
         $cid = $_POST["chatroom_id"];
-        $mdDao = new messages_dtl_dao;
         $filename = "";
-        $id = $this->setChatroomDtlInsert($mdDao, $cid, $_POST["say"], $filename);
+        $id = $this->setChatroomDtlInsert($cid, $_POST["say"], $filename);
         if (empty($id)) return returnAPI([], 1, "chatroom_insert_err");
         return returnAPI([
             "msg_id" => $id,
@@ -98,6 +97,10 @@ class chat_service_con
         $status = $_POST["status"];
         $mmDao = new messages_main_dao;
         if (!$mmDao->setMsgUpdate($cid, ["status" => $status])) return returnAPI([], 1, "upd_err");
+        if ($status == 1) {
+            $mdDao = new messages_dtl_dao;
+            $this->setSystemMsg($mdDao, $cid, '客服"' . (empty($_SESSION["name"]) ? $_SESSION["act"] : $_SESSION["name"]) . '"已加入聊天');
+        }
         return returnAPI([]);
     }
 
@@ -111,7 +114,11 @@ class chat_service_con
         $user = $uosDao->getUserOnlineForTransfer($uid);
         if (empty($user)) return returnAPI([], 1, "service_empty");
         $mmDao = new messages_main_dao;
-        if ($mmDao->setMsgUpdate($cid, ["user_id" => $user[0]["account"]])) return returnAPI([]);
+        if ($mmDao->setMsgUpdate($cid, ["status" => 0, "user_id" => $user[0]["account"]])) {
+            $mdDao = new messages_dtl_dao;
+            $this->setSystemMsg($mdDao, $cid, '客服"' . (empty($_SESSION["name"]) ? $_SESSION["act"] : $_SESSION["name"]) . '"已将聊天室转给其他客服');
+            return returnAPI([]);
+        }
         return returnAPI([], 1, "service_transfer_err");
     }
 
@@ -214,9 +221,20 @@ class chat_service_con
         return $reArr;
     }
 
-    /**聊天室新增訊息 */
-    private function setChatroomDtlInsert(messages_dtl_dao &$mdDao, int $cid, string $say, string &$filename = ""): int
+    private function setSystemMsg(messages_dtl_dao &$mdDao, int $cid, string $msg)
     {
+        $insert["main_id"] = $cid;
+        $insert["content"] = $msg;
+        $insert["msg_from"] = 4;
+        $insert["time"] = time();
+        $mdDao->setMsgInsert($insert);
+    }
+
+    /**聊天室新增訊息 */
+    private function setChatroomDtlInsert(int $cid, string $say, string &$filename = ""): int
+    {
+        $mmDao = new messages_main_dao;
+        $mdDao = new messages_dtl_dao;
         $id = 0;
         $insert["main_id"] = $cid;
         $insert["content"] = $say;
@@ -229,6 +247,7 @@ class chat_service_con
         $insert["service_img"] = $img;
         if (empty($insert["content"]) && $filename) return 0;
         $mdDao->setMsgInsert($insert, $id);
+        $mmDao->setMsgUpdate($cid, ["rep_len" => time()]);
         return $id;
     }
 

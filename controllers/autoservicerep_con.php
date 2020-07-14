@@ -59,7 +59,7 @@ class autoservicerep_con
         if (!isset($_POST["msg"]) || $_POST["msg"] == "") return returnAPI([], 1, "param_empty");
         if (!isset($_POST["sort"]) || !is_numeric($_POST["sort"])) return returnAPI([], 1, "param_err");
         $asDao = new autoservicerep_dao;
-        if ($asDao->getSortRepeat($_POST["sort"])) return returnAPI([], 1, "sort_err");
+        // if ($asDao->getSortRepeat($_POST["parent_id"], $_POST["sort"])) return returnAPI([], 1, "sort_err");
         $insertArr["sort"] = $_POST["sort"];
         $insertArr["parent_id"] = $_POST["parent_id"];
         $insertArr["msg"] = $_POST["msg"];
