@@ -19,19 +19,17 @@ class autoservicerep_con
         $datas = $asDao->getList();
         if (!empty($datas)) {
             $pIDs = [];
-            $onf = [];
             foreach ($datas as $data) {
                 $pIDs[$data["parent_id"]][] = $data["id"];
-                if (!empty($data["onf"])) $onf[] = $data["id"];
             }
             $sDatas = [];
             foreach ($datas as $data) {
-                $sDatas[$data["id"]] = ["id" => $data["id"], "msg" => $data["msg"], "sort" => $data["sort"]];
+                $sDatas[$data["id"]] = ["id" => $data["id"], "msg" => $data["msg"], "sort" => $data["sort"], "onf" => $data["onf"]];
             }
             $redata = [];
             $this->setDatas(0, $pIDs, $sDatas, $redata);
         }
-        return returnAPI(["list" => $redata, "onf" => $onf]);
+        return returnAPI(["list" => $redata]);
     }
 
     private function setDatas(int $id, array &$pIDs, array &$datas, array &$rdata, array &$out = [])
@@ -43,6 +41,7 @@ class autoservicerep_con
                     $r["id"] = $datas[$i]["id"];
                     $r["msg"] = $datas[$i]["msg"];
                     $r["sort"] = $datas[$i]["sort"];
+                    $r["onf"] = $datas[$i]["onf"];
                 }
                 $r["list"] = [];
                 $this->setDatas($i, $pIDs, $datas, $r["list"], $out);
@@ -59,7 +58,6 @@ class autoservicerep_con
         if (!isset($_POST["msg"]) || $_POST["msg"] == "") return returnAPI([], 1, "param_empty");
         if (!isset($_POST["sort"]) || !is_numeric($_POST["sort"])) return returnAPI([], 1, "param_err");
         $asDao = new autoservicerep_dao;
-        // if ($asDao->getSortRepeat($_POST["parent_id"], $_POST["sort"])) return returnAPI([], 1, "sort_err");
         $insertArr["sort"] = $_POST["sort"];
         $insertArr["parent_id"] = $_POST["parent_id"];
         $insertArr["msg"] = $_POST["msg"];
