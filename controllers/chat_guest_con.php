@@ -45,7 +45,7 @@ class chat_guest_con
                 unset($_SESSION["chatroomid"]);
                 return returnAPI([], 1, "chatroom_over");
             }
-            $name = (empty($data[0]["user_name"]) ? $data[0]["user_id"] : $data[0]["user_name"]);
+            $name = (empty($data[0]["user_name"]) ? $data[0]["account"] : $data[0]["user_name"]);
         }
         $web_data = $this->getWebData();
         $cmsDao = new chatroom_menu_dao;
