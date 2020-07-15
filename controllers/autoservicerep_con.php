@@ -25,7 +25,7 @@ class autoservicerep_con
             $sDatas = [];
             foreach ($datas as $data) {
                 $sDatas[$data["id"]] = ["id" => $data["id"], "msg" => $data["msg"], "sort" => $data["sort"], "onf" => $data["onf"]];
-                $tdatas[] = ["id" => $data["id"], "msg" => $data["msg"], "parent_id" => $data["parent_id"]];
+                $tdatas[] = ["id" => $data["id"], "msg" => $data["msg"], "parent_id" => $data["parent_id"], "sort" => $data["sort"]];
             }
             $redata = [];
             $this->setDatas(0, $pIDs, $sDatas, $redata);
