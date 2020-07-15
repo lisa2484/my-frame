@@ -180,6 +180,10 @@ class messages_main_con
                 case '3':
                     $type = "bot";
                     break;
+                
+                case '4':
+                    $type = "system";
+                    break;
             }
 
             $msgdtl_arr[$i]['id'] = $msgdtldata[$i]['id'];
