@@ -43,7 +43,7 @@ class messages_dtl_dao
 
     private function setMainAddCircleCount(int $id)
     {
-        DB::DBCode("UPDATE `" . self::$main_table . "` SET `circle_count` = `circle_count` + 1 AND `end_time` = '" . time() . "' WHERE `id` = '" . $id . "';");
+        DB::DBCode("UPDATE `" . self::$main_table . "` SET `circle_count` = (`circle_count` + 1) ,`end_time` = '" . time() . "' WHERE `id` = '" . $id . "';");
     }
 
     function getMessagesMainRecord(int $mainid): array
