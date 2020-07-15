@@ -56,12 +56,13 @@ class messages_main_con
             $st = $msgmaindata[$i]['start_time'];
             $et = $msgmaindata[$i]['end_time'];
             $rl = $msgmaindata[$i]['rep_len'];
+            $rl_time = ($rl != 0) ? ($rl - $st) : "0";
 
             $msgmain_arr[$i]['start_time'] = date("Y-m-d H:i:s", $st);
             $msgmain_arr[$i]['end_time'] = date("Y-m-d H:i:s", $et);
 
             $msgmain_arr[$i]['time_length'] = $this->getDateTime(($et - $st));
-            $msgmain_arr[$i]['first_time'] = $this->getDateTime(($rl - $st));
+            $msgmain_arr[$i]['first_time'] = $this->getDateTime($rl_time);
         }
 
         $data_arr = array(
