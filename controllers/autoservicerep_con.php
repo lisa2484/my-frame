@@ -29,7 +29,7 @@ class autoservicerep_con
                 $sDatas[$data["id"]] = ["id" => $data["id"], "parent_id" => $data["parent_id"], "msg" => $data["msg"], "sort" => $data["sort"], "onf" => $data["onf"]];
             }
             $this->setDatas(0, $pIDs, $sDatas, $redata);
-            $this->getDatasBySData($sDatas, $tdatas);
+            $this->getDatasBySData($redata, $tdatas);
         }
         return returnAPI(["list" => $redata, "datas" => $tdatas]);
     }
@@ -44,6 +44,7 @@ class autoservicerep_con
                     $r["msg"] = $datas[$i]["msg"];
                     $r["sort"] = $datas[$i]["sort"];
                     $r["onf"] = $datas[$i]["onf"];
+                    $r["parent_id"] = $datas[$i]["parent_id"];
                 }
                 $r["list"] = [];
                 $this->setDatas($i, $pIDs, $datas, $r["list"], $out);
@@ -57,7 +58,7 @@ class autoservicerep_con
     private function getDatasBySData(array &$rdata, array &$redata)
     {
         foreach ($rdata as $k => $d) {
-            $redata[] = ["id" => $d["id"], "msg" => $d["msg"], "sort" => $d["sort"], "parent_id" => $d["parent_id"]];
+            $redata[] = ["id" => $d["id"], "msg" => $d["msg"], "onf" =>  $d["onf"], "sort" => $d["sort"], "parent_id" => $d["parent_id"]];
             if (isset($d["list"])) $this->getDatasBySData($d["list"], $redata);
         }
     }
