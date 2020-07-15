@@ -77,15 +77,24 @@ class actionlog_con
         $time_e = "";
 
         if (isset($_POST["adminname"]) && $_POST["adminname"] != "") $adminname = $_POST["adminname"];
-        if (isset($_POST["timestart"]) && !empty($_POST["timestart"])) $time_s = $_POST["timestart"] . " 00:00:00";
-        if (isset($_POST["timeend"]) && !empty($_POST["timeend"])) $time_e = $_POST["timeend"] . " 23:59:59";
+        if (isset($_POST["timestart"]) && !empty($_POST["timestart"])) $time_s = $_POST["timestart"];
+        if (isset($_POST["timeend"]) && !empty($_POST["timeend"])) $time_e = $_POST["timeend"];
 
         $actionlogDao = new action_log_dao;
-        $logdata = $actionlogDao->getActionLogForExport($adminname, $time_s, $time_e);
-        
+        $where = [];
+        if ($adminname != "") $where["user"] = $adminname;
+        if (($time_s == "" ^ $time_e == "") || ($time_s > $time_e)) {
+            return returnAPI([], 1, "param_empty");
+        }
+        if (!empty($time_s) && !empty($time_e)) {
+            $where["s_d"] = $time_s . " 00:00:00";
+            $where["e_d"] = $time_e . " 23:59:59";
+        }
+        $logdata = $actionlogDao->getActionLogJoinMenu($where, 1, 50000);
+
         $title = $this->getTitle();
-        
-        $f = fopen("php://output", "w");        
+
+        $f = fopen("php://output", "w");
         fputcsv($f, $title);
 
         foreach ($logdata as $data) {

@@ -66,7 +66,7 @@ class messages_main_dao
 
     function getMsgDataForChatroom(int $id): array
     {
-        return DB::select("SELECT `m`.`status`,`m`.`member_id`,`m`.`member_name`,`m`.`member_env`,`m`.`member_ip`,`m`.`member_loc`,`m`.`member_from`,`u`.`account`,`u`.`user_name` 
+        return DB::select("SELECT `m`.`status`,`m`.`member_id`,`m`.`member_name`,`m`.`member_env`,`m`.`member_ip`,`m`.`member_loc`,`m`.`member_from`,`m`.`user_id`,`u`.`account`,`u`.`user_name` 
                            FROM `" . self::$table_name . "` AS `m`
                            LEFT JOIN `" . self::$user_table . "` AS `u`
                            ON `m`.`user_id` = `u`.`account`
