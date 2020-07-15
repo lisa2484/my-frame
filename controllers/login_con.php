@@ -3,10 +3,12 @@
 namespace app\controllers;
 
 include "./models/user_dao.php";
+include "./models/menu_dao.php";
 include "./models/authority_dao.php";
 include "./models/login_log_dao.php";
 
 use app\models\user_dao;
+use app\models\menu_dao;
 use app\models\authority_dao;
 use app\models\login_log_dao;
 
@@ -52,11 +54,10 @@ class login_con
      */
     function getWebData()
     {
+        if (!isset($_SESSION["id"])) return returnAPI([], 2, "login_do");
         $timedata = time();
-
         $userDao = new user_dao;
         $user = $userDao->getUserByID($_SESSION["id"]);
-
         $data_arr = array(
             'account' => $user[0]['account'],
             'year' => date("Y", $timedata),
@@ -64,10 +65,41 @@ class login_con
             'day' => date("d", $timedata),
             'hour' => date("H", $timedata),
             'minute' => date("i", $timedata),
-            'second' => date("s", $timedata)
+            'second' => date("s", $timedata),
+            'menu' => $this->getMenuByAuthority()
         );
-
         return returnAPI($data_arr);
+    }
+
+    private function getMenuByAuthority()
+    {
+        if (!isset($_SESSION["id"]) || empty($_SESSION["id"])) return [];
+        if (!isset($_SESSION["aut"]) || empty($_SESSION["aut"])) return [];
+        $mDao = new menu_dao;
+        if ($_SESSION["aut"] == 1) return $mDao->getMenuSettingAll();
+        $aDao = new authority_dao;
+        $aut = $aDao->getAuthorityByID($_SESSION["aut"]);
+        if (empty($aut)) return [];
+        $ids = json_decode($aut[0]["authority"])["r"];
+        $qids = [];
+        foreach ($ids as $id) {
+            if (!in_array($id, [14, 15])) $qids[] = $id;
+        }
+        return $mDao->getMenuByIDs($qids);
+    }
+
+    /**
+     * 登出
+     */
+    function setlogout()
+    {
+        unset($_SESSION["id"]);
+        unset($_SESSION["act"]);
+        unset($_SESSION["aut"]);
+        unset($_SESSION["name"]);
+        unset($_SESSION["aut_name"]);
+        unset($_SESSION["time"]);
+        return returnAPI([]);
     }
 
     //登入紀錄
@@ -99,23 +131,5 @@ class login_con
         if (!isset($_SESSION["aut"]) || !is_numeric($_SESSION["aut"])) return false;
         if (!isset($_SESSION["aut_name"])) return false;
         return true;
-    }
-
-    function setlogout()
-    {
-        $this->unsetSession();
-
-        return returnAPI([]);
-    }
-
-    //清除session資料
-    private function unsetSession()
-    {
-        unset($_SESSION["id"]);
-        unset($_SESSION["act"]);
-        unset($_SESSION["aut"]);
-        unset($_SESSION["name"]);
-        unset($_SESSION["aut_name"]);
-        unset($_SESSION["time"]);
     }
 }
