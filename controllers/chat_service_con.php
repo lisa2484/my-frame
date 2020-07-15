@@ -7,12 +7,14 @@ include "./models/messages_main_dao.php";
 include "./models/usermsg_dao.php";
 include "./models/messages_dtl_dao.php";
 include "./models/user_dao.php";
+include "./models/web_set_dao.php";
 
 use app\models\messages_dtl_dao;
 use app\models\messages_main_dao;
 use app\models\user_dao;
 use app\models\user_online_status_dao;
 use app\models\usermsg_dao;
+use app\models\web_set_dao;
 
 class chat_service_con
 {
@@ -36,7 +38,8 @@ class chat_service_con
             "online" => $onlineType,
             "service" => $users,
             "chatroom" => $chatroom,
-            "usermsg" => $usermsg
+            "usermsg" => $usermsg,
+            "chatroom_set" => $this->getWebData()
         ]);
     }
 
@@ -266,6 +269,62 @@ class chat_service_con
         $arr["local"] = $data["member_loc"];
         $arr["env"] = $data["member_env"];
         $arr["from"] = $data["member_from"];
+        return $arr;
+    }
+
+    /**取得聊天室設定 */
+    private function getWebData()
+    {
+        $wsDao = new web_set_dao;
+        $datas = $wsDao->getWebSetList();
+        $keys = self::getChatroomSetKey();
+        $repArr = [];
+        $rDatas = [];
+        if (!empty($datas)) {
+            foreach ($datas as $data) {
+                $rDatas[$data["set_key"]] = $data["value"];
+            }
+        }
+        if (empty($rDatas)) {
+            foreach (array_keys($keys) as $k) {
+                $repArr[$k] = "";
+            }
+        } else {
+            foreach ($keys as $k => $d) {
+                if (key_exists($d, $rDatas)) {
+                    switch ($k) {
+                        case "too_s":
+                            $repArr[$k] = html_entity_decode($rDatas[$d]);
+                            break;
+                        case "logo_i":
+                        case "ser_i":
+                        case "vis_i":
+                            $repArr[$k] = getImgUrl("", $rDatas[$d]);
+                            break;
+                        default:
+                            $repArr[$k] = $rDatas[$d];
+                    }
+                } else {
+                    $repArr[$k] = "";
+                }
+            }
+        }
+        return $repArr;
+    }
+
+    private static function getChatroomSetKey(): array
+    {
+        $arr["win_t"] = "window_title";
+        $arr["logo_i"] = "logo_img";
+        $arr["logo_u"] = "logo_url";
+        $arr["win_c"] = "window_color";
+        $arr["news"] = "news";
+        $arr["ser_i"] = "service_img";
+        $arr["ser_c"] = "service_color";
+        $arr["vis_i"] = "visitor_img";
+        $arr["vis_c"] = "visitor_color";
+        $arr["too_s"] = "toolbar_set";
+        $arr["back_u"] = "back_url";
         return $arr;
     }
 }
