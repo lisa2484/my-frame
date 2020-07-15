@@ -100,4 +100,22 @@ class login_con
         if (!isset($_SESSION["aut_name"])) return false;
         return true;
     }
+
+    function setlogout()
+    {
+        $this->unsetSession();
+
+        return returnAPI([]);
+    }
+
+    //清除session資料
+    private function unsetSession()
+    {
+        unset($_SESSION["id"]);
+        unset($_SESSION["act"]);
+        unset($_SESSION["aut"]);
+        unset($_SESSION["name"]);
+        unset($_SESSION["aut_name"]);
+        unset($_SESSION["time"]);
+    }
 }
