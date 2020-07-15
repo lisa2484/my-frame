@@ -296,7 +296,6 @@ class chat_service_con
                         case "too_s":
                             $repArr[$k] = html_entity_decode($rDatas[$d]);
                             break;
-                        case "logo_i":
                         case "ser_i":
                         case "vis_i":
                             $repArr[$k] = getImgUrl("", $rDatas[$d]);
@@ -315,16 +314,12 @@ class chat_service_con
     private static function getChatroomSetKey(): array
     {
         $arr["win_t"] = "window_title";
-        $arr["logo_i"] = "logo_img";
-        $arr["logo_u"] = "logo_url";
         $arr["win_c"] = "window_color";
-        $arr["news"] = "news";
         $arr["ser_i"] = "service_img";
         $arr["ser_c"] = "service_color";
         $arr["vis_i"] = "visitor_img";
         $arr["vis_c"] = "visitor_color";
         $arr["too_s"] = "toolbar_set";
-        $arr["back_u"] = "back_url";
         return $arr;
     }
 }
