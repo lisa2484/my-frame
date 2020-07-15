@@ -10,21 +10,6 @@ class actionlog_con
 {
     /**
      * 抓取操作紀錄資料
-     * @return array(
-     *              'total' => string 總數量,
-     *              'page' => string 當前頁碼,
-     *              'data' => array(
-     *                              0 => array(
-     *                                  'id' => string 編號
-     *                                  'ip' => string IP
-     *                                  'user' => string 使用者帳號
-     *                                  'datetime' => string 操作時間
-     *                                  'remark' => string 操作敘述
-     *                                  'fun' => string 操作項目
-     *                              ),
-     *                              1 => array(....)
-     *                        ) 
-     *         )
      */
     function init()
     {
@@ -65,6 +50,9 @@ class actionlog_con
         return returnAPI($data_arr);
     }
 
+    /**
+     * 匯出功能
+     */
     function getCsv()
     {
         set_time_limit(0);
@@ -84,7 +72,7 @@ class actionlog_con
         $where = [];
         if ($adminname != "") $where["user"] = $adminname;
         if (($time_s == "" ^ $time_e == "") || ($time_s > $time_e)) {
-            return returnAPI([], 1, "param_empty");
+            return returnAPI([], 1, "param_err");
         }
         if (!empty($time_s) && !empty($time_e)) {
             $where["s_d"] = $time_s . " 00:00:00";

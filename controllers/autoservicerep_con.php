@@ -25,11 +25,12 @@ class autoservicerep_con
             $sDatas = [];
             foreach ($datas as $data) {
                 $sDatas[$data["id"]] = ["id" => $data["id"], "msg" => $data["msg"], "sort" => $data["sort"], "onf" => $data["onf"]];
+                $tdatas[] = ["id" => $data["id"], "msg" => $data["msg"]];
             }
             $redata = [];
             $this->setDatas(0, $pIDs, $sDatas, $redata);
         }
-        return returnAPI(["list" => $redata]);
+        return returnAPI(["list" => $redata, "datas" => $tdatas]);
     }
 
     private function setDatas(int $id, array &$pIDs, array &$datas, array &$rdata, array &$out = [])
