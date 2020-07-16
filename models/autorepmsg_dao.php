@@ -88,7 +88,7 @@ class autorepmsg_dao
     /**
      * 更新資料
      */
-    function setMsgUpdate(int $id, array $updateArr)
+    function setMsgUpdate(int $id, array $updateArr): bool
     {
         if (empty($updateArr)) return false;
         $whereArr = [];
@@ -106,7 +106,7 @@ class autorepmsg_dao
     /**
      * 狀態開關
      */
-    function setMsgOnf(int $id, int $onf)
+    function setMsgOnf(int $id, int $onf): bool
     {
         return DB::DBCode("UPDATE `" . self::$table . "`
                            SET `onf` = '" . $onf . "',
@@ -119,13 +119,13 @@ class autorepmsg_dao
     /**
      * 刪除資料
      */
-    function setMsgDelete(int $id)
+    function setMsgDelete(array $id): bool
     {
         return DB::DBCode("UPDATE `" . self::$table . "`
                            SET `is_del` = 1,
                                `updater` = '" . $_SESSION["act"] . "',
                                `update_dt` = '" . date("Y-m-d H:i:s") . "',
                                `update_ip` = '" . getRemoteIP() . "'
-                           WHERE `id` = '" . $id . "';");
+                           WHERE `id` IN (" . implode(",", $id) . ");");
     }
 }

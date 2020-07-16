@@ -8,35 +8,29 @@ use app\models\web_set_dao;
 
 class bot_basicset_con
 {
-    private $field_arr = ['bot_welcome_switch', 'bot_automsg_switch', 'bot_keyword_switch', 'bot_autoservice_switch'];
-    private $front_arr = ['welcome_val', 'automsg_val', 'keyword_val', 'autoservice_val'];
+    private $arr = [
+        'welcome_val' => 'bot_welcome_switch',
+        'automsg_val' => 'bot_automsg_switch',
+        'keyword_val' => 'bot_keyword_switch',
+        'autoservice_val' => 'bot_autoservice_switch'
+    ];
 
     /**
-     * 初始：智能客服基本設置
-     * @return string 
-     * json形式 {
-     *           "welcome_val": string 歡迎訊息的配置,
-     *           "automsg_val": string 自動回應訊息的配置,
-     *           "keyword_val": string 查無關鍵字訊息的配置,
-     *           "autoservice_val": string 智能客服訊息的配置
-     *          }
+     * 智能客服基本設置列表
      */
     function init()
     {
-        $data_arr = array();
-
+        $data_arr = [];
+        $arr = $this->arr;
         $wsDao = new web_set_dao;
-
-        for ($i = 0; $i < count($this->field_arr); $i++) {
-            $fieldstatus = $wsDao->getWebSetListBySetKey($this->field_arr[$i]);
-
-            if ($fieldstatus) {
-                $data_arr[$this->front_arr[$i]] = $fieldstatus[0]['value'];
+        foreach ($arr as $k => $d) {
+            $fieldstatus = $wsDao->getWebSetListBySetKey($d);
+            if (!empty($fieldstatus)) {
+                $data_arr[$k] = $fieldstatus[0]['value'];
             } else {
-                $data_arr[$this->front_arr[$i]] = 0;
+                $data_arr[$k] = 0;
             }
         }
-
         return returnAPI($data_arr);
     }
 
@@ -46,24 +40,18 @@ class bot_basicset_con
      */
     function setBotBasicSetting()
     {
-        $seting_arr = array();
-
-        for ($i = 0; $i < count($this->front_arr); $i++) {
-            if (array_key_exists($this->front_arr[$i], $_POST)) {
-                if (strlen($_POST[$this->front_arr[$i]]) != 1) return returnAPI([], 1, "botset_length_err");
-                if (!in_array($_POST[$this->front_arr[$i]], ['0', '1'])) return returnAPI([], 1, "botset_val_err");
-
-                $seting_arr[$this->field_arr[$i]] = $_POST[$this->front_arr[$i]];
-            } else {
-                return returnAPI([], 1, "param_err");
-            }
+        $seting_arr = [];
+        $arr = $this->arr;
+        foreach ($arr as $k => $d) {
+            if (!isset($_POST[$k])) return returnAPI([], 1, "param_err");
+            $p = $_POST[$k];
+            if (!in_array($p, [0, 1])) return returnAPI([], 1, "param_err");
+            $seting_arr[$d] = $p;
         }
-
         foreach ($seting_arr as $key => $value) {
             $getstatus = $this->getWebSetStatus($key, $value);
             if (!$getstatus) return returnAPI([], 1, "botset_set_err");
         }
-
         return returnAPI([]);
     }
 
@@ -78,7 +66,6 @@ class bot_basicset_con
     private function getWebSetStatus($fieldname, $value)
     {
         $wsDao = new web_set_dao;
-
         if (empty($wsDao->getWebSetListBySetKey($fieldname))) return $wsDao->setWebSetAdd($fieldname, $value);
         return $wsDao->setWebSetEdit($fieldname, $value);
     }

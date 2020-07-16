@@ -13,22 +13,15 @@ class actionlog_con
      */
     function init()
     {
-        $adminname = isset($_POST["adminname"]) ? $_POST["adminname"] : "";
-        $time_s = isset($_POST["timestart"]) ? $_POST["timestart"] : "";
-        $time_e = isset($_POST["timeend"]) ? $_POST["timeend"] : "";
-
         if (!isset($_POST["page"]) || !is_numeric($_POST["page"]) || $_POST["page"] < 1) return returnAPI([], 1, "param_err");
         if (!isset($_POST["limit"]) || !is_numeric($_POST["limit"])) return returnAPI([], 1, "param_err");
         $page = $_POST["page"];
         $limit = $_POST["limit"];
+        $adminname = isset($_POST["adminname"]) ? $_POST["adminname"] : "";
+        $time_s = isset($_POST["timestart"]) ? $_POST["timestart"] : "";
+        $time_e = isset($_POST["timeend"]) ? $_POST["timeend"] : "";
 
-        if ($time_s == "" ^ $time_e == "") {
-            return returnAPI([], 1, "param_empty");
-        }
-
-        if ($time_s > $time_e) {
-            return returnAPI([], 1, "param_err");
-        }
+        if (($time_s == "" ^ $time_e == "") && ($time_s > $time_e)) return returnAPI([], 1, "param_err");
         $where = [];
         if (!empty($time_s) && !empty($time_e)) {
             $where["s_d"] = $time_s . " 00:00:00";
@@ -40,12 +33,12 @@ class actionlog_con
         $logtotal = $actionlogDao->getActionLogTotalByArrayWhere($where);
         $logdata = $actionlogDao->getActionLogJoinMenu($where, $page, $limit);
 
-        $data_arr = array(
+        $data_arr = [
             'total' => $logtotal,
             'totalpage' => ceil($logtotal / $limit),
             'page' => $page,
             'list' => $logdata
-        );
+        ];
 
         return returnAPI($data_arr);
     }
@@ -64,27 +57,21 @@ class actionlog_con
         $time_s = "";
         $time_e = "";
 
-        if (isset($_POST["adminname"]) && $_POST["adminname"] != "") $adminname = $_POST["adminname"];
+        if (isset($_POST["adminname"])) $adminname = $_POST["adminname"];
         if (isset($_POST["timestart"]) && !empty($_POST["timestart"])) $time_s = $_POST["timestart"];
         if (isset($_POST["timeend"]) && !empty($_POST["timeend"])) $time_e = $_POST["timeend"];
-
-        $actionlogDao = new action_log_dao;
+        if (($time_s == "" ^ $time_e == "") || ($time_s > $time_e)) return returnAPI([], 1, "param_err");
         $where = [];
         if ($adminname != "") $where["user"] = $adminname;
-        if (($time_s == "" ^ $time_e == "") || ($time_s > $time_e)) {
-            return returnAPI([], 1, "param_err");
-        }
         if (!empty($time_s) && !empty($time_e)) {
             $where["s_d"] = $time_s . " 00:00:00";
             $where["e_d"] = $time_e . " 23:59:59";
         }
+        $actionlogDao = new action_log_dao;
         $logdata = $actionlogDao->getActionLogJoinMenu($where, 1, 50000);
-
         $title = $this->getTitle();
-
         $f = fopen("php://output", "w");
         fputcsv($f, $title);
-
         foreach ($logdata as $data) {
             fputcsv($f, array_values($data));
         }

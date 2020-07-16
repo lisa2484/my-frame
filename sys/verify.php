@@ -35,7 +35,7 @@ class verify extends serverset
                 return false;
             }
             $this->errmsg = "aut_fail";
-            $this->status = 1;
+            $this->status = 3;
             return false;
         }
         return false;

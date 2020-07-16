@@ -25,6 +25,12 @@ class web_set_dao
         return DB::select("SELECT * FROM `" . self::$table . "` WHERE `set_key` = '" . $setKey . "' LIMIT 1;");
     }
 
+    function getWebSetListByArraySetKey(array $setKey): array
+    {
+        return DB::select("SELECT * FROM `" . self::$table . "`
+                           WHERE `set_key` IN ('" . implode("','", $setKey) . "');");
+    }
+
     /**
      * 新增指定選項名稱的設定
      * @param string $setKey 指定的選項名稱
