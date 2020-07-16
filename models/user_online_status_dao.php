@@ -13,7 +13,7 @@ class user_online_status_dao
                            FROM `" . self::$table . "` AS `s` 
                            LEFT JOIN `" . self::$user_table . "` AS `u` 
                            ON `s`.`user_id` = `u`.`id`
-                           WHERE `u`.`is_del` = 0;");
+                           WHERE `u`.`is_del` = 0 AND `u`.`id` != '" . $_SESSION["id"] . "';");
     }
 
     function getUserIsOnline()

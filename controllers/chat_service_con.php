@@ -313,7 +313,6 @@ class chat_service_con
 
     private static function getChatroomSetKey(): array
     {
-        $arr["win_t"] = "window_title";
         $arr["win_c"] = "window_color";
         $arr["ser_i"] = "service_img";
         $arr["ser_c"] = "service_color";

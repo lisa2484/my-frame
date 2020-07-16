@@ -2,7 +2,6 @@
 
 namespace app;
 
-// error_reporting(E_ERROR);
 include "./sys/db_connect.php";
 include "./sys/controller.php";
 include "./sys/mysqlDB.php";

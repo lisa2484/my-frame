@@ -80,7 +80,7 @@ class login_con
         $aDao = new authority_dao;
         $aut = $aDao->getAuthorityByID($_SESSION["aut"]);
         if (empty($aut)) return [];
-        $ids = json_decode($aut[0]["authority"])["r"];
+        $ids = json_decode($aut[0]["authority"], true)["r"];
         $qids = [];
         foreach ($ids as $id) {
             if (!in_array($id, [14, 15])) $qids[] = $id;

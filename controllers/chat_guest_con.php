@@ -239,6 +239,9 @@ class chat_guest_con
             $mmDao->setMsgStatusOver($_SESSION["chatroomid"]);
             $mdDao = new messages_dtl_dao;
             $this->setSystemMsg($mdDao, $_SESSION["chatroomid"], '访客已离开聊天室');
+            if (isset($_POST["eva"]) && in_array($_POST["eva"], [1, 2, 3, 4, 5])) {
+                $mmDao->setMsgUpdate($_SESSION["chatroomid"], ["evaluation" => $_POST["eva"]]);
+            }
         }
         unset($_SESSION["chatroomid"]);
         return returnAPI([]);
