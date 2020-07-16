@@ -125,6 +125,9 @@ class chat_service_con
         return returnAPI([], 1, "service_transfer_err");
     }
 
+    /**
+     * 設定上線狀態
+     */
     function setOnlineType()
     {
         if (!isset($_POST["switch"]) || !in_array($_POST["switch"], [0, 1])) return returnAPI([], 1, "param_err");
@@ -133,6 +136,9 @@ class chat_service_con
         return returnAPI([], 1, "upd_err");
     }
 
+    /**
+     * 設定訪客資料
+     */
     function setGuestData()
     {
         if (!isset($_POST["chatroom_id"]) || !is_numeric($_POST["chatroom_id"])) return returnAPI([], 1, "param_err");
@@ -230,6 +236,9 @@ class chat_service_con
         return $reArr;
     }
 
+    /**
+     * 新增系統訊息
+     */
     private function setSystemMsg(messages_dtl_dao &$mdDao, int $cid, string $msg)
     {
         $insert = [

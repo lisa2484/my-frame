@@ -55,7 +55,7 @@ class user_online_status_dao
                                SET `status` = '" . $switch . "'" . $str . "
                                WHERE `user_id` = '" . $id . "';");
         if ($success && empty(mysqli_affected_rows(DB::getDBCon()))) {
-            if (empty(DB::select("SELECT `id` FROM `" . self::$table . "` WHERE `user_id` = `" . $id . "` LIMIT 1")))
+            if (empty(DB::select("SELECT `id` FROM `" . self::$table . "` WHERE `user_id` = '" . $id . "' LIMIT 1")))
                 return DB::DBCode("INSERT INTO `" . self::$table . "` (`user_id`,`status`,`last_online_time`)
                                    VALUE ('" . $id . "','" . $switch . "','" . time() . "');");
         }
