@@ -3,12 +3,10 @@
 namespace app\controllers;
 
 include "./models/user_dao.php";
-include "./models/menu_dao.php";
 include "./models/authority_dao.php";
 include "./models/login_log_dao.php";
 
 use app\models\user_dao;
-use app\models\menu_dao;
 use app\models\authority_dao;
 use app\models\login_log_dao;
 
@@ -75,17 +73,10 @@ class login_con
     {
         if (!isset($_SESSION["id"]) || empty($_SESSION["id"])) return [];
         if (!isset($_SESSION["aut"]) || empty($_SESSION["aut"])) return [];
-        $mDao = new menu_dao;
-        if ($_SESSION["aut"] == 1) return $mDao->getMenuSettingAll();
         $aDao = new authority_dao;
         $aut = $aDao->getAuthorityByID($_SESSION["aut"]);
         if (empty($aut)) return [];
-        $ids = json_decode($aut[0]["authority"], true)["r"];
-        $qids = [];
-        foreach ($ids as $id) {
-            if (!in_array($id, [14, 15])) $qids[] = $id;
-        }
-        return $mDao->getMenuByIDs($qids);
+        return json_decode($aut[0]["authority"], true)["r"];
     }
 
     /**
