@@ -132,13 +132,10 @@ class usermsg_con
 
     function setUserPhoto()
     {
+        if (empty($_FILES)) return returnAPI([], 1, "param_empty");
         $filename = "";
-        if (!empty($_FILES)) {
-            if (!updateImg($filename, "", "userphoto_" . $_SESSION["id"] . "_")) return returnAPI([], 1, "upload_err");
-        }
-
+        if (!updateImg($filename, "", "userphoto_" . $_SESSION["id"] . "_")) return returnAPI([], 1, "upload_err");
         $userDao = new user_dao;
-
         if ($userDao->updUserPhoto($_SESSION["id"], $filename)) {
             return returnAPI([]);
         } else {

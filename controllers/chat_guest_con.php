@@ -25,6 +25,7 @@ class chat_guest_con
     private $autoservice_sw;
     private $wsDao;
     private $time;
+    private $bot_service_name = "智能客服";
 
     function __construct()
     {
@@ -43,7 +44,7 @@ class chat_guest_con
             if (empty($data)) return returnAPI([], 1, "chatroom_null");
             if (in_array($data[0]["status"], [2, 3])) {
                 unset($_SESSION["chatroomid"]);
-                return returnAPI([], 1, "chatroom_over");
+                if (!$this->createChatRoom($name, $errmsg)) return returnAPI([], 1, $errmsg);
             }
             $name = (empty($data[0]["user_name"]) ? $data[0]["user_id"] : $data[0]["user_name"]);
         }
@@ -53,7 +54,7 @@ class chat_guest_con
         foreach ($menu_data as $k => $d) {
             $menu_data[$k]["filename"] = getImgUrl("chatroom_menu", $d["filename"]);
         }
-        if ($name == "智能客服") {
+        if ($name == $this->bot_service_name) {
             $asrDao = new autoservicerep_dao;
             $amsg = $asrDao->getResponseForParentId(0);
         } else {
@@ -63,7 +64,7 @@ class chat_guest_con
         return returnAPI([
             'chatroom_id' => $_SESSION["chatroomid"],
             'chatroom_set' => $web_data,
-            'chatroom_type' => ($name == "智能客服" ? 'bot' : 'service'),
+            'chatroom_type' => ($name == $this->bot_service_name ? 'bot' : 'service'),
             'menu_set' => $menu_data,
             'service' => $name,
             'autoservice' => $this->autoservice_sw,
@@ -98,8 +99,7 @@ class chat_guest_con
             foreach ($pIDs[$id] as $i) {
                 $r = [];
                 if (!in_array($id, $out)) {
-                    $r["id"] = $datas[$i]["id"];
-                    $r["msg"] = $datas[$i]["msg"];
+                    $r = ["id" => $datas[$i]["id"], "msg" => $datas[$i]["msg"]];
                 }
                 $r["list"] = [];
                 $this->setDatas($i, $pIDs, $datas, $r["list"], $out);
@@ -124,16 +124,22 @@ class chat_guest_con
     function getNewMessages()
     {
         if (!isset($_POST["id"]) || !is_numeric($_POST["id"])) return returnAPI([], 1, "param_err");
-        $mdDao = new messages_dtl_dao;
         if (!isset($_SESSION["chatroomid"])) return returnAPI([], 1, "chatroom_empty");
+        $mmDao = new messages_main_dao;
+        $cdata = $mmDao->getMsgDataForChatroom($_SESSION["chatroomid"]);
+        if (empty($cdata)) return returnAPI([], 1, "chatroom_null");
+        if (in_array($cdata[0]["status"], [2, 3])) return returnAPI([], 1, "chatroom_over");
+        $mdDao = new messages_dtl_dao;
         $datas = $mdDao->getMsgByMsgJsonUser($_SESSION["chatroomid"], $_POST["id"]);
         $returnArr = [];
         foreach ($datas as $data) {
-            $arr["id"] = $data["id"];
-            $arr["content"] = $data["content"];
-            $arr["file"] = (empty($data["filename"]) ? "" : getImgUrl('chatroom/' . $_SESSION["chatroomid"], $data["filename"]));
-            $arr["date"] = date("Y-m-d", $data["time"]);
-            $arr["time"] = date("H:i:s", $data["time"]);
+            $arr = [
+                "id" => $data["id"],
+                "content" => $data["content"],
+                "file" => (empty($data["filename"]) ? "" : getImgUrl('chatroom/' . $_SESSION["chatroomid"], $data["filename"])),
+                "date" => date("Y-m-d", $data["time"]),
+                "time" => date("H:i:s", $data["time"])
+            ];
             switch ($data["msg_from"]) {
                 case 1:
                     $arr["type"] = "guest";
@@ -145,7 +151,7 @@ class chat_guest_con
                     break;
                 case 3:
                     $arr["type"] = "bot";
-                    $arr["service_name"] = "智能客服";
+                    $arr["service_name"] = $this->bot_service_name;
                     break;
                 case 4:
                     $arr["type"] = "system";
@@ -225,7 +231,7 @@ class chat_guest_con
         $mmDao = new messages_main_dao;
         if ($mmDao->setMsgUpdate($_SESSION["chatroomid"], ["user_id" => $user[0]["account"]])) {
             $mdDao = new messages_dtl_dao;
-            $this->setSystemMsg($mdDao, $_SESSION["chatroomid"], '智能客服已将聊天室转给其他客服');
+            $this->setSystemMsg($mdDao, $_SESSION["chatroomid"], $this->bot_service_name . '已将聊天室转给其他客服');
             return returnAPI([]);
         }
         return returnAPI([], 1, "upd_err");
@@ -249,10 +255,12 @@ class chat_guest_con
 
     private function setSystemMsg(messages_dtl_dao &$mdDao, int $cid, string $msg)
     {
-        $insert["main_id"] = $cid;
-        $insert["content"] = $msg;
-        $insert["msg_from"] = 4;
-        $insert["time"] = time();
+        $insert = [
+            "main_id" => $cid,
+            "content" => $msg,
+            "msg_from" => 4,
+            "time" => time()
+        ];
         $mdDao->setMsgInsert($insert);
     }
 
@@ -291,11 +299,13 @@ class chat_guest_con
     private function setMsgSave(messages_dtl_dao &$mdDao, int $from, string $say, string $fileName = "")
     {
         $id = 0;
-        $insert["main_id"] = $_SESSION["chatroomid"];
-        $insert["msg_from"] = $from;
-        $insert["content"] = $say;
-        $insert["filename"] = $fileName;
-        $insert["time"] = $this->time;
+        $insert = [
+            "main_id" => $_SESSION["chatroomid"],
+            "msg_from" => $from,
+            "content" => $say,
+            "filename" => $fileName,
+            "time" => $this->time
+        ];
         $mdDao->setMsgInsert($insert, $id);
         return $id;
     }
@@ -317,18 +327,20 @@ class chat_guest_con
             $user = $users[0]["account"];
             $user_name = $users[0]["user_name"];
         } else {
-            $user = "智能客服";
-            $user_name = "智能客服";
+            $user = $this->bot_service_name;
+            $user_name = $this->bot_service_name;
         }
         $mmDao = new messages_main_dao;
         $id = 0;
         $time = $this->time;
-        $insertArr["member_env"] = $_POST["env"];
-        $insertArr["member_from"] = $_POST["env"];
-        $insertArr["user_id"] = $user;
-        $insertArr["start_time"] = $time;
-        $insertArr["end_time"] = $time;
-        $insertArr["member_ip"] = getRemoteIP();
+        $insertArr = [
+            "member_env" => $_POST["env"],
+            "member_from" => $_POST["from"],
+            "user_id" => $user,
+            "start_time" => $time,
+            "end_time" => $time,
+            "member_ip" => getRemoteIP()
+        ];
         if (isset($_POST["loc"]) && !empty($_POST["loc"])) $insertArr["member_loc"] = $_POST["loc"];
         $mmDao->setMsgMainForChatroom($insertArr, $id);
         if (empty($id)) {
@@ -394,17 +406,19 @@ class chat_guest_con
 
     private static function getChatroomSetKey(): array
     {
-        $arr["win_t"] = "window_title";
-        $arr["logo_i"] = "logo_img";
-        $arr["logo_u"] = "logo_url";
-        $arr["win_c"] = "window_color";
-        $arr["news"] = "news";
-        $arr["ser_i"] = "service_img";
-        $arr["ser_c"] = "service_color";
-        $arr["vis_i"] = "visitor_img";
-        $arr["vis_c"] = "visitor_color";
-        $arr["too_s"] = "toolbar_set";
-        $arr["back_u"] = "back_url";
+        $arr = [
+            "win_t" => "window_title",
+            "logo_i" => "logo_img",
+            "logo_u" => "logo_url",
+            "win_c" => "window_color",
+            "news" => "news",
+            "ser_i" => "service_img",
+            "ser_c" => "service_color",
+            "vis_i" => "visitor_img",
+            "vis_c" => "visitor_color",
+            "too_s" => "toolbar_set",
+            "back_u" => "back_url"
+        ];
         return $arr;
     }
 }

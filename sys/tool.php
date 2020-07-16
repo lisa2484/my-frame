@@ -30,12 +30,13 @@ function updateImg(&$filename, string $url, string $name = "", $key = "file")
     if (empty($_FILES)) return false;
     $type = pathinfo($_FILES[$key]["name"]);
     if (!isset($type["extension"])) return false;
-    if (!in_array(strtolower($type["extension"]), ["jpg", "gif", "jpeg", "png", "bmp"])) return false;
+    $ex = strtolower($type["extension"]);
+    if (!in_array($ex, ["jpg", "gif", "jpeg", "png", "bmp"])) return false;
     $path = "./resources/img/" . $url;
     if (!is_dir($path)) {
         mkdir($path, 0777, true);
     }
-    $filename = $name . date("YmdHis") . "." . $type["extension"];
+    $filename = $name . date("YmdHis") . "." . $ex;
     return move_uploaded_file($_FILES[$key]["tmp_name"], "$path/$filename");
 }
 
