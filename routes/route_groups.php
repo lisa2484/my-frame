@@ -20,3 +20,4 @@ $routeGroups["chatroom_menu"] = "chatroom_menu_rou";
 $routeGroups["botwelcome"] = "bot_welcome_rou";
 $routeGroups["chat_service"] = "chat_service_rou";
 $routeGroups["chat_guest"] = "chat_guest_rou";
+$routeGroups["dashboard"] = "dashboard_rou";

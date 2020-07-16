@@ -61,4 +61,13 @@ class user_online_status_dao
         }
         return $success;
     }
+
+    /**
+     * 儀錶板抓取 在線/離線 人數
+     * @return array 回傳狀態、數量 MYSQLI_ASSOC
+     */
+    function getOnlineCount()
+    {
+        return DB::select("SELECT `status`, count(*) FROM `" . self::$table . "` GROUP BY `status`");
+    }
 }

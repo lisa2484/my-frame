@@ -113,4 +113,46 @@ class messages_main_dao
                            WHERE `id` = '" . $id . "' 
                            AND `status` IN (0,1);");
     }
+
+    /**
+     * 儀錶板抓取 在線/離線 人數
+     * @param int $status 要查詢的狀態值 (0:等待對話 1:處理中 2:處理完畢)
+     * @param int $today_s 當天0時
+     * @param int $today_e 現在時間
+     * @return int 回傳數量
+     */
+    function getMsgStatus(int $status, int $today_s, int $today_e)
+    {
+        $count = DB::select("SELECT count(*) FROM `" . self::$table_name . "` WHERE `status` = '" . $status . "' AND `start_time` >= " . $today_s . " AND `end_time` <= " . $today_e);
+        return $count[0]['count(*)'];
+    }
+
+    /**
+     * 儀錶板抓取回合數、評價
+     * @param int $today_s 當天0時
+     * @param int $today_e 現在時間
+     * @return array 總數、評價、訊息數量 MYSQLI_ASSOC
+     */
+    function getMsgInfo(int $today_s, int $today_e)
+    {
+        return DB::select("SELECT count(*) as c, SUM(`evaluation`) as s, SUM(`circle_count`) as r FROM `" . self::$table_name . "` WHERE (`status` = 1 OR `status` = 2) AND `evaluation` != 0 AND `circle_count` != 0 AND `start_time` >= " . $today_s . " AND `end_time` <= " . $today_e);
+    }
+    
+    /**
+     * 儀錶板抓取 在線/離線 人數
+     * @return array 回傳狀態、數量 MYSQLI_ASSOC
+     */
+    function getMsgLength(int $today_s, int $today_e)
+    {
+        return DB::select("SELECT count(*) as c, SUM(`rep_len` - `start_time`) as fl, SUM(`end_time` - `start_time`) as ml FROM `" . self::$table_name . "` WHERE (`status` = 1 OR `status` = 2) AND `rep_len` != 0 AND `start_time` >= " . $today_s . " AND `end_time` <= " . $today_e);
+    }
+
+    /**
+     * 儀錶板抓取 在線/離線 人數
+     * @return array 回傳狀態、數量 MYSQLI_ASSOC
+     */
+    function getMsgChart(string $field, int $today_s, int $today_e)
+    {
+        return DB::select("SELECT `" . $field . "` as 'name', COUNT(*) as 'count' FROM `messages_main` WHERE (`status` = 1 OR `status` = 2) AND `start_time` >= " . $today_s . " AND `end_time` <= " . $today_e . " GROUP BY `" . $field . "`");
+    }
 }
