@@ -27,12 +27,14 @@ class user_online_status_dao
                            LIMIT 1;");
     }
 
-    function getUserOnline(int $id)
+    function getUserOnline(int $id): int
     {
-        return DB::select("SELECT `status`
-                           FROM `" . self::$table . "`
-                           WHERE `user_id` = '" . $id . "'
-                           LIMIT 1;");
+        $data = DB::select("SELECT `status`
+                            FROM `" . self::$table . "`
+                            WHERE `user_id` = '" . $id . "'
+                            LIMIT 1;");
+        if (empty($data)) return 0;
+        return $data[0]["status"];
     }
 
     function getUserOnlineForTransfer(int $id)

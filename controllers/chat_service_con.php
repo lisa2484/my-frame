@@ -31,7 +31,7 @@ class chat_service_con
         $mmDao = new messages_main_dao;
         $umDao = new usermsg_dao;
         $users = $this->getUserAllOnlineTyep($uosDao);
-        $onlineType = $this->getUserOnlineType($users);
+        $onlineType = $uosDao->getUserOnline($_SESSION["id"]);
         $chatroom = $this->getChatroomType($mmDao);
         $usermsg = $this->getOftenMsg($umDao);
         return returnAPI([
@@ -150,15 +150,6 @@ class chat_service_con
         $mmDao = new messages_main_dao;
         if ($mmDao->setMsgUpdate($_POST["chatroom_id"], $update)) return returnAPI([]);
         return returnAPI([], 1, "upd_err");
-    }
-
-    /**取得自己的在線狀態 */
-    private function getUserOnlineType(array &$users): int
-    {
-        foreach ($users as $u) {
-            if ($u["id"] == $_SESSION["id"]) return (empty($u["status"]) ? 0 : 1);
-        }
-        return 0;
     }
 
     /**取得所有客服的在線狀態 */
