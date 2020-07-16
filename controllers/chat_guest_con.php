@@ -135,10 +135,12 @@ class chat_guest_con
         foreach ($datas as $data) {
             $arr = [
                 "id" => $data["id"],
-                "content" => $data["content"],
+                "content" => (empty($data["type"]) ? $data["content"] : json_decode($data["content"], true)),
+                "c_type" => (empty($data["type"]) ? "string" : "array"),
                 "file" => (empty($data["filename"]) ? "" : getImgUrl('chatroom/' . $_SESSION["chatroomid"], $data["filename"])),
                 "date" => date("Y-m-d", $data["time"]),
-                "time" => date("H:i:s", $data["time"])
+                "time" => date("H:i:s", $data["time"]),
+                "service_img" => empty($data["service_img"]) ? "" : getImgUrl("", $data["service_img"])
             ];
             switch ($data["msg_from"]) {
                 case 1:
@@ -157,7 +159,6 @@ class chat_guest_con
                     $arr["type"] = "system";
                     $arr["service_name"] = "";
             }
-            $arr["service_img"] = empty($data["service_img"]) ? "" : getImgUrl("", $data["service_img"]);
             $returnArr[] = $arr;
         }
         return returnAPI([$returnArr]);
@@ -194,11 +195,11 @@ class chat_guest_con
         if (isset($_POST["id"])) {
             if (!is_numeric($_POST["id"])) return returnAPI([], 1, "param_err");
             $mdDao = new messages_dtl_dao;
-            if (!$this->setMsgSave($mdDao, 1, $_POST["id"])) return returnAPI([], 1, "chatroom_insert_err");
+            $data = $asrDao->getByMsgForID($_POST["id"]);
+            if (empty($data)) return $this->repBotMsg($sarDao->getRepForBot());
+            if (!$this->setMsgSave($mdDao, 1, $data[0]["msg"])) return returnAPI([], 1, "chatroom_insert_err");
             $msgs = $asrDao->getResponseForParentId($_POST["id"]);
-            if (empty($msgs)) {
-                return $this->repBotMsg($sarDao->getRepForBot());
-            }
+            if (empty($msgs)) return $this->repBotMsg($sarDao->getRepForBot());
             return $this->repBotMsg($msgs);
         }
         if (isset($_POST["say"])) {
@@ -268,11 +269,8 @@ class chat_guest_con
     private function repBotMsg($say)
     {
         if (is_array($say)) {
-            foreach ($say as $d) {
-                $arr[] = $d["msg"];
-            }
             $mdDao = new messages_dtl_dao;
-            $id = $this->setMsgSave($mdDao, 3, implode("<br>", $arr));
+            $id = $this->setMsgSave($mdDao, 3, json_encode($say), "", 1);
             return returnAPI([
                 "msg_id" => $id,
                 "type" => "array",
@@ -296,13 +294,14 @@ class chat_guest_con
     }
 
     /**儲存聊天紀錄 */
-    private function setMsgSave(messages_dtl_dao &$mdDao, int $from, string $say, string $fileName = "")
+    private function setMsgSave(messages_dtl_dao &$mdDao, int $from, string $say, string $fileName = "", int $type = 0)
     {
         $id = 0;
         $insert = [
             "main_id" => $_SESSION["chatroomid"],
             "msg_from" => $from,
-            "content" => $say,
+            "content" => (empty($type) ? $say : str_replace("\\", "\\\\", $say)),
+            "type" => $type,
             "filename" => $fileName,
             "time" => $this->time
         ];

@@ -23,6 +23,16 @@ class autoservicerep_dao
                            ORDER BY `parent_id` ASC,`sort` ASC;");
     }
 
+    function getByMsgForID(int $id)
+    {
+        return DB::select("SELECT `msg` 
+                           FROM `" . self::$table . "` 
+                           WHERE `id` = '" . $id . "' 
+                           AND `is_del` = 0
+                           AND `onf` = 1
+                           LIMIT 1");
+    }
+
     function getResponseForParentId(int $parentId): array
     {
         return DB::select("SELECT `id`,`msg` 

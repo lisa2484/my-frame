@@ -168,33 +168,31 @@ class messages_main_con
 
         $msgdtldata = $msgdtlDao->getMessagesMainRecord($mainid);
 
-        for ($i = 0; $i < count($msgdtldata); $i++) {
-            switch ($msgdtldata[$i]['msg_from']) {
+        foreach ($msgdtldata as $data) {
+            $arr = [
+                'id' => $data['id'],
+                'content' => empty($data["type"]) ? $data['content'] : json_decode($data['content'], true),
+                'c_type' => empty($data["type"]) ? 'string' : 'array',
+                'file' => (empty($data['filename']) ? "" : getImgUrl('chatroom/' . $data["main_id"], $data['filename'])),
+                'date' => date("Y-m-d", $data['time']),
+                'time' => date("H:i:s", $data['time']),
+                'service_name' => $data['service_name'],
+                'service_img' => (empty($data['service_img']) ? "" : getImgUrl('', $data['service_img']))
+            ];
+            switch ($data['msg_from']) {
                 case '1':
-                    $type = "guest";
+                    $arr["type"] = "guest";
                     break;
-
                 case '2':
-                    $type = "service";
+                    $arr["type"] = "service";
                     break;
-
                 case '3':
-                    $type = "bot";
+                    $arr["type"] = "bot";
                     break;
-                
                 case '4':
-                    $type = "system";
-                    break;
+                    $arr["type"] = "system";
             }
-
-            $msgdtl_arr[$i]['id'] = $msgdtldata[$i]['id'];
-            $msgdtl_arr[$i]['content'] = $msgdtldata[$i]['content'];
-            $msgdtl_arr[$i]['file'] = (empty($msgdtldata[$i]['filename']) ? "" : getImgUrl('chatroom/' . $msgdtldata[$i]["main_id"], $msgdtldata[$i]['filename']));
-            $msgdtl_arr[$i]['date'] = date("Y-m-d", $msgdtldata[$i]['time']);
-            $msgdtl_arr[$i]['time'] = date("H:i:s", $msgdtldata[$i]['time']);
-            $msgdtl_arr[$i]['type'] = $type;
-            $msgdtl_arr[$i]['service_name'] = $msgdtldata[$i]['service_name'];
-            $msgdtl_arr[$i]['service_img'] = (empty($msgdtldata[$i]['service_img']) ? "" : getImgUrl('', $msgdtldata[$i]['service_img']));
+            $msgdtl_arr[] = $arr;
         }
 
         return returnAPI($msgdtl_arr);

@@ -201,11 +201,16 @@ class chat_service_con
         $reArr = [];
         if (!empty($datas)) {
             foreach ($datas as $data) {
-                $arr["id"] = $data["id"];
-                $arr["content"] = $data["content"];
-                $arr["file"] = (empty($data["filename"]) ? "" : getImgUrl('chatroom/' . $mid, $data["filename"]));
-                $arr["date"] = date("Y-m-d", $data["time"]);
-                $arr["time"] = date("H:i:s", $data["time"]);
+                $arr = [
+                    "id" => $data["id"],
+                    "content" => (empty($data["type"]) ? $data["content"] : json_decode($data["content"], true)),
+                    "c_type" => (empty($data["type"]) ? "string" : "array"),
+                    "file" => (empty($data["filename"]) ? "" : getImgUrl('chatroom/' . $mid, $data["filename"])),
+                    "date" => date("Y-m-d", $data["time"]),
+                    "time" => date("H:i:s", $data["time"]),
+                    "service_name" => ($data["msg_from"] == 3 ? "智能客服" : (empty($data["user_name"]) ? $data["service_name"] : $data["user_name"])),
+                    "service_img" => (empty($data["service_img"]) ? "" : getImgUrl("", $data["service_img"]))
+                ];
                 switch ($data["msg_from"]) {
                     case 1:
                         $arr["type"] = "guest";
@@ -219,8 +224,6 @@ class chat_service_con
                     case 4:
                         $arr["type"] = "system";
                 }
-                $arr["service_name"] = ($data["msg_from"] == 3 ? "智能客服" : (empty($data["user_name"]) ? $data["service_name"] : $data["user_name"]));
-                $arr["service_img"] = (empty($data["service_img"]) ? "" : getImgUrl("", $data["service_img"]));
                 $reArr[] = $arr;
             }
         }
@@ -229,10 +232,12 @@ class chat_service_con
 
     private function setSystemMsg(messages_dtl_dao &$mdDao, int $cid, string $msg)
     {
-        $insert["main_id"] = $cid;
-        $insert["content"] = $msg;
-        $insert["msg_from"] = 4;
-        $insert["time"] = time();
+        $insert = [
+            "main_id" => $cid,
+            "content" => $msg,
+            "msg_from" => 4,
+            "time" => time()
+        ];
         $mdDao->setMsgInsert($insert);
     }
 
@@ -242,12 +247,14 @@ class chat_service_con
         $mmDao = new messages_main_dao;
         $mdDao = new messages_dtl_dao;
         $id = 0;
-        $insert["main_id"] = $cid;
-        $insert["content"] = $say;
-        $insert["msg_from"] = 2;
+        $insert = [
+            "main_id" => $cid,
+            "content" => $say,
+            "msg_from" => 2,
+            "time" => time(),
+            "service_name" => $_SESSION["act"]
+        ];
         if (updateImg($filename, "chatroom/" . $cid, $_SESSION["act"])) $insert["filename"] = $filename;
-        $insert["time"] = time();
-        $insert["service_name"] = $_SESSION["act"];
         $uDao = new user_dao;
         $img = $uDao->getUserPhoto($_SESSION["id"]);
         $insert["service_img"] = $img;
@@ -263,12 +270,14 @@ class chat_service_con
         $datas = $mmDao->getMsgByID($cid);
         if (empty($datas)) return [];
         $data = $datas[0];
-        $arr["member_id"] = $data["member_id"];
-        $arr["member_name"] = $data["member_name"];
-        $arr["ip"] = $data["member_ip"];
-        $arr["local"] = $data["member_loc"];
-        $arr["env"] = $data["member_env"];
-        $arr["from"] = $data["member_from"];
+        $arr = [
+            "member_id" => $data["member_id"],
+            "member_name" => $data["member_name"],
+            "ip" => $data["member_ip"],
+            "local" => $data["member_loc"],
+            "env" => $data["member_env"],
+            "from" => $data["member_from"]
+        ];
         return $arr;
     }
 
@@ -313,12 +322,14 @@ class chat_service_con
 
     private static function getChatroomSetKey(): array
     {
-        $arr["win_c"] = "window_color";
-        $arr["ser_i"] = "service_img";
-        $arr["ser_c"] = "service_color";
-        $arr["vis_i"] = "visitor_img";
-        $arr["vis_c"] = "visitor_color";
-        $arr["too_s"] = "toolbar_set";
+        $arr = [
+            "win_c" => "window_color",
+            "ser_i" => "service_img",
+            "ser_c" => "service_color",
+            "vis_i" => "visitor_img",
+            "vis_c" => "visitor_color",
+            "too_s" => "toolbar_set"
+        ];
         return $arr;
     }
 }

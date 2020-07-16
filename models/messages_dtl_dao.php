@@ -19,7 +19,7 @@ class messages_dtl_dao
 
     function getMsgByMsgJsonUser(int $mid, int $id)
     {
-        return DB::select("SELECT `d`.`id`,`d`.`msg_from`,`d`.`content`,`d`.`filename`,`d`.`time`,`d`.`service_name`,`d`.`service_img`,`u`.`user_name`
+        return DB::select("SELECT `d`.`id`,`d`.`msg_from`,`d`.`content`,`d`.`filename`,`d`.`time`,`d`.`service_name`,`d`.`service_img`,`u`.`user_name`,`d`.`type`
                            FROM `" . self::$table . "` AS `d`
                            LEFT JOIN `" . self::$user_table . "` AS `u`
                            ON `d`.`service_name` = `u`.`account`
