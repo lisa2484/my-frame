@@ -123,7 +123,7 @@ class messages_main_dao
     }
 
     /**
-     * 儀錶板抓取 在線/離線 人數
+     * 儀錶板抓取 等待/處理中 人數
      * @param int $status 要查詢的狀態值 (0:等待對話 1:處理中 2:處理完畢)
      * @param int $today_s 當天0時
      * @param int $today_e 現在時間
@@ -136,6 +136,18 @@ class messages_main_dao
     }
 
     /**
+     * 儀錶板抓取 處理中 人工/智能客服 人數
+     * @param int $status 查詢處理中的狀態值
+     * @param int $today_s 當天0時
+     * @param int $today_e 現在時間
+     * @return 
+     */
+    function getMsgAutoStatus(string $autoname, int $status, int $today_s, int $today_e)
+    {
+        return DB::select("SELECT `user_id`, count(*) FROM `" . self::$table_name . "` WHERE `status` = '" . $status . "' AND `start_time` >= " . $today_s . " AND `end_time` <= " . $today_e . " GROUP BY `user_id` != '" . $autoname . "'");
+    }
+
+    /**
      * 儀錶板抓取回合數、評價
      * @param int $today_s 當天0時
      * @param int $today_e 現在時間
@@ -143,7 +155,7 @@ class messages_main_dao
      */
     function getMsgInfo(int $today_s, int $today_e)
     {
-        return DB::select("SELECT count(*) as c, SUM(`evaluation`) as s, SUM(`circle_count`) as r FROM `" . self::$table_name . "` WHERE (`status` = 1 OR `status` = 2) AND `evaluation` != 0 AND `circle_count` != 0 AND `start_time` >= " . $today_s . " AND `end_time` <= " . $today_e);
+        return DB::select("SELECT count(*) as c, SUM(`evaluation`) as s, SUM(`circle_count`) as r FROM `" . self::$table_name . "` WHERE (`status` = 1 OR `status` = 2) AND `circle_count` != 0 AND `start_time` >= " . $today_s . " AND `end_time` <= " . $today_e);
     }
 
     /**
