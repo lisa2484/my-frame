@@ -209,8 +209,8 @@ class chat_guest_con
             $datas = $asrDao->getResponseForLink($_POST["say"]);
             if (empty($datas)) {
                 $armDao = new autorepmsg_dao;
-                $msg = $armDao->getMsgByChatroom($_POST["say"]);
-                if (!empty($msg)) return $this->repBotMsg($msg);
+                $msg = $armDao->getMsgWhereTimeAndOnf($_POST["say"]);
+                if (!empty($msg)) return $this->repBotMsg($msg[0]["msg"]);
                 return $this->repBotMsg($sarDao->getRepForBot());
             }
             foreach ($datas as $d) {
@@ -270,13 +270,22 @@ class chat_guest_con
     {
         if (is_array($say)) {
             $mdDao = new messages_dtl_dao;
+            $asrDao = new autoservicerep_dao;
+            $last = true;
+            foreach ($say as $s) {
+                if (!empty($asrDao->getResponseForParentId($s["id"]))) {
+                    $last = false;
+                    break;
+                }
+            }
             $id = $this->setMsgSave($mdDao, 3, json_encode($say), "", 1);
             return returnAPI([
                 "msg_id" => $id,
                 "type" => "array",
                 "msg" => $say,
                 "date" => date("Y-m-d", $this->time),
-                "time" => date("H:i:s", $this->time)
+                "time" => date("H:i:s", $this->time),
+                "last" => ($last ? 1 : 0)
             ]);
         }
         if (is_string($say)) {
@@ -287,7 +296,8 @@ class chat_guest_con
                 "type" => "string",
                 "msg" => $say,
                 "date" => date("Y-m-d", $this->time),
-                "time" => date("H:i:s", $this->time)
+                "time" => date("H:i:s", $this->time),
+                "last" => 1
             ]);
         }
         return returnAPI([], 1, "autoservice_err");

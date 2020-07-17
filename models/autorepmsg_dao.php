@@ -40,43 +40,28 @@ class autorepmsg_dao
         return $req[0]["i"];
     }
 
-    function getMsgByChatroom(string $key): string
-    {
-        $time = time();
-        $datestr = date("Y-m-d", $time);
-        $timestr = date("H:i:s", $time);
-        $data = DB::select("SELECT `msg`
-                            FROM `" . self::$table . "`
-                            WHERE `is_del` = 0
-                            AND `onf` = 1
-                            AND '" . $datestr . "' BETWEEN `start_d` AND `end_d`
-                            AND '" . $timestr . "' BETWEEN `start_t` AND `end_t`
-                            AND '" . $key . "' LIKE CONCAT('%',`keyword`,'%')
-                            LIMIT 1;");
-        if (empty($data)) return "";
-        return $data[0]["msg"];
-    }
-
     /**
      * 取得資料 依時間與開啟狀況
      */
-    function getMsgWhereTimeAndOnf(): array
+    function getMsgWhereTimeAndOnf(string $say): array
     {
         $date = date("Y-m-d");
         $time = date("H:i:s");
         return DB::select("SELECT `keyword`,`msg`
                            FROM `" . self::$table . "`
-                           WHERE `onf` = 1
+                           WHERE `is_del` = 0
+                           AND `onf` = 1
                            AND (`time_limit` = 0 
-                                OR (`start_d` <= '" . $date . "' 
+                                OR (`time_limit` = 1
                                     AND `end_d` >= '" . $date . "' 
                                     AND `start_t` <= '" . $time . "' 
                                     AND `end_t` >= '" . $time . "'
-                                    AND `time_limit` = 1) 
+                                    AND `start_d` <= '" . $date . "') 
                                 OR (`time_limit` = 2
                                     AND `start_t` <= '" . $time . "' 
                                     AND `end_t` >= '" . $time . "'))
-                           AND `is_del` = 0");
+                           AND '" . $say . "' LIKE CONCAT('%',`keyword`,'%')
+                           LIMIT 1;");
     }
 
     function setMsgInsert(array $insertArr)

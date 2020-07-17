@@ -48,7 +48,8 @@ class autoservicerep_dao
                            FROM `" . self::$table . "`
                            WHERE `is_del` = 0
                            AND `onf` = 1
-                           AND `msg` LIKE '%" . $say . "%'");
+                           AND `msg` LIKE '%" . $say . "%'
+                           LIMIT 1");
     }
 
     function getSortRepeat(int $parentId, int $sort): bool
