@@ -89,6 +89,11 @@ class messages_main_dao
         return $success;
     }
 
+    function setMsgLocal(int $id, string $loc)
+    {
+        return DB::DBCode("UPDATE `" . self::$table_name . "` SET `member_loc` = '" . $loc . "' WHERE `id` = '" . $id . "' AND `member_loc` = ''");
+    }
+
     function setMsgUpdate(int $id, array $update)
     {
         $upstr = [];
@@ -137,7 +142,7 @@ class messages_main_dao
     {
         return DB::select("SELECT count(*) as c, SUM(`evaluation`) as s, SUM(`circle_count`) as r FROM `" . self::$table_name . "` WHERE (`status` = 1 OR `status` = 2) AND `evaluation` != 0 AND `circle_count` != 0 AND `start_time` >= " . $today_s . " AND `end_time` <= " . $today_e);
     }
-    
+
     /**
      * 儀錶板抓取 在線/離線 人數
      * @return array 回傳狀態、數量 MYSQLI_ASSOC
