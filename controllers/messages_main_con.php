@@ -12,6 +12,9 @@ use app\models\messages_main_dao;
 
 class messages_main_con
 {
+    /**
+     * 初始：客戶對話查詢_列表
+     */
     function init()
     {
         $member = "";
@@ -76,6 +79,9 @@ class messages_main_con
         return returnAPI($data_arr);
     }
 
+    /**
+     * 匯出功能
+     */
     function getCsv()
     {
         set_time_limit(0);
@@ -117,6 +123,9 @@ class messages_main_con
         fclose($file);
     }
 
+    /**
+     * 匯出功能_欄位標題名稱
+     */
     private function getTitle()
     {
         $arr[] = "序号";
@@ -137,6 +146,9 @@ class messages_main_con
         return $arr;
     }
 
+    /**
+     * 匯出功能_狀態對應名稱
+     */
     private function getStatus()
     {
         $arr[0] = "等待对话";
@@ -146,6 +158,9 @@ class messages_main_con
         return $arr;
     }
 
+    /**
+     * 時間換算 00:00:00
+     */
     private function getDateTime($time)
     {
         $hour = str_pad(floor($time / 3600), 2, "0", STR_PAD_LEFT);
@@ -156,6 +171,9 @@ class messages_main_con
         return $hour . ':' . $minute . ':' . $second;
     }
 
+    /**
+     * 客戶對話查詢_單筆查詢
+     */
     function getMsgRecord()
     {
         if (!isset($_POST["mainid"])) return returnAPI([], 1, "param_err");

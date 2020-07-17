@@ -79,6 +79,9 @@ class loginlog_con
         return returnAPI($data_arr);
     }
 
+    /**
+     * 匯出功能
+     */
     function getCsv()
     {
         set_time_limit(0);
@@ -102,6 +105,9 @@ class loginlog_con
         fclose($f);
     }
 
+    /**
+     * 匯出功能_欄位標題名稱
+     */
     private function getTitle()
     {
         $arr[] = "帐号";

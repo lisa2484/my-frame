@@ -4,9 +4,11 @@ namespace app\controllers;
 
 include "./models/messages_main_dao.php";
 include "./models/user_online_status_dao.php";
+include "./models/user_dao.php";
 
 use app\models\messages_main_dao;
 use app\models\user_online_status_dao;
+use app\models\user_dao;
 
 class dashboard_con
 {
@@ -19,8 +21,24 @@ class dashboard_con
         $this->time_today = strtotime(date("Y-m-d"));
     }
 
+    /**
+     * 初始：儀表板各資訊、超級管理員切換客服上線狀態
+     */
     function init()
     {
+        //抓登入者權限
+        // $aut_status = [];
+
+        // $user_aut = $_SESSION["aut"];
+        // if($user_aut == 1) {
+        //     $uosDao = new user_online_status_dao;
+            
+        // }
+
+
+
+
+
         $gss_arr = $this->getServiceStatus();       //客服
         $gcs_arr = $this->getCustomerStatus();      //客戶
         $gti_arr = $this->getTodayInfo();           //今日實時統計
@@ -29,6 +47,7 @@ class dashboard_con
         $gd_arr = $this->getDevice(0);              //使用環境
 
         $data_arr = array(
+            // 'a'=>$user_aut,
             'service' => $gss_arr,
             'customer' => $gcs_arr,
             'todayinfo' => $gti_arr,
@@ -40,6 +59,9 @@ class dashboard_con
         return returnAPI($data_arr);
     }
 
+    /**
+     * 客服狀態：在線/離線
+     */
     private function getServiceStatus()
     {
         $uosDao = new user_online_status_dao;
@@ -54,6 +76,9 @@ class dashboard_con
         return $ss_arr;
     }
 
+    /**
+     * 客戶狀態：等待/處理中
+     */
     private function getCustomerStatus()
     {
         $msgmainDao = new messages_main_dao;
@@ -72,6 +97,9 @@ class dashboard_con
         return $cs_arr;
     }
 
+    /**
+     * 今日統計：評價/平均回合數/處理完畢/平均首次響應/平均對話
+     */
     private function getTodayInfo()
     {
         $msgmainDao = new messages_main_dao;
@@ -124,6 +152,9 @@ class dashboard_con
         return $ti_arr;
     }
 
+    /**
+     * IP地區數據
+     */
     function getIPArea($init = 1)
     {
         if ($init == 1) {
@@ -141,14 +172,13 @@ class dashboard_con
         
         $area = $msgmainDao->getMsgChart("member_loc", $time_s, $time_e);        //IP地區
 
-        $ia_arr = array(
-            'area' => $area
-        );
-
-        if ($init == 1) return returnAPI($ia_arr);
-        return $ia_arr;
+        if ($init == 1) return returnAPI($area);
+        return $area;
     }
 
+    /**
+     * 來源網址數據
+     */
     function getSource($init = 1)
     {
         if ($init == 1) {
@@ -166,14 +196,13 @@ class dashboard_con
         
         $source = $msgmainDao->getMsgChart("member_from", $time_s, $time_e);        //來源網址
 
-        $s_arr = array(
-            'source' => $source
-        );
-
-        if ($init == 1) return returnAPI($s_arr);
-        return $s_arr;
+        if ($init == 1) return returnAPI($source);
+        return $source;
     }
 
+    /**
+     * 使用環境數據
+     */
     function getDevice($init = 1)
     {
         if ($init == 1) {
@@ -191,14 +220,13 @@ class dashboard_con
         
         $device = $msgmainDao->getMsgChart("member_env", $time_s, $time_e);        //使用環境
 
-        $d_arr = array(
-            'device' => $device
-        );
-
-        if ($init == 1) return returnAPI($d_arr);
-        return $d_arr;
+        if ($init == 1) return returnAPI($device);
+        return $device;
     }
 
+    /**
+     * 時間換算 00:00:00
+     */
     private function getMsgTime($time)
     {
         $hour = str_pad(floor($time / 3600), 2, "0", STR_PAD_LEFT);
@@ -209,6 +237,9 @@ class dashboard_con
         return $hour . ':' . $minute . ':' . $second;
     }
 
+    /**
+     * 計算時戳
+     */
     private function getToTime($val)
     {
         switch ($val) {
