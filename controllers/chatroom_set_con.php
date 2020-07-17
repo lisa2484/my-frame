@@ -95,7 +95,11 @@ class chatroom_set_con
                 }
             } else {
                 if (!isset($request[$k])) return returnAPI([], 1, "param_err");
-                $datas[] = [$d, $request[$k]];
+                if ($k == "too_s") {
+                    $datas[] = [$d, html_entity_decode($request[$k])];
+                } else {
+                    $datas[] = [$d, $request[$k]];
+                }
             }
         }
         if (empty($datas)) return returnAPI([], 1, "param_err");
