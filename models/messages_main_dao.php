@@ -7,6 +7,9 @@ class messages_main_dao
     private static $table_name = "messages_main";
     private static $user_table = "user";
 
+    /**
+     * 
+     */
     function getMessagesMainTotal(string $member, string $name, string $device, string $ip, string $adminname, string $date_s, string $date_e): int
     {
         $where = [];
@@ -131,7 +134,7 @@ class messages_main_dao
      * 儀錶板抓取回合數、評價
      * @param int $today_s 當天0時
      * @param int $today_e 現在時間
-     * @return array 總數、評價、訊息數量 MYSQLI_ASSOC
+     * @return array 總數、評價加總、訊息數量加總 MYSQLI_ASSOC
      */
     function getMsgInfo(int $today_s, int $today_e)
     {
@@ -139,8 +142,10 @@ class messages_main_dao
     }
     
     /**
-     * 儀錶板抓取 在線/離線 人數
-     * @return array 回傳狀態、數量 MYSQLI_ASSOC
+     * 儀錶板抓取首次響應、對話時間
+     * @param int $today_s 當天0時
+     * @param int $today_e 現在時間
+     * @return array 總數、首次響應時間加總、對話時間加總 MYSQLI_ASSOC
      */
     function getMsgLength(int $today_s, int $today_e)
     {
@@ -148,8 +153,11 @@ class messages_main_dao
     }
 
     /**
-     * 儀錶板抓取 在線/離線 人數
-     * @return array 回傳狀態、數量 MYSQLI_ASSOC
+     * 儀錶板抓取 IP地區、來源網址、使用環境
+     * @param string $field 查詢的欄位名稱
+     * @param int $today_s 當天0時
+     * @param int $today_e 現在時間
+     * @return array 名稱、數量 MYSQLI_ASSOC
      */
     function getMsgChart(string $field, int $today_s, int $today_e)
     {
