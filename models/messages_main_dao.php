@@ -79,7 +79,7 @@ class messages_main_dao
 
     function getMsgForNotOverByAcount()
     {
-        return DB::select("SELECT `id`,`member_id`,`member_name`,`status`,`circle_count`,`user_id`
+        return DB::select("SELECT `id`,`member_id`,`member_name`,`status`,`user_id`,`unread`
                            FROM `" . self::$table_name . "`
                            WHERE `user_id` = '" . $_SESSION["act"] . "' AND `status` IN (0,1);");
     }

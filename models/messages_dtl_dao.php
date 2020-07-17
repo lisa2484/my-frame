@@ -41,9 +41,26 @@ class messages_dtl_dao
         return $success;
     }
 
+    function setMsgInsertAddUnread(array $insertArr, int &$id = 0)
+    {
+        if (!isset($insertArr["main_id"]) || !is_numeric($insertArr["main_id"])) return false;
+        $success = DB::DBCode("INSERT INTO `" . self::$table . "` (`" . implode("`,`", array_keys($insertArr)) . "`)
+                               VALUE ('" . implode("','", array_values($insertArr)) . "')");
+        if ($success) {
+            $id = mysqli_insert_id(DB::getDBCon());
+            $this->setMainAddCircleCountAndUnread($insertArr["main_id"]);
+        }
+        return $success;
+    }
+
     private function setMainAddCircleCount(int $id)
     {
         DB::DBCode("UPDATE `" . self::$main_table . "` SET `circle_count` = (`circle_count` + 1) ,`end_time` = '" . time() . "' WHERE `id` = '" . $id . "';");
+    }
+
+    private function setMainAddCircleCountAndUnread(int $id)
+    {
+        DB::DBCode("UPDATE `" . self::$main_table . "` SET `circle_count` = (`circle_count` + 1),`unread` = (`unread` + 1) ,`end_time` = '" . time() . "' WHERE `id` = '" . $id . "';");
     }
 
     function getMessagesMainRecord(int $mainid): array

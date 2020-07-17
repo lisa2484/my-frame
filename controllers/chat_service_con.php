@@ -194,9 +194,11 @@ class chat_service_con
     /**取得聊天室聊天訊息 */
     private function getChatroomNewMessage(messages_dtl_dao &$mdDao, int $mid, int $id): array
     {
-        $datas = $mdDao->getMsgByMsgJsonUser($mid, $id);
         $reArr = [];
+        $datas = $mdDao->getMsgByMsgJsonUser($mid, $id);
         if (!empty($datas)) {
+            $mmDao = new messages_main_dao;
+            $mmDao->setMsgUpdate($mid, ["unread" => 0]);
             foreach ($datas as $data) {
                 $arr = [
                     "id" => $data["id"],

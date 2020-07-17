@@ -186,6 +186,7 @@ CREATE TABLE IF NOT EXISTS `messages_main` (
   `rep_len` int(15) NOT NULL DEFAULT '0' COMMENT '首次回應時戳',
   `circle_count` int(15) NOT NULL DEFAULT '0' COMMENT '訊息數量',
   `evaluation` int(11) NOT NULL DEFAULT '0' COMMENT '評價',
+  `unread` int(11) NOT NULL DEFAULT '0' COMMENT '未讀訊息量',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='對話訊息主檔\r\n非後台可刪除資料';
 

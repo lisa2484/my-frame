@@ -188,7 +188,7 @@ class chat_guest_con
         $filename = "";
         if (isset($_FILES["file"])) if (!updateImg($filename, "chatroom/" . $_SESSION["chatroomid"], "guest" . $_SESSION["chatroomid"])) return returnAPI([], 1, "upload_err");
         $mdDao = new messages_dtl_dao;
-        $id = $this->setMsgSave($mdDao, 1, $_POST["say"], $filename);
+        $id = $this->setMsgSaveByGuest($mdDao, 1, $_POST["say"], $filename);
         if (empty($id)) return returnAPI([], 1, "chatroom_insert_err");
         return returnAPI([
             "msg_id" => $id,
@@ -328,6 +328,22 @@ class chat_guest_con
             "time" => $this->time
         ];
         $mdDao->setMsgInsert($insert, $id);
+        return $id;
+    }
+
+    /**儲存聊天紀錄 */
+    private function setMsgSaveByGuest(messages_dtl_dao &$mdDao, int $from, string $say, string $fileName = "", int $type = 0)
+    {
+        $id = 0;
+        $insert = [
+            "main_id" => $_SESSION["chatroomid"],
+            "msg_from" => $from,
+            "content" => (empty($type) ? $say : str_replace("\\", "\\\\", $say)),
+            "type" => $type,
+            "filename" => $fileName,
+            "time" => $this->time
+        ];
+        $mdDao->setMsgInsertAddUnread($insert, $id);
         return $id;
     }
 
