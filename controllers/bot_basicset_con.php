@@ -41,10 +41,11 @@ class bot_basicset_con
     function setBotBasicSetting()
     {
         $seting_arr = [];
+        $request = $_POST;
         $arr = $this->arr;
         foreach ($arr as $k => $d) {
-            if (!isset($_POST[$k])) return returnAPI([], 1, "param_err");
-            $p = $_POST[$k];
+            if (!isset($request[$k])) return returnAPI([], 1, "param_err");
+            $p = $request[$k];
             if (!in_array($p, [0, 1])) return returnAPI([], 1, "param_err");
             $seting_arr[$d] = $p;
         }

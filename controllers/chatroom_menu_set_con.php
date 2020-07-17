@@ -8,6 +8,9 @@ use app\models\chatroom_menu_dao;
 
 class chatroom_menu_set_con
 {
+    /**
+     * 聊天室menu設定列表
+     */
     function init()
     {
         $cmDao = new chatroom_menu_dao;
@@ -31,6 +34,9 @@ class chatroom_menu_set_con
         return returnAPI(["list" => $menudata, "next_sort" => $maxSort + 1]);
     }
 
+    /**
+     * 新增
+     */
     function add()
     {
         $cmDao = new chatroom_menu_dao;
@@ -43,14 +49,19 @@ class chatroom_menu_set_con
         $filename = "";
         if (!updateImg($filename, "chatroom_menu", "crmn_")) return returnAPI([], 1, "upload_err");
         if ($cmDao->getSortRepeat($sort)) return returnAPI([], 1, "sort_err");
-        $insertArr["title"] = $_POST["title"];
-        $insertArr["url"] = $_POST["url"];
-        $insertArr["filename"] = $filename;
-        $insertArr["sort"] = $sort;
+        $insertArr = [
+            "title" => $_POST["title"],
+            "url" => $_POST["url"],
+            "filename" => $filename,
+            "sort" => $sort
+        ];
         if ($cmDao->setMenuInsert($insertArr)) return returnAPI([]);
         return returnAPI([], 1, "add_err");
     }
 
+    /**
+     * 修改
+     */
     function set()
     {
         if (!isset($_POST["id"]) || !is_numeric($_POST["id"])) return returnAPI([], 1, "param_err");
@@ -63,23 +74,24 @@ class chatroom_menu_set_con
         if ($cmDao->getSortRepeat($sort, $id)) return returnAPI([], 1, "sort_err");
         if (isset($_POST["title"])) $title = $_POST["title"];
         if (isset($_POST["url"])) $url = $_POST["url"];
-        $updateArr = [];
-        if ($title != "") $updateArr["title"] = $title;
-        if ($url != "") $updateArr["url"] = $url;
-        $updateArr["sort"] = $sort;
         $filename = "";
         if (!empty($_FILES)) {
             if (!updateImg($filename, "chatroom_menu", "crmn_")) return returnAPI([], 1, "upload_err");
         }
+        $updateArr["sort"] = $sort;
+        if ($title != "") $updateArr["title"] = $title;
+        if ($url != "") $updateArr["url"] = $url;
         if ($filename != "") $updateArr["filename"] = $filename;
-
         if ($cmDao->setMenuUpdate($id, $updateArr)) return returnAPI([]);
         return returnAPI([], 1, "upd_err");
     }
 
+    /**
+     * 刪除
+     */
     function delete()
     {
-        if (!key_exists("id", $_POST)) return returnAPI([], 1, "param_err");
+        if (!isset($_POST["id"])) return returnAPI([], 1, "param_err");
         $ids = explode(",", $_POST["id"]);
         if (empty($ids)) return returnAPI([], 1, "param_err");
         foreach ($ids as $i) {
