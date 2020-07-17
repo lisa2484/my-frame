@@ -110,6 +110,18 @@ class chat_guest_con
         $out[] = $id;
     }
 
+    /**
+     * 設定地區
+     */
+    function setLocal()
+    {
+        if (!isset($_SESSION["chatroomid"])) return returnAPI([], 1, "chatroom_empty");
+        if (!isset($_POST["loc"])) return returnAPI([], 1, "param_err");
+        $mmDao = new messages_main_dao;
+        if ($mmDao->setMsgLocal($_SESSION["chatroomid"], $_POST["loc"])) return returnAPI([]);
+        return returnAPI([], 1, "upd_err");
+    }
+
     /**設定評價 */
     function setEvaluation()
     {
