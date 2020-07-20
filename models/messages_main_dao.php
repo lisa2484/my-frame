@@ -166,7 +166,7 @@ class messages_main_dao
      */
     function getMsgLength(int $today_s, int $today_e)
     {
-        return DB::select("SELECT count(*) as c, SUM(`rep_len` - `start_time`) as fl, SUM(`end_time` - `start_time`) as ml FROM `" . self::$table_name . "` WHERE (`status` = 1 OR `status` = 2) AND `rep_len` != 0 AND `start_time` >= " . $today_s . " AND `end_time` <= " . $today_e);
+        return DB::select("SELECT count(*) as c, SUM(`rep_len` - `start_time`) as fl, SUM(`end_time` - `start_time`) as ml FROM `" . self::$table_name . "` WHERE (`status` = 1 OR `status` = 2) AND `user_id` != '智能客服' AND `start_time` >= " . $today_s . " AND `end_time` <= " . $today_e);
     }
 
     /**
