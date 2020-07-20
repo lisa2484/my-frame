@@ -14,6 +14,7 @@ class dashboard_con
 {
     private $time_now;
     private $time_today;
+    private $autoname = "智能客服";
 
     function __construct()
     {
@@ -27,17 +28,13 @@ class dashboard_con
     function init()
     {
         //抓登入者權限
-        // $aut_status = [];
+        $aut_status = [];
 
-        // $user_aut = $_SESSION["aut"];
-        // if($user_aut == 1) {
-        //     $uosDao = new user_online_status_dao;
-            
-        // }
-
-
-
-
+        $user_aut = $_SESSION["aut"];
+        if ($user_aut == 1) {
+            $uosDao = new user_online_status_dao;
+            $aut_status = $uosDao->getAllUserOnlineType();
+        }
 
         $gss_arr = $this->getServiceStatus();       //客服
         $gcs_arr = $this->getCustomerStatus();      //客戶
@@ -47,7 +44,7 @@ class dashboard_con
         $gd_arr = $this->getDevice(0);              //使用環境
 
         $data_arr = array(
-            // 'a'=>$user_aut,
+            'serviceOnline' => $aut_status,
             'service' => $gss_arr,
             'customer' => $gcs_arr,
             'todayinfo' => $gti_arr,
@@ -60,6 +57,19 @@ class dashboard_con
     }
 
     /**
+     * 切換客服上線狀態
+     */
+    function setServiceSwitch()
+    {
+        if (!isset($_POST["userid"]) || !is_numeric($_POST["userid"])) return returnAPI([], 1, "param_err");
+
+        $uosDao = new user_online_status_dao;
+
+        if ($uosDao->setUserStatus($_POST["userid"])) return returnAPI([]);
+        return returnAPI([], 1, "upd_err");
+    }
+
+    /**
      * 客服狀態：在線/離線
      */
     private function getServiceStatus()
@@ -68,9 +78,20 @@ class dashboard_con
 
         $goc = $uosDao->getOnlineCount();
 
+        $offcount = 0;
+        $oncount = 0;
+
+        foreach ($goc as $value) {
+            if ($value['status'] == 0) {
+                $offcount = $value['count(*)'];
+            } else {
+                $oncount = $value['count(*)'];
+            }
+        }
+
         $ss_arr = array(
-            'off' => $goc[0]['count(*)'],
-            'on' => $goc[1]['count(*)']
+            'off' => $offcount,
+            'on' => $oncount
         );
 
         return $ss_arr;
@@ -86,12 +107,24 @@ class dashboard_con
         $today_s = $this->time_today;
         $today_e = $this->time_now;
 
-        $waiting = $msgmainDao->getMsgStatus(0, $today_s, $today_e);        //等待對話
-        $processing = $msgmainDao->getMsgStatus(1, $today_s, $today_e);     //處理中
+        $waiting = $msgmainDao->getMsgStatus(0, $today_s, $today_e);                            //等待對話
+        $processing = $msgmainDao->getMsgStatus(1, $today_s, $today_e);                         //處理中
+        $autodatas = $msgmainDao->getMsgAutoStatus($this->autoname, 1, $today_s, $today_e);     //處理中(人工/智能)
+        $autocount = 0;
+        $servicecount = 0;
+        foreach ($autodatas as $value) {
+            if ($value['user_id'] == $this->autoname) {
+                $autocount = $value['count(*)'];
+            } else {
+                $servicecount = $value['count(*)'];
+            }
+        }
 
         $cs_arr = array(
             'waiting' => $waiting,
-            'processing' => $processing
+            'processing' => $processing,
+            'auto' => $autocount,
+            'service' => $servicecount
         );
 
         return $cs_arr;
@@ -109,7 +142,7 @@ class dashboard_con
 
         $gmi_data = $msgmainDao->getMsgInfo($today_s, $today_e);
         $gml_data = $msgmainDao->getMsgLength($today_s, $today_e);
-        
+
         //評價
         if (!empty($gmi_data[0]['s']) && !empty($gmi_data[0]['c'])) {
             $evaluation = round($gmi_data[0]['s'] / $gmi_data[0]['c'], 1);
@@ -123,7 +156,7 @@ class dashboard_con
         } else {
             $round = 0;
         }
-        
+
         //處理完畢
         $finish = $msgmainDao->getMsgStatus(2, $today_s, $today_e);
 
@@ -169,7 +202,7 @@ class dashboard_con
 
         $time_s = $this->getToTime($days);
         $time_e = $this->time_now;
-        
+
         $area = $msgmainDao->getMsgChart("member_loc", $time_s, $time_e);        //IP地區
 
         if ($init == 1) return returnAPI($area);
@@ -193,7 +226,7 @@ class dashboard_con
 
         $time_s = $this->getToTime($days);
         $time_e = $this->time_now;
-        
+
         $source = $msgmainDao->getMsgChart("member_from", $time_s, $time_e);        //來源網址
 
         if ($init == 1) return returnAPI($source);
@@ -217,7 +250,7 @@ class dashboard_con
 
         $time_s = $this->getToTime($days);
         $time_e = $this->time_now;
-        
+
         $device = $msgmainDao->getMsgChart("member_env", $time_s, $time_e);        //使用環境
 
         if ($init == 1) return returnAPI($device);
@@ -250,15 +283,15 @@ class dashboard_con
             case '15':
                 $time = "-15 day";
                 break;
-            
+
             case '30':
                 $time = "-1 month";
                 break;
-            
+
             case '90':
                 $time = "-3 month";
                 break;
-            
+
             case '180':
                 $time = "-6 month";
                 break;

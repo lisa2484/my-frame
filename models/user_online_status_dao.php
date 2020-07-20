@@ -72,4 +72,14 @@ class user_online_status_dao
     {
         return DB::select("SELECT `status`, count(*) FROM `" . self::$table . "` GROUP BY `status`");
     }
+
+    /**
+     * 修改客服上線狀態
+     */
+    function setUserStatus(int $userid)
+    {
+        return DB::DBCode("UPDATE `" . self::$table . "` 
+                           SET `status` = '0'
+                           WHERE `user_id` = '" . $userid . "'");
+    }
 }
