@@ -6,7 +6,6 @@ class messages_dtl_dao
 {
     private static $table = "messages_dtl";
     private static $main_table = "messages_main";
-    private static $user_table = "user";
 
     function getMsgByNewMessage(int $mid, int $id)
     {

@@ -32,13 +32,13 @@ class usermsg_dao
         return $total[0]['count(*)'];
     }
 
-    function getSort($sort)
+    function getSort($sort): int
     {
         $sortsount = DB::select("SELECT count(*) FROM " . self::$table_name . " WHERE `sort` = " . $sort . " AND `is_del` = 0 limit 1 ");
         return $sortsount[0]['count(*)'];
     }
 
-    function getSortValue($id)
+    function getSortValue($id): int
     {
         $sortsount = DB::select("SELECT `sort` FROM " . self::$table_name . " WHERE `id` = " . $id . " AND `is_del` = 0 limit 1 ");
         return $sortsount[0]['sort'];

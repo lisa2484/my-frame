@@ -8,31 +8,30 @@ use app\models\web_set_dao;
 
 class web_set_con
 {
+    /**
+     * 網站設定列表
+     */
     function init()
-    {
-        return $this->getWebsetList();
-    }
-
-    function getWebsetList()
     {
         $wsDao = new web_set_dao;
         $timezone = $wsDao->getWebSetListBySetKey("web_timezone");
-        (empty($timezone) ? $returnArr["web_tz"] = 0 : $returnArr["web_tz"] = $timezone[0]["value"]);
-        return returnAPI($returnArr);
+        return returnAPI(["web_tz" => (empty($timezone) ? 0 : $timezone[0]["value"])]);
     }
 
+    /**
+     * 修改時區
+     */
     function setWebTimeZone()
     {
-        if (!key_exists("value", $_POST)) return returnAPI([], 1, "param_err");
+        if (!isset($_POST["value"]) || !in_array($_POST["value"], [0, 1])) return returnAPI([], 1, "param_err");
         $value = $_POST["value"];
-        if (strlen($value) > 1) return returnAPI([], 1, "param_err");
-        if (!in_array($value, [0, 1])) return returnAPI([], 1, "param_err");
-        if ($this->setWebset("web_timezone", $value)) {
-            return returnAPI([]);
-        }
+        if ($this->setWebset("web_timezone", $value)) return returnAPI([]);
         return returnAPI([], 1, "upd_err");
     }
 
+    /**
+     * web_set設定功能
+     */
     private function setWebset($setkey, $value)
     {
         $wsDao = new web_set_dao;

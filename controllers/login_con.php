@@ -12,10 +12,13 @@ use app\models\login_log_dao;
 
 class login_con
 {
+    /**
+     * 登入功能
+     */
     function init()
     {
-        if (!key_exists("account", $_POST) || $_POST["account"] == "") return returnAPI([], 2, "userset_act_empty");
-        if (!key_exists("password", $_POST) || $_POST["password"] == "") return returnAPI([], 2, "userset_pwd_empty");
+        if (!isset($_POST["account"]) || $_POST["account"] == "") return returnAPI([], 2, "userset_act_empty");
+        if (!isset($_POST["password"]) || $_POST["password"] == "") return returnAPI([], 2, "userset_pwd_empty");
         $userDao = new user_dao;
         $user = $userDao->getUserByAccount($_POST["account"]);
         if (!empty($user)) {
@@ -41,6 +44,9 @@ class login_con
         return returnAPI([], 2, "login_fail");
     }
 
+    /**
+     * 取得在線狀態與IP
+     */
     function getLoginStatus()
     {
         if (!$this->chkSession()) return returnAPI(["ip" => getRemoteIP(), "login" => false]);
@@ -56,7 +62,7 @@ class login_con
         $timedata = time();
         $userDao = new user_dao;
         $user = $userDao->getUserByID($_SESSION["id"]);
-        $data_arr = array(
+        $data_arr = [
             'account' => $user[0]['account'],
             'year' => date("Y", $timedata),
             'month' => date("m", $timedata),
@@ -65,10 +71,13 @@ class login_con
             'minute' => date("i", $timedata),
             'second' => date("s", $timedata),
             'menu' => $this->getMenuByAuthority()
-        );
+        ];
         return returnAPI($data_arr);
     }
 
+    /**
+     * 取得權限對應menu ID
+     */
     private function getMenuByAuthority()
     {
         if (!isset($_SESSION["id"]) || empty($_SESSION["id"])) return [];
@@ -93,27 +102,30 @@ class login_con
         return returnAPI([]);
     }
 
-    //登入紀錄
+    /**
+     * 登入紀錄
+     */
     private function loginLog(string $user, bool $success)
     {
-        $insert["account"] = $user;
-        $insert["session_id"] = session_id();
         $headers = apache_request_headers();
         $headers["REMOTE_ADDR"] = $_SERVER["REMOTE_ADDR"];
-        $insert["headers"] = json_encode($headers);
-        $insert["ip"] = getRemoteIP();
-        $insert["login_date"] = date("Y-m-d H:i:s");
-        $insert["user_name"] = ($success ? $_SESSION["name"] : "");
-        if (isset($_SESSION["aut_name"])) {
-            $insert["authority_name"] = $_SESSION["aut_name"];
-        } else {
-            $insert["authority_name"] = "";
-        }
-        $success ? $insert["success"] = 1 : $insert["success"] = 0;
+        $insert = [
+            "account" => $user,
+            "session_id" => session_id(),
+            "headers" => json_encode($headers),
+            "ip" => getRemoteIP(),
+            "login_date" => date("Y-m-d H:i:s"),
+            "user_name" => ($success ? $_SESSION["name"] : ""),
+            "authority_name" => (isset($_SESSION["aut_name"]) ? $_SESSION["aut_name"] : ""),
+            "success" => ($success ? 1 : 0)
+        ];
         $logDao = new login_log_dao;
         $logDao->setLoginLogInsert($insert);
     }
 
+    /**
+     * 確認session
+     */
     private function chkSession()
     {
         if (!isset($_SESSION["id"]) || !is_numeric($_SESSION["id"])) return false;

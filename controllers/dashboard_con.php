@@ -4,11 +4,9 @@ namespace app\controllers;
 
 include "./models/messages_main_dao.php";
 include "./models/user_online_status_dao.php";
-include "./models/user_dao.php";
 
 use app\models\messages_main_dao;
 use app\models\user_online_status_dao;
-use app\models\user_dao;
 
 class dashboard_con
 {

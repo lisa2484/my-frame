@@ -91,15 +91,16 @@ class user_dao
     function setUserSetting(int $id, ?int $aut, ?string $pad): bool
     {
         if (!isset($aut) && !isset($pad)) return false;
-        $arr = [];
+        $arr = [
+            "`updater` = '" . $_SESSION["act"] . "'",
+            "`update_dt` = '" . date("Y-m-d H:i:s") . "'",
+            "`update_ip` = '" . getRemoteIP() . "'"
+        ];
         if (isset($aut)) $arr[] = "`authority` = '" . $aut . "'";
         if (isset($pad)) {
             $arr[] = "`password` = '" . $pad . "'";
             $arr[] = "`chg_pw_time` = '" . time() . "'";
         }
-        $arr[] = "`updater` = '" . $_SESSION["act"] . "'";
-        $arr[] = "`update_dt` = '" . date("Y-m-d H:i:s") . "'";
-        $arr[] = "`update_ip` = '" . getRemoteIP() . "'";
         $setstr = "UPDATE `" . self::$table_name . "`
                    SET " . implode(",", $arr) . " 
                    WHERE `id` = '" . $id . "' AND `is_del` = 0;";
@@ -138,14 +139,14 @@ class user_dao
      * @param int $id 使用者編號
      * @return bool 回傳是否成功
      */
-    function setDelete(int $id): bool
+    function setDelete(array $ids): bool
     {
         return DB::DBCode("UPDATE `" . self::$table_name . "` 
                            SET `is_del` = 1 ,
                                `updater` = '" . $_SESSION["act"] . "',
                                `update_dt` = '" . date("Y-m-d H:i:s") . "',
                                `update_ip` = '" . getRemoteIP() . "'
-                           WHERE `id` = '" . $id . "';");
+                           WHERE `id` IN (" . implode(",", $ids) . ");");
     }
 
     /**
