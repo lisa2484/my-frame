@@ -65,6 +65,9 @@ class chat_service_con
         return returnAPI(["chatroom_data" => $chatroom, "message" => $msgs]);
     }
 
+    /**
+     * 刷新
+     */
     function getNewMessages()
     {
         if (!isset($_POST["chatroom_id"]) || !is_numeric($_POST["chatroom_id"])) return returnAPI([], 1, "param_err");
@@ -76,6 +79,9 @@ class chat_service_con
         return returnAPI([$msgs]);
     }
 
+    /**
+     * 發話
+     */
     function setSpeak()
     {
         if (!isset($_POST["chatroom_id"]) || !is_numeric($_POST["chatroom_id"])) return returnAPI([], 1, "param_err");
@@ -92,6 +98,9 @@ class chat_service_con
         ]);
     }
 
+    /**
+     * 設定聊天室狀態(處理中,處理完成,垃圾訊息)
+     */
     function setChatRoomType()
     {
         if (!isset($_POST["chatroom_id"]) || !is_numeric($_POST["chatroom_id"])) return returnAPI([], 1, "param_err");
@@ -107,6 +116,9 @@ class chat_service_con
         return returnAPI([]);
     }
 
+    /**
+     * 轉交聊天室
+     */
     function setTransfer()
     {
         if (!isset($_POST["chatroom_id"]) || !is_numeric($_POST["chatroom_id"])) return returnAPI([], 1, "param_err");
@@ -195,7 +207,7 @@ class chat_service_con
     private function getChatroomNewMessage(messages_dtl_dao &$mdDao, int $mid, int $id): array
     {
         $reArr = [];
-        $datas = $mdDao->getMsgByMsgJsonUser($mid, $id);
+        $datas = $mdDao->getMsgByNew($mid, $id);
         if (!empty($datas)) {
             $mmDao = new messages_main_dao;
             $mmDao->setMsgUpdate($mid, ["unread" => 0]);
@@ -207,7 +219,7 @@ class chat_service_con
                     "file" => (empty($data["filename"]) ? "" : getImgUrl('chatroom/' . $mid, $data["filename"])),
                     "date" => date("Y-m-d", $data["time"]),
                     "time" => date("H:i:s", $data["time"]),
-                    "service_name" => ($data["msg_from"] == 3 ? "智能客服" : (empty($data["user_name"]) ? $data["service_name"] : $data["user_name"])),
+                    "service_name" => ($data["msg_from"] == 3 ? "智能客服" : (empty($data["service_name"]) ? $data["service_act"] : $data["service_name"])),
                     "service_img" => (empty($data["service_img"]) ? "" : getImgUrl("", $data["service_img"]))
                 ];
                 switch ($data["msg_from"]) {
@@ -248,13 +260,18 @@ class chat_service_con
     {
         $mmDao = new messages_main_dao;
         $mdDao = new messages_dtl_dao;
+        $uDao = new user_dao;
+        $user = $uDao->getUserByID($_SESSION["id"]);
+        $uImg = isset($user[0]["img_name"]) ? $user[0]["img_name"] : "";
         $id = 0;
         $insert = [
             "main_id" => $cid,
             "content" => $say,
             "msg_from" => 2,
             "time" => time(),
-            "service_name" => $_SESSION["act"]
+            "service_act" => $_SESSION["act"],
+            "service_name" => $_SESSION["name"],
+            "service_img" => $uImg
         ];
         if (updateImg($filename, "chatroom/" . $cid, $_SESSION["act"])) $insert["filename"] = $filename;
         $uDao = new user_dao;

@@ -162,6 +162,7 @@ CREATE TABLE IF NOT EXISTS `messages_dtl` (
   `type` int(11) NOT NULL DEFAULT '0' COMMENT '0:string 1:json',
   `filename` varchar(100) NOT NULL COMMENT '上傳檔案名稱',
   `time` int(15) NOT NULL COMMENT '時戳',
+  `service_act` varchar(50) NOT NULL DEFAULT '' COMMENT '客服帳號',
   `service_name` varchar(50) NOT NULL DEFAULT '' COMMENT '客服暱稱',
   `service_img` varchar(50) DEFAULT '' COMMENT '客服頭像',
   PRIMARY KEY (`id`),

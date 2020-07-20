@@ -194,7 +194,7 @@ class messages_main_con
                 'file' => (empty($data['filename']) ? "" : getImgUrl('chatroom/' . $data["main_id"], $data['filename'])),
                 'date' => date("Y-m-d", $data['time']),
                 'time' => date("H:i:s", $data['time']),
-                'service_name' => $data['service_name'],
+                'service_name' => empty($data['service_name']) ? $data["service_act"] : $data['service_name'],
                 'service_img' => (empty($data['service_img']) ? "" : getImgUrl('', $data['service_img']))
             ];
             switch ($data['msg_from']) {

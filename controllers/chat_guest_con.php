@@ -142,7 +142,7 @@ class chat_guest_con
         if (empty($cdata)) return returnAPI([], 1, "chatroom_null");
         if (in_array($cdata[0]["status"], [2, 3])) return returnAPI([], 1, "chatroom_over");
         $mdDao = new messages_dtl_dao;
-        $datas = $mdDao->getMsgByMsgJsonUser($_SESSION["chatroomid"], $_POST["id"]);
+        $datas = $mdDao->getMsgByNew($_SESSION["chatroomid"], $_POST["id"]);
         $returnArr = [];
         foreach ($datas as $data) {
             $arr = [
@@ -161,7 +161,7 @@ class chat_guest_con
                     break;
                 case 2:
                     $arr["type"] = "service";
-                    $arr["service_name"] = (empty($data["user_name"]) ? $data["service_name"] : $data["user_name"]);
+                    $arr["service_name"] = (empty($data["service_name"]) ? $data["service_act"] : $data["service_name"]);
                     break;
                 case 3:
                     $arr["type"] = "bot";
