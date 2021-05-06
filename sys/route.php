@@ -1,12 +1,6 @@
 <?php
 
-namespace app;
-// error_reporting(0);
-include "./sys/controller.php";
-include "./sys/mysqlDB.php";
-include "./sys/verify.php";
-include "./sys/tool.php";
-include "./sys/db_connect.php";
+namespace app\sys;
 
 class route extends verify
 {
@@ -15,7 +9,7 @@ class route extends verify
         session_start();
         $this->setTimeZone();
         //注入防禦
-        $this->unInjection(getServer());
+        $this->unInjection();
         $script_name = $_SERVER["SCRIPT_NAME"];
         $script_name = str_replace("index.php", "", $script_name);
         $request_url = $_SERVER["REQUEST_URI"];
@@ -78,12 +72,11 @@ class route extends verify
         return $routes;
     }
 
-    function unInjection($dbcon)
+    function unInjection()
     {
         foreach ($_POST as $k => $d) {
-            $d = mysqli_real_escape_string($dbcon, htmlentities(trim($d)));
+            $d = DB::getRealEscapeString(htmlentities(trim($d)));
             $_POST[$k] = $d;
         }
-        $dbcon->close();
     }
 }

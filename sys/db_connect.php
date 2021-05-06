@@ -1,10 +1,20 @@
 <?php
 
-function getServer()
+namespace app\sys;
+
+class db_connect
 {
-    $mysql = new mysqli('localhost', 'root', '', 'laravel');
-    mysqli_query($mysql, "SET NAMES utf8");
-    mysqli_query($mysql, "SET CHARACTER_SET_CLIENT=utf8");
-    mysqli_query($mysql, "SET CHARACTER_SET_RESULTS=utf8");
-    return $mysql;
+    private static $db_connect;
+
+    protected static function getConnectData(int $Set)
+    {
+        self::setConnectSet();
+        return self::$db_connect[$Set];
+    }
+
+    private static function setConnectSet()
+    {
+        $db_connect[0] = ['localhost', 'root', '', 'test'];
+        self::$db_connect = $db_connect;
+    }
 }
